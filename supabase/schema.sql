@@ -208,3 +208,65 @@ using (
     or private.es_admin()
   )
 );
+
+
+-- ============================================================
+-- NOTIFICACIONES: triggers que avisan a la duena + Realtime
+-- ============================================================
+-- Aviso cuando un cliente crea una solicitud de cotizacion.
+create or replace function private.notificar_nueva_solicitud()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  nombre_cliente text;
+begin
+  select coalesce(nullif(nombre, ''), email, 'Un cliente')
+    into nombre_cliente
+  from usuarios where id = new.usuario_id;
+
+  insert into notificaciones (presupuesto_id, mensaje)
+  values (
+    new.id,
+    'Nueva solicitud de cotización de ' || coalesce(nombre_cliente, 'un cliente')
+  );
+  return new;
+end;
+$$;
+
+create trigger presupuesto_notifica_admin
+  after insert on presupuestos
+  for each row execute function private.notificar_nueva_solicitud();
+
+-- Aviso cuando un cliente registra un pago.
+create or replace function private.notificar_nuevo_pago()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  nombre_cliente text;
+begin
+  select coalesce(nullif(nombre, ''), email, 'Un cliente')
+    into nombre_cliente
+  from usuarios where id = new.usuario_id;
+
+  insert into notificaciones (presupuesto_id, mensaje)
+  values (
+    new.presupuesto_id,
+    coalesce(nombre_cliente, 'Un cliente') || ' registró un pago de $'
+      || to_char(coalesce(new.monto_declarado, 0), 'FM999999990.00')
+  );
+  return new;
+end;
+$$;
+
+create trigger pago_notifica_admin
+  after insert on pagos
+  for each row execute function private.notificar_nuevo_pago();
+
+-- Activar Realtime para transmitir los cambios de notificaciones en vivo.
+alter publication supabase_realtime add table notificaciones;
