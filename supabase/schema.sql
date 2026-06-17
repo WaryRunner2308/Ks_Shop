@@ -15,12 +15,6 @@ create table usuarios (
   created_at timestamptz not null default now()
 );
 
-create table configuracion (
-  id bigint generated always as identity primary key,
-  porcentaje_ganancia numeric(5,4) not null default 0.2000,
-  updated_at timestamptz not null default now()
-);
-
 create table metodos_pago (
   id bigint generated always as identity primary key,
   nombre text not null,
@@ -34,9 +28,7 @@ create table presupuestos (
   usuario_id uuid not null references usuarios(id) on delete cascade,
   link text not null,
   variante text,
-  precio_real numeric(12,2),
-  total numeric(12,2),
-  porcentaje_ganancia_usado numeric(5,4),
+  precio_venta numeric(12,2),
   estado estado_presupuesto not null default 'pendiente',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -68,9 +60,6 @@ create index idx_pagos_presupuesto_id on pagos(presupuesto_id);
 create index idx_pagos_estado on pagos(estado);
 create index idx_notificaciones_leida on notificaciones(leida);
 
--- Configuracion inicial (20% de ganancia)
-insert into configuracion (porcentaje_ganancia) values (0.2000);
-
 
 -- ============================================================
 -- SEGURIDAD: Row Level Security (RLS) y politicas
@@ -78,7 +67,6 @@ insert into configuracion (porcentaje_ganancia) values (0.2000);
 
 -- Activar RLS en todas las tablas
 alter table usuarios enable row level security;
-alter table configuracion enable row level security;
 alter table metodos_pago enable row level security;
 alter table presupuestos enable row level security;
 alter table pagos enable row level security;
@@ -113,10 +101,6 @@ create policy usuarios_insert on usuarios for insert to authenticated
 create policy usuarios_update on usuarios for update to authenticated
   using (id = auth.uid() or private.es_admin())
   with check (private.es_admin() or (id = auth.uid() and rol = 'cliente'));
-
--- CONFIGURACION: privada, solo la duena (contiene su margen de ganancia).
-create policy configuracion_admin on configuracion for all to authenticated
-  using (private.es_admin()) with check (private.es_admin());
 
 -- METODOS_PAGO: todos los logueados ven los activos; solo la duena los administra.
 create policy metodos_pago_select on metodos_pago for select to authenticated
