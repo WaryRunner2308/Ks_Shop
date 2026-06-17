@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# mcp (contiene el token de acceso de Supabase, no debe subirse)
+.mcp.json
