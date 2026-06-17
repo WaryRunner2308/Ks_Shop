@@ -85,8 +85,11 @@ alter table pagos enable row level security;
 alter table notificaciones enable row level security;
 
 -- Funcion helper: detecta si el usuario actual (logueado) es la duena (admin).
+-- Vive en el schema privado para que NO sea llamable desde la API publica.
 -- SECURITY DEFINER evita recursion al leer la tabla usuarios dentro de sus propias politicas.
-create or replace function public.es_admin()
+create schema if not exists private;
+
+create or replace function private.es_admin()
 returns boolean
 language sql
 security definer
@@ -98,55 +101,59 @@ as $$
   );
 $$;
 
+grant usage on schema private to authenticated;
+revoke all on function private.es_admin() from public, anon;
+grant execute on function private.es_admin() to authenticated;
+
 -- USUARIOS: cada quien ve/edita lo suyo; la duena ve/edita todo. Nadie se auto-asciende a admin.
 create policy usuarios_select on usuarios for select to authenticated
-  using (id = auth.uid() or es_admin());
+  using (id = auth.uid() or private.es_admin());
 create policy usuarios_insert on usuarios for insert to authenticated
   with check (id = auth.uid() and rol = 'cliente');
 create policy usuarios_update on usuarios for update to authenticated
-  using (id = auth.uid() or es_admin())
-  with check (es_admin() or (id = auth.uid() and rol = 'cliente'));
+  using (id = auth.uid() or private.es_admin())
+  with check (private.es_admin() or (id = auth.uid() and rol = 'cliente'));
 
 -- CONFIGURACION: privada, solo la duena (contiene su margen de ganancia).
 create policy configuracion_admin on configuracion for all to authenticated
-  using (es_admin()) with check (es_admin());
+  using (private.es_admin()) with check (private.es_admin());
 
 -- METODOS_PAGO: todos los logueados ven los activos; solo la duena los administra.
 create policy metodos_pago_select on metodos_pago for select to authenticated
-  using (activo or es_admin());
+  using (activo or private.es_admin());
 create policy metodos_pago_insert on metodos_pago for insert to authenticated
-  with check (es_admin());
+  with check (private.es_admin());
 create policy metodos_pago_update on metodos_pago for update to authenticated
-  using (es_admin()) with check (es_admin());
+  using (private.es_admin()) with check (private.es_admin());
 create policy metodos_pago_delete on metodos_pago for delete to authenticated
-  using (es_admin());
+  using (private.es_admin());
 
 -- PRESUPUESTOS: el cliente ve y crea los suyos; solo la duena edita (pone precios) y borra.
 create policy presupuestos_select on presupuestos for select to authenticated
-  using (usuario_id = auth.uid() or es_admin());
+  using (usuario_id = auth.uid() or private.es_admin());
 create policy presupuestos_insert on presupuestos for insert to authenticated
   with check (usuario_id = auth.uid());
 create policy presupuestos_update on presupuestos for update to authenticated
-  using (es_admin()) with check (es_admin());
+  using (private.es_admin()) with check (private.es_admin());
 create policy presupuestos_delete on presupuestos for delete to authenticated
-  using (es_admin());
+  using (private.es_admin());
 
 -- PAGOS: el cliente ve y sube los suyos; solo la duena los verifica/rechaza y borra.
 create policy pagos_select on pagos for select to authenticated
-  using (usuario_id = auth.uid() or es_admin());
+  using (usuario_id = auth.uid() or private.es_admin());
 create policy pagos_insert on pagos for insert to authenticated
   with check (usuario_id = auth.uid());
 create policy pagos_update on pagos for update to authenticated
-  using (es_admin()) with check (es_admin());
+  using (private.es_admin()) with check (private.es_admin());
 create policy pagos_delete on pagos for delete to authenticated
-  using (es_admin());
+  using (private.es_admin());
 
 -- NOTIFICACIONES: son para la duena; solo ella las lee, marca leidas y borra.
 -- El insert se hace desde el servidor (service_role, que omite RLS), por eso no hay
 -- politica de insert para clientes.
 create policy notificaciones_select on notificaciones for select to authenticated
-  using (es_admin());
+  using (private.es_admin());
 create policy notificaciones_update on notificaciones for update to authenticated
-  using (es_admin()) with check (es_admin());
+  using (private.es_admin()) with check (private.es_admin());
 create policy notificaciones_delete on notificaciones for delete to authenticated
-  using (es_admin());
+  using (private.es_admin());
