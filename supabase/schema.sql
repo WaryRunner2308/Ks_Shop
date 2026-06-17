@@ -6,6 +6,7 @@ create type rol_usuario as enum ('cliente', 'admin');
 create type estado_presupuesto as enum ('solicitado', 'cotizado', 'pagado', 'cancelado');
 create type estado_pago as enum ('pendiente', 'verificado', 'rechazado');
 create type plataforma_compra as enum ('aliexpress', 'shein', 'alibaba');
+create type tipo_metodo_pago as enum ('pago_movil', 'transferencia', 'binance', 'paypal', 'zelle');
 
 -- Tablas
 create table usuarios (
@@ -25,8 +26,8 @@ create table configuracion (
 
 create table metodos_pago (
   id bigint generated always as identity primary key,
-  nombre text not null,
-  detalles text,
+  tipo tipo_metodo_pago not null,
+  detalles jsonb not null default '{}'::jsonb,
   activo boolean not null default true,
   created_at timestamptz not null default now()
 );

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import {
   DISCLAIMER_ENVIO,
@@ -101,9 +102,17 @@ export default async function AdminPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
       <header className="mb-8">
-        <h1 className="font-display text-3xl text-tinta">
-          Solicitudes de cotización
-        </h1>
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="font-display text-3xl text-tinta">
+            Solicitudes de cotización
+          </h1>
+          <Link
+            href="/admin/metodos-pago"
+            className="shrink-0 rounded-xl border border-linea px-4 py-2 text-sm font-medium text-tinta transition hover:bg-crema-2"
+          >
+            Métodos de pago
+          </Link>
+        </div>
         <p className="mt-2 text-sm text-tinta-soft">
           Revisa los productos desde tu cuenta y envía el precio de venta.
         </p>
