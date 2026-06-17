@@ -106,12 +106,20 @@ export default async function AdminPage() {
           <h1 className="font-display text-3xl text-tinta">
             Solicitudes de cotización
           </h1>
-          <Link
-            href="/admin/metodos-pago"
-            className="shrink-0 rounded-xl border border-linea px-4 py-2 text-sm font-medium text-tinta transition hover:bg-crema-2"
-          >
-            Métodos de pago
-          </Link>
+          <div className="flex shrink-0 gap-2">
+            <Link
+              href="/admin/pagos"
+              className="rounded-xl border border-linea px-4 py-2 text-sm font-medium text-tinta transition hover:bg-crema-2"
+            >
+              Pagos
+            </Link>
+            <Link
+              href="/admin/metodos-pago"
+              className="rounded-xl border border-linea px-4 py-2 text-sm font-medium text-tinta transition hover:bg-crema-2"
+            >
+              Métodos de pago
+            </Link>
+          </div>
         </div>
         <p className="mt-2 text-sm text-tinta-soft">
           Revisa los productos desde tu cuenta y envía el precio de venta.
