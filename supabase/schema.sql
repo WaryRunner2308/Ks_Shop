@@ -3,8 +3,9 @@
 
 -- Enums
 create type rol_usuario as enum ('cliente', 'admin');
-create type estado_presupuesto as enum ('pendiente', 'cotizado', 'pagado', 'cancelado');
+create type estado_presupuesto as enum ('solicitado', 'cotizado', 'pagado', 'cancelado');
 create type estado_pago as enum ('pendiente', 'verificado', 'rechazado');
+create type plataforma_compra as enum ('aliexpress', 'shein', 'alibaba');
 
 -- Tablas
 create table usuarios (
@@ -33,10 +34,11 @@ create table metodos_pago (
 create table presupuestos (
   id bigint generated always as identity primary key,
   usuario_id uuid not null references usuarios(id) on delete cascade,
-  link text not null,
+  plataforma plataforma_compra not null,
+  url_producto text not null,
   variante text,
   precio_venta numeric(12,2),
-  estado estado_presupuesto not null default 'pendiente',
+  estado estado_presupuesto not null default 'solicitado',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

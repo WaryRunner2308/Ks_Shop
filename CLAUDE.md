@@ -19,7 +19,7 @@ El sistema NO calcula ningún precio ni ganancia. La dueña escribe el precio de
 cliente: solicita cotización, paga, sube comprobante. admin (dueña): mira productos y escribe el precio de venta final, ve pagos, recibe notificaciones.
 
 ## Tablas
-usuarios, metodos_pago, presupuestos (link, variante, precio_venta, estado), pagos (comprobante, monto, estado), notificaciones (mensaje, leida, para la dueña).
+usuarios, metodos_pago, presupuestos (plataforma, url_producto, variante, precio_venta, estado), pagos (comprobante, monto, estado), notificaciones (mensaje, leida, para la dueña). Estados de presupuesto: solicitado → cotizado → pagado / cancelado.
 NOTA: la tabla `configuracion` y el campo `porcentaje_ganancia` YA NO SE USAN (quedaron obsoletos al eliminar el cálculo de ganancia).
 
 ## Marca

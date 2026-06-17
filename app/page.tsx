@@ -26,13 +26,28 @@ export default async function Home() {
         <nav className="flex items-center gap-3 text-sm">
           {user ? (
             <>
-              {perfil?.rol === "admin" && (
+              {perfil?.rol === "admin" ? (
                 <Link
                   href="/admin"
                   className="font-semibold text-coral-dark hover:underline"
                 >
                   Panel
                 </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/cotizar"
+                    className="rounded-full bg-coral px-4 py-2 font-semibold text-white transition hover:bg-coral-dark"
+                  >
+                    Cotizar
+                  </Link>
+                  <Link
+                    href="/mis-solicitudes"
+                    className="rounded-full px-4 py-2 font-medium hover:bg-crema-2"
+                  >
+                    Mis solicitudes
+                  </Link>
+                </>
               )}
               <form action={cerrarSesion}>
                 <button
@@ -76,13 +91,22 @@ export default async function Home() {
           complicaciones. El precio del envío internacional se notificará cuando
           el paquete llegue al país.
         </p>
-        {!user && (
+        {!user ? (
           <Link
             href="/registro"
             className="mt-8 rounded-xl bg-coral px-7 py-3.5 font-semibold text-white transition hover:bg-coral-dark"
           >
             Pedir una cotización
           </Link>
+        ) : (
+          perfil?.rol !== "admin" && (
+            <Link
+              href="/cotizar"
+              className="mt-8 rounded-xl bg-coral px-7 py-3.5 font-semibold text-white transition hover:bg-coral-dark"
+            >
+              Pedir una cotización
+            </Link>
+          )
         )}
       </main>
     </div>
