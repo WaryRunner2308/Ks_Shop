@@ -15,6 +15,13 @@ create table usuarios (
   created_at timestamptz not null default now()
 );
 
+-- Tabla de configuracion general (reservada para ajustes futuros: datos de
+-- contacto, mensajes, etc.). Ya NO contiene porcentaje_ganancia.
+create table configuracion (
+  id bigint generated always as identity primary key,
+  updated_at timestamptz not null default now()
+);
+
 create table metodos_pago (
   id bigint generated always as identity primary key,
   nombre text not null,
@@ -67,6 +74,7 @@ create index idx_notificaciones_leida on notificaciones(leida);
 
 -- Activar RLS en todas las tablas
 alter table usuarios enable row level security;
+alter table configuracion enable row level security;
 alter table metodos_pago enable row level security;
 alter table presupuestos enable row level security;
 alter table pagos enable row level security;
@@ -101,6 +109,10 @@ create policy usuarios_insert on usuarios for insert to authenticated
 create policy usuarios_update on usuarios for update to authenticated
   using (id = auth.uid() or private.es_admin())
   with check (private.es_admin() or (id = auth.uid() and rol = 'cliente'));
+
+-- CONFIGURACION: privada, solo la duena la ve y la modifica.
+create policy configuracion_admin on configuracion for all to authenticated
+  using (private.es_admin()) with check (private.es_admin());
 
 -- METODOS_PAGO: todos los logueados ven los activos; solo la duena los administra.
 create policy metodos_pago_select on metodos_pago for select to authenticated
