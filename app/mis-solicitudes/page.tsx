@@ -56,7 +56,11 @@ export default async function MisSolicitudesPage() {
       ) : (
         <ul className="flex flex-col gap-4">
           {solicitudes.map((s) => {
-            const cotizada = s.estado === "cotizado" && s.precio_venta != null;
+            const tienePrecio =
+              s.precio_venta != null &&
+              (s.estado === "cotizado" || s.estado === "pagado");
+            const puedePagar =
+              s.estado === "cotizado" && s.precio_venta != null;
             return (
               <li
                 key={s.id}
@@ -86,7 +90,7 @@ export default async function MisSolicitudesPage() {
                   </span>
                 </div>
 
-                {cotizada ? (
+                {tienePrecio ? (
                   <div className="mt-4 rounded-xl bg-crema p-4">
                     <p className="text-sm text-tinta-soft">Precio</p>
                     <p className="font-display text-2xl text-tinta">
@@ -95,6 +99,18 @@ export default async function MisSolicitudesPage() {
                     <p className="mt-2 text-xs leading-relaxed text-tinta-soft">
                       {DISCLAIMER_ENVIO}
                     </p>
+                    {puedePagar ? (
+                      <Link
+                        href={`/pagar/${s.id}`}
+                        className="mt-3 inline-block rounded-xl bg-coral px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-coral-dark"
+                      >
+                        Pagar
+                      </Link>
+                    ) : (
+                      <p className="mt-3 text-sm font-medium text-tinta">
+                        Pago registrado · en verificación
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <p className="mt-4 text-sm text-tinta-soft">

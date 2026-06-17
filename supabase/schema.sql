@@ -4,7 +4,7 @@
 -- Enums
 create type rol_usuario as enum ('cliente', 'admin');
 create type estado_presupuesto as enum ('solicitado', 'cotizado', 'pagado', 'cancelado');
-create type estado_pago as enum ('pendiente', 'verificado', 'rechazado');
+create type estado_pago as enum ('registrado', 'verificado', 'rechazado');
 create type plataforma_compra as enum ('aliexpress', 'shein', 'alibaba');
 create type tipo_metodo_pago as enum ('pago_movil', 'transferencia', 'binance', 'paypal', 'zelle');
 
@@ -48,9 +48,10 @@ create table pagos (
   id bigint generated always as identity primary key,
   presupuesto_id bigint not null references presupuestos(id) on delete cascade,
   usuario_id uuid not null references usuarios(id) on delete cascade,
+  metodo_pago_id bigint references metodos_pago(id) on delete set null,
   comprobante_url text,
-  monto numeric(12,2),
-  estado estado_pago not null default 'pendiente',
+  monto_declarado numeric(12,2),
+  estado estado_pago not null default 'registrado',
   created_at timestamptz not null default now()
 );
 
@@ -156,3 +157,54 @@ create policy notificaciones_update on notificaciones for update to authenticate
   using (private.es_admin()) with check (private.es_admin());
 create policy notificaciones_delete on notificaciones for delete to authenticated
   using (private.es_admin());
+
+
+-- ============================================================
+-- TRIGGER: al registrar un pago, el presupuesto pasa a "pagado"
+-- ============================================================
+-- SECURITY DEFINER: asi el cliente NO necesita permiso de update sobre
+-- presupuestos (que sigue siendo solo de la duena).
+create or replace function private.marcar_presupuesto_pagado()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update presupuestos
+  set estado = 'pagado', updated_at = now()
+  where id = new.presupuesto_id and estado = 'cotizado';
+  return new;
+end;
+$$;
+
+create trigger pago_marca_presupuesto
+  after insert on pagos
+  for each row execute function private.marcar_presupuesto_pagado();
+
+
+-- ============================================================
+-- STORAGE: bucket privado de comprobantes de pago
+-- ============================================================
+insert into storage.buckets (id, name, public)
+values ('comprobantes', 'comprobantes', false)
+on conflict (id) do nothing;
+
+-- Subir: solo logueados, y solo dentro de su propia carpeta (su user id).
+create policy "comprobantes_subir_propios"
+on storage.objects for insert to authenticated
+with check (
+  bucket_id = 'comprobantes'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+-- Ver: el cliente ve los suyos; la duena (admin) ve los de todos.
+create policy "comprobantes_ver_propios_o_admin"
+on storage.objects for select to authenticated
+using (
+  bucket_id = 'comprobantes'
+  and (
+    (storage.foldername(name))[1] = auth.uid()::text
+    or private.es_admin()
+  )
+);
