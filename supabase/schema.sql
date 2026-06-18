@@ -37,9 +37,13 @@ create table metodos_pago (
 create table presupuestos (
   id bigint generated always as identity primary key,
   usuario_id uuid not null references usuarios(id) on delete cascade,
-  plataforma plataforma_compra not null,
+  -- Texto libre (no enum): la lista de plataformas vive en lib/constantes.ts y
+  -- crece sin migraciones (AliExpress, Shein, Temu, eBay, Romwe, etc.).
+  plataforma text not null,
   url_producto text not null,
   variante text,
+  -- Imagen de referencia opcional (ruta en el bucket privado 'referencias').
+  imagen_url text,
   precio_venta numeric(12,2),
   estado estado_presupuesto not null default 'solicitado',
   created_at timestamptz not null default now(),
@@ -215,6 +219,30 @@ create policy "comprobantes_ver_propios_o_admin"
 on storage.objects for select to authenticated
 using (
   bucket_id = 'comprobantes'
+  and (
+    (storage.foldername(name))[1] = auth.uid()::text
+    or private.es_admin()
+  )
+);
+
+-- ============================================================
+-- STORAGE: bucket privado de imagenes de referencia (cotizar)
+-- ============================================================
+insert into storage.buckets (id, name, public)
+values ('referencias', 'referencias', false)
+on conflict (id) do nothing;
+
+create policy "referencias_subir_propios"
+on storage.objects for insert to authenticated
+with check (
+  bucket_id = 'referencias'
+  and (storage.foldername(name))[1] = auth.uid()::text
+);
+
+create policy "referencias_ver_propios_o_admin"
+on storage.objects for select to authenticated
+using (
+  bucket_id = 'referencias'
   and (
     (storage.foldername(name))[1] = auth.uid()::text
     or private.es_admin()

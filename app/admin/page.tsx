@@ -17,6 +17,7 @@ type Solicitud = {
   precio_venta: number | null;
   estado: string;
   created_at: string;
+  imagen_url: string | null;
   usuarios: Cliente | null;
 };
 
@@ -38,7 +39,13 @@ const ESTADO_CHIP: Record<string, string> = {
   cancelado: "bg-tinta/10 text-tinta-soft",
 };
 
-function Tarjeta({ s }: { s: Solicitud }) {
+function Tarjeta({
+  s,
+  imagenUrl,
+}: {
+  s: Solicitud;
+  imagenUrl?: string | null;
+}) {
   const cliente = s.usuarios?.nombre || s.usuarios?.email || "Cliente";
   const pendiente = s.estado === "solicitado";
 
@@ -64,6 +71,24 @@ function Tarjeta({ s }: { s: Solicitud }) {
             <p className="mt-1 text-sm text-tinta-soft">
               Variante: {s.variante}
             </p>
+          )}
+          {imagenUrl && (
+            <a
+              href={imagenUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group mt-2 inline-flex items-center gap-2"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imagenUrl}
+                alt="Imagen de referencia"
+                className="h-12 w-12 rounded-lg object-cover ring-1 ring-white/10 transition group-hover:ring-coral/50"
+              />
+              <span className="text-xs font-medium text-coral-dark group-hover:underline">
+                Ver imagen de referencia
+              </span>
+            </a>
           )}
           <p className="mt-1 text-xs text-tinta-soft">
             {formatearFecha(s.created_at)}
@@ -132,7 +157,7 @@ export default async function AdminPage() {
   const { data } = await supabase
     .from("presupuestos")
     .select(
-      "id, plataforma, url_producto, variante, precio_venta, estado, created_at, usuarios(nombre, email)",
+      "id, plataforma, url_producto, variante, precio_venta, estado, created_at, imagen_url, usuarios(nombre, email)",
     )
     .order("created_at", { ascending: false })
     .returns<Solicitud[]>();
@@ -140,6 +165,23 @@ export default async function AdminPage() {
   const solicitudes = data ?? [];
   const pendientes = solicitudes.filter((s) => s.estado === "solicitado");
   const cotizadas = solicitudes.filter((s) => s.estado !== "solicitado");
+
+  // URLs firmadas (temporales) para ver las imágenes de referencia del bucket
+  // privado. Solo para las solicitudes que traen imagen.
+  const rutasImg = solicitudes
+    .map((s) => s.imagen_url)
+    .filter((r): r is string => !!r);
+  const firmadas: Record<string, string> = {};
+  if (rutasImg.length > 0) {
+    const { data: urls } = await supabase.storage
+      .from("referencias")
+      .createSignedUrls(rutasImg, 3600);
+    for (const u of urls ?? []) {
+      if (u.path && u.signedUrl) firmadas[u.path] = u.signedUrl;
+    }
+  }
+  const urlDe = (s: Solicitud) =>
+    s.imagen_url ? firmadas[s.imagen_url] : undefined;
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
@@ -201,7 +243,7 @@ export default async function AdminPage() {
         ) : (
           <ul className="entrada flex flex-col gap-4">
             {pendientes.map((s) => (
-              <Tarjeta key={s.id} s={s} />
+              <Tarjeta key={s.id} s={s} imagenUrl={urlDe(s)} />
             ))}
           </ul>
         )}
@@ -220,7 +262,7 @@ export default async function AdminPage() {
         ) : (
           <ul className="entrada flex flex-col gap-4">
             {cotizadas.map((s) => (
-              <Tarjeta key={s.id} s={s} />
+              <Tarjeta key={s.id} s={s} imagenUrl={urlDe(s)} />
             ))}
           </ul>
         )}

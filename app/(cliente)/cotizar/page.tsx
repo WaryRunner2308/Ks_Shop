@@ -1,21 +1,156 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { crearSolicitud, type EstadoCotizar } from "./actions";
 import { PLATAFORMAS } from "@/lib/constantes";
 import SelectorPlataforma from "@/app/components/selector-plataforma";
 
 const estadoInicial: EstadoCotizar = {};
 
+// ── Un bloque de producto (plataforma + link + variante + imagen opcional) ────
+function BloqueProducto({
+  indice,
+  numero,
+  removible,
+  onQuitar,
+}: {
+  indice: number;
+  numero: number;
+  removible: boolean;
+  onQuitar: () => void;
+}) {
+  const [preview, setPreview] = useState<string | null>(null);
+
+  function alElegirImagen(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    setPreview(f ? URL.createObjectURL(f) : null);
+  }
+
+  return (
+    <div className="tarjeta flex flex-col gap-4 p-5">
+      {removible && (
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-tinta-soft">
+            Producto {numero}
+          </span>
+          <button
+            type="button"
+            onClick={onQuitar}
+            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-tinta-soft transition hover:bg-white/[0.06] hover:text-coral-dark"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+            Quitar
+          </button>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-tinta">Plataforma</span>
+        <SelectorPlataforma name={`plataforma_${indice}`} opciones={PLATAFORMAS} />
+      </div>
+
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-tinta">Link del producto</span>
+        <input
+          type="url"
+          name={`url_${indice}`}
+          required
+          inputMode="url"
+          placeholder="https://…"
+          className="campo"
+        />
+      </label>
+
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-tinta">
+          Variante que quieres
+        </span>
+        <textarea
+          name={`variante_${indice}`}
+          required
+          rows={2}
+          placeholder="Ej.: Talla M, color negro"
+          className="campo resize-none"
+        />
+      </label>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-tinta">
+          Imagen de referencia{" "}
+          <span className="font-normal text-tinta-soft">(opcional)</span>
+        </span>
+        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/[0.04] p-3 transition hover:border-coral/50">
+          {preview ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={preview}
+              alt="Vista previa"
+              className="h-14 w-14 shrink-0 rounded-lg object-cover"
+            />
+          ) : (
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] text-tinta-soft">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="9" cy="9" r="2" />
+                <path d="m21 15-3.6-3.6a2 2 0 0 0-2.8 0L6 20" />
+              </svg>
+            </span>
+          )}
+          <span className="text-sm text-tinta-soft">
+            {preview ? "Toca para cambiar la imagen" : "Sube una foto (ej. el color exacto)"}
+          </span>
+          <input
+            type="file"
+            name={`imagen_${indice}`}
+            accept="image/*"
+            onChange={alElegirImagen}
+            className="hidden"
+          />
+        </label>
+      </div>
+    </div>
+  );
+}
+
 export default function CotizarPage() {
   const [estado, accion, enviando] = useActionState(
     crearSolicitud,
     estadoInicial,
   );
+  const [ids, setIds] = useState<number[]>([0]);
+  const siguiente = useRef(1);
+
+  function agregar() {
+    setIds((prev) => [...prev, siguiente.current++]);
+  }
+  function quitar(id: number) {
+    setIds((prev) => prev.filter((x) => x !== id));
+  }
 
   // Mensaje de confirmación tras enviar.
   if (estado.ok) {
+    const n = estado.cantidad ?? 1;
     return (
       <div className="mx-auto max-w-lg px-6 py-16">
         <div className="tarjeta aparecer p-8 text-center">
@@ -26,8 +161,9 @@ export default function CotizarPage() {
             ¡Solicitud recibida!
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-tinta-soft">
-            Pronto revisaremos tu producto y recibirás el precio. Puedes ver el
-            estado de tus solicitudes en cualquier momento.
+            {n > 1
+              ? `Recibimos tus ${n} productos. Pronto revisaremos y recibirás el precio de cada uno.`
+              : "Pronto revisaremos tu producto y recibirás el precio."}
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link href="/mis-solicitudes" className="btn-coral px-5 py-3">
@@ -77,44 +213,39 @@ export default function CotizarPage() {
         </p>
       </header>
 
-      <form action={accion} className="tarjeta entrada flex flex-col gap-5 p-6">
-        <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-tinta">Plataforma</span>
-          <SelectorPlataforma name="plataforma" opciones={PLATAFORMAS} />
-        </div>
+      <form action={accion} className="entrada flex flex-col gap-4">
+        <input type="hidden" name="cantidad" value={ids.length} />
 
-        <label className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-tinta">
-            Link del producto
-          </span>
-          <input
-            type="url"
-            name="url_producto"
-            required
-            inputMode="url"
-            placeholder="https://…"
-            className="campo"
+        {ids.map((id, i) => (
+          <BloqueProducto
+            key={id}
+            indice={i}
+            numero={i + 1}
+            removible={ids.length > 1}
+            onQuitar={() => quitar(id)}
           />
-          <span className="text-xs text-tinta-soft">
-            Pega el enlace exacto del producto que quieres.
-          </span>
-        </label>
+        ))}
 
-        <label className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-tinta">
-            Variante que quieres
-          </span>
-          <textarea
-            name="variante"
-            required
-            rows={3}
-            placeholder="Ej.: Talla M, color negro"
-            className="campo resize-none"
-          />
-          <span className="text-xs text-tinta-soft">
-            Indica talla, color o el modelo específico.
-          </span>
-        </label>
+        {/* ¿Quieres cotizar algo más? */}
+        <button
+          type="button"
+          onClick={agregar}
+          className="btn-linea justify-center px-4 py-3 text-sm"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          ¿Quieres cotizar algo más?
+        </button>
 
         {estado.error && (
           <p className="deslizar-entra rounded-xl border border-coral/30 bg-coral/10 px-4 py-3 text-sm text-coral-dark">
@@ -127,7 +258,11 @@ export default function CotizarPage() {
           disabled={enviando}
           className="btn-coral mt-1 px-4 py-3.5"
         >
-          {enviando ? "Enviando…" : "Enviar solicitud"}
+          {enviando
+            ? "Enviando…"
+            : ids.length > 1
+              ? `Enviar ${ids.length} solicitudes`
+              : "Enviar solicitud"}
         </button>
 
         <p className="flex items-start gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-3 text-xs leading-relaxed text-tinta-soft">
@@ -149,12 +284,6 @@ export default function CotizarPage() {
           paquete llegue al país.
         </p>
       </form>
-
-      <p className="mt-6 text-center text-sm">
-        <Link href="/mis-solicitudes" className="text-coral-dark hover:underline">
-          Ver mis solicitudes
-        </Link>
-      </p>
     </div>
   );
 }
