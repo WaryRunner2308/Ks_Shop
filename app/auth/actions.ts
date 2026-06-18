@@ -33,7 +33,10 @@ function traducirError(mensaje: string): string {
     return "Ese correo ya tiene una cuenta. Inicia sesión.";
   }
   if (mensaje.includes("Invalid login credentials")) {
-    return "Correo o contraseña incorrectos.";
+    return "Correo o contraseña incorrectos. Verifica e intenta de nuevo.";
+  }
+  if (mensaje.includes("rate limit") || mensaje.includes("Too many")) {
+    return "Demasiados intentos. Espera un momento e intenta de nuevo.";
   }
   if (mensaje.includes("Email not confirmed")) {
     return "Aún no confirmas tu correo. Revisa tu bandeja de entrada.";
