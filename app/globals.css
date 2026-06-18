@@ -528,6 +528,220 @@ body::after {
   animation: latido 2s ease-out infinite;
 }
 
+/* ====================================================================
+   ESCENA DE AUTENTICACIÓN — "Aurora de pétalos"
+   Fondo inmersivo en movimiento para login y registro.
+   ==================================================================== */
+
+.escena-auth {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 2.5rem 1.25rem;
+  isolation: isolate;
+  background:
+    radial-gradient(65% 55% at 50% -5%, #c50670 0%, rgba(197, 6, 112, 0) 60%),
+    linear-gradient(160deg, #2c021d 0%, #5e0340 48%, #1d0114 100%);
+}
+
+/* Aurora: manchas de color enormes que derivan y respiran. */
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(72px);
+  opacity: 0.85;
+  z-index: -2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.aurora-1 {
+  width: 46rem;
+  height: 46rem;
+  left: -12rem;
+  top: -13rem;
+  background: radial-gradient(
+    circle at 50% 50%,
+    #ff3aa5 0%,
+    rgba(255, 58, 165, 0) 70%
+  );
+  animation: aurora-a 19s ease-in-out infinite alternate;
+}
+.aurora-2 {
+  width: 40rem;
+  height: 40rem;
+  right: -13rem;
+  top: 18%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    #ff7bc2 0%,
+    rgba(255, 123, 194, 0) 70%
+  );
+  animation: aurora-b 23s ease-in-out infinite alternate;
+}
+.aurora-3 {
+  width: 38rem;
+  height: 38rem;
+  left: 22%;
+  bottom: -15rem;
+  background: radial-gradient(
+    circle at 50% 50%,
+    #ec0b86 0%,
+    rgba(236, 11, 134, 0) 70%
+  );
+  animation: aurora-c 21s ease-in-out infinite alternate;
+}
+@keyframes aurora-a {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(8rem, 4rem) scale(1.15);
+  }
+}
+@keyframes aurora-b {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-7rem, 5rem) scale(1.1);
+  }
+}
+@keyframes aurora-c {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(5rem, -5rem) scale(1.18);
+  }
+}
+
+/* Orbes de luz que ascienden lentamente. */
+.orbe {
+  position: absolute;
+  bottom: -10vh;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 35% 30%,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 200, 230, 0.2) 55%,
+    rgba(255, 200, 230, 0) 72%
+  );
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  animation: ascender linear infinite;
+}
+@keyframes ascender {
+  0% {
+    transform: translateY(0) scale(0.7);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateY(-115vh) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Pétalos que caen en diagonal mientras giran. */
+.petalo {
+  position: absolute;
+  top: -8vh;
+  width: 14px;
+  height: 14px;
+  border-radius: 80% 0 80% 0;
+  background: linear-gradient(135deg, #ffe1f0, #ff7bc2);
+  box-shadow: 0 0 6px rgba(255, 123, 194, 0.4);
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  animation: caer linear infinite;
+}
+.petalo-claro {
+  background: linear-gradient(135deg, #ffffff, #ffd6ec);
+}
+@keyframes caer {
+  0% {
+    transform: translate(0, -8vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--drift, 8vw), 116vh) rotate(440deg);
+    opacity: 0;
+  }
+}
+
+/* Tarjeta de autenticación: vidrio luminoso con borde brillante. */
+.tarjeta-auth {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 27rem;
+  border-radius: 1.85rem;
+  padding: 2.25rem;
+  background: rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(28px) saturate(165%);
+  -webkit-backdrop-filter: blur(28px) saturate(165%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 32px 80px -22px rgba(28, 1, 20, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+/* Entrada de la tarjeta: emerge con desenfoque. */
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.95);
+    filter: blur(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+.surgir {
+  animation: surgir 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Brillo giratorio detrás de la tarjeta. */
+.halo-auth {
+  position: absolute;
+  inset: -8px;
+  border-radius: 2.1rem;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 123, 194, 0),
+    rgba(255, 123, 194, 0.6),
+    rgba(255, 58, 165, 0),
+    rgba(255, 123, 194, 0.5),
+    rgba(255, 123, 194, 0)
+  );
+  filter: blur(16px);
+  opacity: 0.75;
+  animation: girar 12s linear infinite;
+}
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Respeta a quien prefiere menos movimiento. */
 @media (prefers-reduced-motion: reduce) {
   *,

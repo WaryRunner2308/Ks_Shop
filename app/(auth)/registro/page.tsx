@@ -34,7 +34,7 @@ export default function RegistroPage() {
 
   return (
     <div>
-      <header className="mb-8">
+      <header className="mb-8 text-center">
         <h2 className="font-display text-3xl tracking-tight text-tinta">
           Crea tu cuenta
         </h2>

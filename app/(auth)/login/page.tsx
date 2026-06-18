@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   return (
     <div>
-      <header className="mb-8">
+      <header className="mb-8 text-center">
         <h2 className="font-display text-3xl tracking-tight text-tinta">
           Bienvenida de vuelta
         </h2>

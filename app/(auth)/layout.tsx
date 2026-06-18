@@ -1,67 +1,110 @@
-import Link from "next/link";
 import Logo from "@/app/components/logo";
 
-// Layout compartido de login y registro: panel de marca a la izquierda,
-// formulario a la derecha. En móvil solo se ve el formulario con el logo arriba.
+// Escena inmersiva "Aurora de pétalos": aurora fucsia en movimiento, orbes de
+// luz que ascienden, pétalos cayendo y una tarjeta de vidrio luminoso al centro
+// que contiene el formulario (login o registro).
+
+// Pétalos: posiciones, tamaños, ritmos y deriva fijos (deterministas para no
+// romper la hidratación de React).
+const petalos = [
+  { left: 6, size: 12, dur: 11, delay: 0, drift: 9, claro: true },
+  { left: 14, size: 16, dur: 14, delay: 3, drift: 6, claro: false },
+  { left: 22, size: 10, dur: 9, delay: 1.5, drift: 12, claro: false },
+  { left: 30, size: 18, dur: 16, delay: 5, drift: 4, claro: true },
+  { left: 38, size: 13, dur: 12, delay: 2, drift: 10, claro: false },
+  { left: 46, size: 11, dur: 10, delay: 6, drift: 7, claro: true },
+  { left: 54, size: 17, dur: 15, delay: 1, drift: -5, claro: false },
+  { left: 62, size: 12, dur: 13, delay: 4, drift: 8, claro: true },
+  { left: 70, size: 15, dur: 11, delay: 7, drift: -8, claro: false },
+  { left: 78, size: 10, dur: 9.5, delay: 2.5, drift: 6, claro: true },
+  { left: 86, size: 16, dur: 14.5, delay: 5.5, drift: -6, claro: false },
+  { left: 92, size: 12, dur: 12.5, delay: 0.8, drift: 9, claro: true },
+  { left: 18, size: 14, dur: 13.5, delay: 8, drift: -10, claro: false },
+  { left: 50, size: 9, dur: 10.5, delay: 3.6, drift: 5, claro: true },
+  { left: 66, size: 13, dur: 12, delay: 6.5, drift: -4, claro: false },
+  { left: 82, size: 11, dur: 11.5, delay: 4.2, drift: 7, claro: true },
+];
+
+// Orbes de luz que suben desde abajo.
+const orbes = [
+  { left: 12, size: 10, dur: 16, delay: 0 },
+  { left: 28, size: 6, dur: 13, delay: 4 },
+  { left: 40, size: 14, dur: 20, delay: 7 },
+  { left: 55, size: 8, dur: 15, delay: 2 },
+  { left: 68, size: 5, dur: 12, delay: 6 },
+  { left: 80, size: 12, dur: 18, delay: 3 },
+  { left: 90, size: 7, dur: 14, delay: 9 },
+  { left: 48, size: 9, dur: 17, delay: 11 },
+];
+
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen w-full lg:grid lg:grid-cols-[1.05fr_1fr]">
-      {/* Panel de marca */}
-      <aside className="panel-marca grano relative hidden flex-col justify-between overflow-hidden p-12 text-crema lg:flex">
-        {/* Monograma gigante de marca, como marca de agua decorativa */}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -bottom-16 -right-10 select-none font-display text-[22rem] italic leading-none text-crema/[0.05]"
-        >
-          K
-        </span>
+    <div className="escena-auth">
+      {/* Auroras de fondo */}
+      <div className="aurora aurora-1" aria-hidden />
+      <div className="aurora aurora-2" aria-hidden />
+      <div className="aurora aurora-3" aria-hidden />
 
-        <div className="relative z-10">
-          <Logo href="/" height={56} plate priority />
-        </div>
+      {/* Orbes de luz ascendentes */}
+      <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
+        {orbes.map((o, i) => (
+          <span
+            key={`orbe-${i}`}
+            className="orbe"
+            style={{
+              left: `${o.left}%`,
+              width: `${o.size}px`,
+              height: `${o.size}px`,
+              animationDuration: `${o.dur}s`,
+              animationDelay: `${o.delay}s`,
+            }}
+          />
+        ))}
+      </div>
 
-        <div className="relative z-10 aparecer">
-          <p className="mb-5 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.2em] text-coral">
-            <span className="h-1.5 w-1.5 rounded-full bg-coral latido" />
-            Compras bajo pedido
-          </p>
-          <h1 className="font-display text-5xl italic leading-[1.05] text-crema xl:text-6xl">
-            Lo que quieres,
-            <br />
-            pedido por
-            <br />
-            nosotras.
-          </h1>
-          <p className="mt-6 max-w-sm text-base leading-relaxed text-crema/70">
-            Cotiza, paga y recibe tus compras de AliExpress, Shein y Alibaba —
-            todo desde un solo lugar, sin complicaciones.
-          </p>
-        </div>
+      {/* Pétalos cayendo */}
+      <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
+        {petalos.map((p, i) => (
+          <span
+            key={`petalo-${i}`}
+            className={`petalo${p.claro ? " petalo-claro" : ""}`}
+            style={
+              {
+                left: `${p.left}%`,
+                width: `${p.size}px`,
+                height: `${p.size}px`,
+                animationDuration: `${p.dur}s`,
+                animationDelay: `${p.delay}s`,
+                "--drift": `${p.drift}vw`,
+              } as React.CSSProperties
+            }
+          />
+        ))}
+      </div>
 
-        <div className="relative z-10 flex items-center gap-3 text-sm text-crema/60">
-          {["AliExpress", "Shein", "Alibaba"].map((p) => (
-            <span
-              key={p}
-              className="rounded-full border border-crema/20 px-3 py-1 transition hover:border-coral/60 hover:text-crema"
-            >
-              {p}
-            </span>
-          ))}
-        </div>
-      </aside>
-
-      {/* Formulario */}
-      <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm aparecer">
-          {/* Logo visible en móvil */}
-          <div className="mb-10 flex justify-center lg:hidden">
-            <Logo href="/" height={84} priority />
+      {/* Tarjeta central con el formulario */}
+      <main className="surgir relative w-full max-w-[27rem]">
+        <span aria-hidden className="halo-auth" />
+        <div className="tarjeta-auth">
+          <div className="mb-7 flex flex-col items-center text-center">
+            <div className="flotar">
+              <Logo href="/" height={92} priority />
+            </div>
           </div>
+
           {children}
+
+          <div className="mt-7 flex items-center justify-center gap-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-tinta-soft">
+            <span>AliExpress</span>
+            <span className="text-coral">·</span>
+            <span>Shein</span>
+            <span className="text-coral">·</span>
+            <span>Alibaba</span>
+          </div>
         </div>
       </main>
     </div>
