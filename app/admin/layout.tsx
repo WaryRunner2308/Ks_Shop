@@ -22,7 +22,10 @@ export default async function AdminLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-white/60 bg-white/55 px-5 py-4 backdrop-blur-xl sm:px-6">
+      <header
+        className="sticky top-3 z-30 mx-3 flex items-center justify-between gap-3 rounded-3xl border border-white/60 bg-white/60 px-5 py-3 backdrop-blur-xl sm:mx-4 sm:px-6"
+        style={{ boxShadow: "var(--sombra-media)" }}
+      >
         <div className="flex min-w-0 items-center gap-3">
           <Logo href="/admin" height={40} priority />
           <span className="chip hidden sm:inline-flex">Panel de la dueña</span>

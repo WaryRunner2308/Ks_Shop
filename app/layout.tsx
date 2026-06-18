@@ -18,7 +18,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "K's Shop",
   description:
-    "K's Shop — tus compras de AliExpress, Shein y Alibaba, pedidas por nosotras.",
+    "K's Shop — tus compras de AliExpress, Shein y Alibaba, sin complicaciones.",
 };
 
 export default function RootLayout({

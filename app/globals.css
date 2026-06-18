@@ -61,6 +61,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Color del "rebote" (overscroll) al hacer scroll a tope arriba/abajo en móvil:
+   el rubber-band de iOS toma el color del elemento raíz, así que lo pintamos
+   con el tono del sistema para que NUNCA se vea blanco. En las pantallas de
+   acceso (escena oscura) usamos el magenta profundo para que combine. */
+html {
+  background: var(--background);
+}
+html:has(.escena-auth) {
+  background: #2c021d;
+}
+
 /* ====================================================================
    CIELO DE NUBES — atmósfera global animada detrás de todo
    ==================================================================== */

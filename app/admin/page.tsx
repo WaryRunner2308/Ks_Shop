@@ -168,13 +168,13 @@ export default async function AdminPage() {
       {/* Accesos rápidos */}
       <div className="mb-6 flex flex-wrap gap-2">
         <Link href="/admin/pagos" className="btn-linea px-4 py-2 text-sm">
-          💳 Pagos
+          Pagos
         </Link>
         <Link
           href="/admin/metodos-pago"
           className="btn-linea px-4 py-2 text-sm"
         >
-          ⚙️ Métodos de pago
+          Métodos de pago
         </Link>
       </div>
 

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "artifacts-builder": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/artifacts-builder/SKILL.md",
+      "computedHash": "c070b77000001fc67190470d0d0fe1bc163a6861096a78d9c3beaccb6311807c"
+    }
+  }
+}

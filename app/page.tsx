@@ -49,17 +49,12 @@ export default async function Home() {
               </form>
             </>
           ) : (
-            <>
-              <Link
-                href="/login"
-                className="rounded-full px-4 py-2 font-medium transition hover:bg-crema-2"
-              >
-                Iniciar sesión
-              </Link>
-              <Link href="/registro" className="btn-coral px-4 py-2">
-                Crear cuenta
-              </Link>
-            </>
+            <Link
+              href="/login"
+              className="rounded-full px-4 py-2 font-medium transition hover:bg-crema-2"
+            >
+              Iniciar sesión
+            </Link>
           )}
         </nav>
       </header>
@@ -104,7 +99,7 @@ export default async function Home() {
           href={user ? "/cotizar" : "/registro"}
           className="btn-coral mt-8 px-7 py-3.5 text-base"
         >
-          Pedir una cotización
+          {user ? "Pedir una cotización" : "Crear cuenta"}
         </Link>
 
         {/* Plataformas con las que trabajamos */}
