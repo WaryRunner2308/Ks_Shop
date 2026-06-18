@@ -60,19 +60,26 @@ export default function SelectorPlataforma({
     function tecla(e: KeyboardEvent) {
       if (e.key === "Escape") setAbierto(false);
     }
-    function alScrollear() {
+    function alScrollear(e: Event) {
+      // Si el scroll ocurre DENTRO de la propia lista, no cerrar (el usuario
+      // está navegando las opciones). Solo cerrar si se mueve la página.
+      const t = e.target as Node | null;
+      if (t && lista.current?.contains(t)) return;
+      setAbierto(false);
+    }
+    function alRedimensionar() {
       setAbierto(false);
     }
 
     document.addEventListener("mousedown", fuera);
     document.addEventListener("keydown", tecla);
     window.addEventListener("scroll", alScrollear, true);
-    window.addEventListener("resize", alScrollear);
+    window.addEventListener("resize", alRedimensionar);
     return () => {
       document.removeEventListener("mousedown", fuera);
       document.removeEventListener("keydown", tecla);
       window.removeEventListener("scroll", alScrollear, true);
-      window.removeEventListener("resize", alScrollear);
+      window.removeEventListener("resize", alRedimensionar);
     };
   }, [abierto]);
 
