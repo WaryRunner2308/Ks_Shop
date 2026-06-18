@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
+import PwaInstallManager from "./components/pwa-install-manager";
 
 // Fraunces: serif con carácter para títulos y el monograma de marca.
 const fraunces = Fraunces({
@@ -19,6 +20,21 @@ export const metadata: Metadata = {
   title: "K's Shop",
   description:
     "K's Shop — tus compras de AliExpress, Shein y Alibaba, sin complicaciones.",
+  // Habilita modo standalone y la barra de estado en iOS al instalar la PWA.
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "K's Shop",
+  },
+  // Ícono para "Agregar a inicio" en iOS.
+  icons: {
+    apple: "/icons/icono-192.png",
+  },
+};
+
+// theme-color del navegador (barra superior en móvil), con la marca fucsia.
+export const viewport: Viewport = {
+  themeColor: "#ec0b86",
 };
 
 export default function RootLayout({
@@ -44,6 +60,8 @@ export default function RootLayout({
           }}
         />
         {children}
+        {/* Invitación a instalar la PWA: prompt nativo en Android, guía en iOS. */}
+        <PwaInstallManager />
       </body>
     </html>
   );

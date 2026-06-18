@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next dev",
     "start:prod": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "iconos": "node scripts/generar-iconos-pwa.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
@@ -24,6 +25,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "sharp": "^0.35.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
