@@ -6,6 +6,8 @@
 // wa.me necesita el código de país (+58) y NO funciona con el 0 inicial.
 
 const CODIGO_PAIS = "58"; // Venezuela
+// Los 10 dígitos nacionales empiezan por 4 (celular) o 2 (fijo).
+const ANTECEDENTE_VE = /^[24]/;
 
 /**
  * Normaliza un teléfono venezolano a formato internacional (+58XXXXXXXXXX).
@@ -24,20 +26,24 @@ export function normalizarTelefonoVE(entrada: string): string | null {
   // Prefijo internacional escrito como "00".
   if (s.startsWith("00")) s = s.slice(2);
 
-  // Ya viene con código de país: 58 + 10 dígitos.
+  // Reducir cualquier formato a los 10 dígitos nacionales (sin 0 ni +58).
+  let nacional: string | null = null;
   if (s.startsWith(CODIGO_PAIS) && s.length === 12) {
-    return "+" + s;
-  }
-  // Formato nacional con 0 inicial: 0 + 10 dígitos (04125423385).
-  if (s.startsWith("0") && s.length === 11) {
-    return "+" + CODIGO_PAIS + s.slice(1);
-  }
-  // 10 dígitos sin 0 ni código de país (4125423385 / 2125423385).
-  if (s.length === 10) {
-    return "+" + CODIGO_PAIS + s;
+    // Ya viene con código de país: 58 + 10 dígitos.
+    nacional = s.slice(2);
+  } else if (s.startsWith("0") && s.length === 11) {
+    // Formato nacional con 0 inicial: 0 + 10 dígitos (04125423385).
+    nacional = s.slice(1);
+  } else if (s.length === 10) {
+    // 10 dígitos sin 0 ni código de país (4125423385 / 2125423385).
+    nacional = s;
   }
 
-  return null;
+  // Un número venezolano válido empieza por 4 (celular) o 2 (fijo). Esto
+  // descarta entradas raras (p.ej. 10 dígitos que empiecen por otra cifra).
+  if (!nacional || !ANTECEDENTE_VE.test(nacional)) return null;
+
+  return "+" + CODIGO_PAIS + nacional;
 }
 
 /**
