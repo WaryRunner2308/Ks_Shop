@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 type Opcion = { valor: string; etiqueta: string };
 
 /*
   SelectorPlataforma — dropdown personalizado (reemplaza al <select> nativo).
 
-  El <select> del sistema abre una lista con estilo del navegador (fondo blanco,
-  texto ilegible en modo oscuro). Este componente la dibuja nosotros: superficie
-  oscura, opción activa en fucsia y buena legibilidad. Guarda el valor en un
-  <input hidden> para que el formulario lo envíe igual que antes.
+  La lista se renderiza con un PORTAL directamente en <body>, posicionada de
+  forma fija bajo el disparador. Así sale del "contexto de apilado" del
+  formulario (cuyos campos con desenfoque se pintaban encima) y siempre queda
+  arriba, con fondo sólido y legible. Guarda el valor en un <input hidden>.
 */
 export default function SelectorPlataforma({
   name,
@@ -21,33 +22,59 @@ export default function SelectorPlataforma({
   opciones: readonly Opcion[];
   placeholder?: string;
 }) {
+  const [montado, setMontado] = useState(false);
   const [abierto, setAbierto] = useState(false);
   const [valor, setValor] = useState("");
-  const contenedor = useRef<HTMLDivElement>(null);
+  const [rect, setRect] = useState<DOMRect | null>(null);
+  const disparador = useRef<HTMLButtonElement>(null);
+  const lista = useRef<HTMLUListElement>(null);
   const listaId = useId();
 
   const seleccionada = opciones.find((o) => o.valor === valor);
 
-  // Cerrar al hacer clic fuera o con Escape.
+  useEffect(() => setMontado(true), []);
+
+  function recalcular() {
+    if (disparador.current) setRect(disparador.current.getBoundingClientRect());
+  }
+
+  function alternar() {
+    if (!abierto) recalcular();
+    setAbierto((v) => !v);
+  }
+
+  // Cerrar al hacer clic fuera, con Escape, o al hacer scroll/resize.
   useEffect(() => {
+    if (!abierto) return;
+
     function fuera(e: MouseEvent) {
+      const t = e.target as Node;
       if (
-        contenedor.current &&
-        !contenedor.current.contains(e.target as Node)
+        disparador.current?.contains(t) ||
+        lista.current?.contains(t)
       ) {
-        setAbierto(false);
+        return;
       }
+      setAbierto(false);
     }
     function tecla(e: KeyboardEvent) {
       if (e.key === "Escape") setAbierto(false);
     }
+    function alScrollear() {
+      setAbierto(false);
+    }
+
     document.addEventListener("mousedown", fuera);
     document.addEventListener("keydown", tecla);
+    window.addEventListener("scroll", alScrollear, true);
+    window.addEventListener("resize", alScrollear);
     return () => {
       document.removeEventListener("mousedown", fuera);
       document.removeEventListener("keydown", tecla);
+      window.removeEventListener("scroll", alScrollear, true);
+      window.removeEventListener("resize", alScrollear);
     };
-  }, []);
+  }, [abierto]);
 
   function elegir(v: string) {
     setValor(v);
@@ -55,17 +82,15 @@ export default function SelectorPlataforma({
   }
 
   return (
-    <div
-      className={`relative ${abierto ? "z-50" : "z-10"}`}
-      ref={contenedor}
-    >
+    <div className="relative">
       {/* Valor real que envía el formulario */}
       <input type="hidden" name={name} value={valor} />
 
       {/* Disparador */}
       <button
+        ref={disparador}
         type="button"
-        onClick={() => setAbierto((v) => !v)}
+        onClick={alternar}
         aria-haspopup="listbox"
         aria-expanded={abierto}
         aria-controls={listaId}
@@ -93,52 +118,62 @@ export default function SelectorPlataforma({
         </svg>
       </button>
 
-      {/* Lista desplegable */}
-      {abierto && (
-        <ul
-          id={listaId}
-          role="listbox"
-          className="lista-selector deslizar-entra absolute z-50 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-white/15 p-1.5"
-          style={{
-            background: "#241022",
-            boxShadow:
-              "0 24px 52px -14px rgba(0,0,0,0.85), 0 0 0 1px rgba(0,0,0,0.4)",
-          }}
-        >
-          {opciones.map((o) => {
-            const activa = o.valor === valor;
-            return (
-              <li key={o.valor} role="option" aria-selected={activa}>
-                <button
-                  type="button"
-                  onClick={() => elegir(o.valor)}
-                  className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-sm transition ${
-                    activa
-                      ? "bg-coral/15 font-semibold text-coral-dark"
-                      : "text-tinta hover:bg-white/[0.07]"
-                  }`}
-                >
-                  {o.etiqueta}
-                  {activa && (
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                  )}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      {/* Lista desplegable en un portal, fija bajo el disparador */}
+      {montado &&
+        abierto &&
+        rect &&
+        createPortal(
+          <ul
+            ref={lista}
+            id={listaId}
+            role="listbox"
+            className="lista-selector deslizar-entra max-h-72 overflow-y-auto rounded-2xl border border-white/15 p-1.5"
+            style={{
+              position: "fixed",
+              top: rect.bottom + 8,
+              left: rect.left,
+              width: rect.width,
+              zIndex: 9999,
+              background: "#241022",
+              boxShadow:
+                "0 24px 52px -14px rgba(0,0,0,0.9), 0 0 0 1px rgba(0,0,0,0.5)",
+            }}
+          >
+            {opciones.map((o) => {
+              const activa = o.valor === valor;
+              return (
+                <li key={o.valor} role="option" aria-selected={activa}>
+                  <button
+                    type="button"
+                    onClick={() => elegir(o.valor)}
+                    className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-sm transition ${
+                      activa
+                        ? "bg-coral/20 font-semibold text-coral-dark"
+                        : "text-tinta hover:bg-white/[0.08]"
+                    }`}
+                  >
+                    {o.etiqueta}
+                    {activa && (
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>,
+          document.body,
+        )}
     </div>
   );
 }
