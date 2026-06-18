@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { cerrarSesion } from "@/app/auth/actions";
+import Logo from "@/app/components/logo";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -22,9 +23,7 @@ export default async function Home() {
   return (
     <div className="flex min-h-screen flex-col text-tinta">
       <header className="flex items-center justify-between px-6 py-5 sm:px-10">
-        <span className="font-display text-xl tracking-tight">
-          K&apos;s<span className="text-coral">.</span>Shop
-        </span>
+        <Logo height={48} priority />
         <nav className="flex items-center gap-2 text-sm sm:gap-3">
           {user ? (
             <>
@@ -70,8 +69,16 @@ export default async function Home() {
         </nav>
       </header>
 
-      <main className="entrada flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
-        <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-linea bg-white/70 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-coral backdrop-blur">
+      <main className="entrada relative flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
+        {/* Nubecitas flotantes decorativas detrás del titular */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-10 -z-10 h-72 w-[34rem] max-w-[90vw] -translate-x-1/2 rounded-full bg-white/50 blur-3xl flotar"
+        />
+        <div className="flotar mb-2">
+          <Logo href={null} height={150} priority />
+        </div>
+        <p className="chip mb-6 px-4 py-1.5 text-xs uppercase tracking-[0.2em]">
           <span className="h-1.5 w-1.5 rounded-full bg-coral latido" />
           Compras bajo pedido
         </p>
@@ -79,7 +86,7 @@ export default async function Home() {
           {user ? (
             <>
               Hola,{" "}
-              <span className="italic text-coral-dark">
+              <span className="italic texto-fucsia">
                 {perfil?.nombre || "bienvenida"}
               </span>
               .
@@ -88,7 +95,7 @@ export default async function Home() {
             <>
               Lo que quieres,
               <br />
-              <span className="italic text-coral-dark">pedido por nosotras.</span>
+              <span className="italic texto-fucsia">pedido por nosotras.</span>
             </>
           )}
         </h1>
@@ -111,11 +118,11 @@ export default async function Home() {
         )}
 
         {/* Plataformas con las que trabajamos */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-2.5 text-sm text-tinta-soft">
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-2.5 text-sm">
           {["AliExpress", "Shein", "Alibaba"].map((p) => (
             <span
               key={p}
-              className="rounded-full border border-linea bg-white/60 px-4 py-1.5 font-medium backdrop-blur transition hover:border-coral hover:text-tinta"
+              className="btn-linea px-4 py-1.5 text-sm font-medium"
             >
               {p}
             </span>

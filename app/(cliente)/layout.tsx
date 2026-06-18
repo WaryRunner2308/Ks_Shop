@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { cerrarSesion } from "@/app/auth/actions";
+import Logo from "@/app/components/logo";
 import CampanaNotificaciones, {
   type Notificacion,
 } from "@/app/components/campana-notificaciones";
@@ -26,11 +27,9 @@ export default async function ClienteLayout({
     .returns<Notificacion[]>();
 
   return (
-    <div className="flex min-h-screen flex-col bg-crema">
-      <header className="flex items-center justify-between gap-4 border-b border-linea bg-white px-6 py-4">
-        <Link href="/" className="font-display text-xl text-tinta">
-          K&apos;s Shop
-        </Link>
+    <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-white/60 bg-white/55 px-6 py-4 backdrop-blur-xl">
+        <Logo height={40} priority />
         <nav className="flex items-center gap-2 text-sm sm:gap-3">
           <Link
             href="/"

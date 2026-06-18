@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
+/* ====================================================================
+   K's SHOP — Sistema visual "Fucsia entre nubes"
+   Marca: blanco · negro · FUCSIA (fucsia predominante).
+   Estética: vidrio esmerilado sobre un cielo de nubes rosadas y fucsia.
+   ==================================================================== */
+
 :root {
-  --background: #faf6f0;
-  --foreground: #271c17;
+  --background: #fff3fa;
+  --foreground: #1b0610;
 }
 
 @theme inline {
@@ -12,28 +18,40 @@
   --font-display: var(--font-fraunces);
 }
 
-/* Paleta de marca K's Shop: boutique cálida (espresso + coral terracota sobre crema). */
+/* Tokens de marca. Conservo los nombres originales (coral, crema, tinta…)
+   para no romper las clases existentes, pero ahora apuntan a la paleta fucsia. */
 @theme {
-  --color-crema: #faf6f0;
-  --color-crema-2: #f2e9dd;
-  --color-tinta: #271c17;
-  --color-tinta-soft: #786a5f;
-  --color-coral: #d9644a;
-  --color-coral-dark: #bd4f37;
-  --color-marca: #2a1d1a;
-  --color-marca-2: #4a2930;
-  --color-linea: #e6dac9;
+  /* Superficies claras / "nube" */
+  --color-crema: #ffe7f4;
+  --color-crema-2: #ffd3ea;
+  --color-linea: #ffc9e4;
+
+  /* Texto (negro de marca, con un matiz ciruela apenas perceptible) */
+  --color-tinta: #1b0610;
+  --color-tinta-soft: #8a5870;
+
+  /* FUCSIA — el color principal de la marca */
+  --color-coral: #ec0b86;
+  --color-coral-dark: #c50670;
+
+  /* Panel oscuro de marca: magenta profundo para los degradados */
+  --color-marca: #4a0330;
+  --color-marca-2: #8a0552;
+
+  /* Atajos fucsia adicionales por si se usan directamente */
+  --color-fucsia: #ec0b86;
+  --color-fucsia-claro: #ff7bc2;
 }
 
-/* Sombras cálidas (teñidas de espresso, no negro puro) y anillo de foco coral. */
+/* Sombras teñidas de fucsia (no negro puro) y halos suaves. */
 :root {
-  --sombra-suave: 0 1px 2px rgba(39, 28, 23, 0.04),
-    0 4px 14px rgba(39, 28, 23, 0.05);
-  --sombra-media: 0 6px 18px rgba(39, 28, 23, 0.08),
-    0 2px 6px rgba(39, 28, 23, 0.05);
-  --sombra-flota: 0 18px 40px -12px rgba(189, 79, 55, 0.28),
-    0 8px 20px -8px rgba(39, 28, 23, 0.12);
-  --sombra-coral: 0 10px 24px -8px rgba(217, 100, 74, 0.5);
+  --sombra-suave: 0 1px 2px rgba(236, 11, 134, 0.05),
+    0 6px 18px rgba(236, 11, 134, 0.07);
+  --sombra-media: 0 8px 24px rgba(236, 11, 134, 0.12),
+    0 2px 8px rgba(197, 6, 112, 0.08);
+  --sombra-flota: 0 22px 48px -14px rgba(236, 11, 134, 0.42),
+    0 10px 24px -10px rgba(27, 6, 16, 0.12);
+  --sombra-fucsia: 0 12px 30px -8px rgba(236, 11, 134, 0.55);
 }
 
 body {
@@ -43,31 +61,136 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Atmósfera global sutil: dos brillos cálidos detrás de todo, muy tenues. */
+/* ====================================================================
+   CIELO DE NUBES — atmósfera global animada detrás de todo
+   ==================================================================== */
+
+/* Capa 1: brillos de color (fucsia + rosa) que respiran lentamente. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      55% 45% at 12% 8%,
+      rgba(255, 123, 194, 0.55) 0%,
+      rgba(255, 123, 194, 0) 60%
+    ),
+    radial-gradient(
+      50% 40% at 88% 6%,
+      rgba(236, 11, 134, 0.4) 0%,
+      rgba(236, 11, 134, 0) 60%
+    ),
+    radial-gradient(
+      60% 50% at 80% 95%,
+      rgba(255, 158, 207, 0.5) 0%,
+      rgba(255, 158, 207, 0) 62%
+    ),
+    radial-gradient(
+      45% 40% at 0% 100%,
+      rgba(197, 6, 112, 0.28) 0%,
+      rgba(197, 6, 112, 0) 60%
+    ),
+    linear-gradient(180deg, #fff6fb 0%, #ffe9f5 45%, #ffdcef 100%);
+  background-size: 200% 200%, 200% 200%, 200% 200%, 200% 200%, 100% 100%;
+  animation: cielo 26s ease-in-out infinite alternate;
+}
+
+/* Capa 2: nubes blancas difusas que flotan suavemente. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -10%;
   z-index: -1;
   pointer-events: none;
   background:
     radial-gradient(
-      60% 50% at 85% -5%,
-      rgba(217, 100, 74, 0.1) 0%,
-      rgba(217, 100, 74, 0) 60%
+      38% 26% at 22% 30%,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0) 70%
     ),
     radial-gradient(
-      50% 45% at -5% 105%,
-      rgba(74, 41, 48, 0.08) 0%,
-      rgba(74, 41, 48, 0) 60%
+      30% 22% at 70% 22%,
+      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0) 70%
+    ),
+    radial-gradient(
+      42% 30% at 78% 70%,
+      rgba(255, 255, 255, 0.82) 0%,
+      rgba(255, 255, 255, 0) 72%
+    ),
+    radial-gradient(
+      34% 24% at 18% 82%,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0) 72%
     );
+  filter: blur(8px);
+  animation: nubes 32s ease-in-out infinite alternate;
+}
+
+@keyframes cielo {
+  from {
+    background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0 0;
+  }
+  to {
+    background-position: 30% 20%, 70% 18%, 70% 80%, 25% 85%, 0 0;
+  }
+}
+
+@keyframes nubes {
+  from {
+    transform: translate3d(-1.5%, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(1.5%, -1.5%, 0) scale(1.06);
+  }
+}
+
+/* Nube decorativa reutilizable (se puede poner dentro de paneles). */
+.nube {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+/* ====================================================================
+   VIDRIO ESMERILADO — superficie base de la estética
+   ==================================================================== */
+
+.vidrio {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    var(--sombra-suave),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.vidrio-fucsia {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 123, 194, 0.22) 0%,
+    rgba(255, 255, 255, 0.45) 55%
+  );
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
 }
 
 /* ====================================================================
    SISTEMA DE COMPONENTES — clases reutilizables y consistentes
    ==================================================================== */
 
-/* Botón primario coral: degradado, brillo y "sheen" que cruza en hover. */
+/* Botón primario FUCSIA: degradado vivo, halo y brillo que cruza al pasar. */
 .btn-coral {
   position: relative;
   display: inline-flex;
@@ -75,11 +198,12 @@ body::before {
   justify-content: center;
   gap: 0.5rem;
   overflow: hidden;
-  border-radius: 0.85rem;
-  background: linear-gradient(135deg, #e06b50 0%, var(--color-coral-dark) 100%);
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #ff3aa5 0%, var(--color-coral-dark) 100%);
   color: #fff;
   font-weight: 600;
-  box-shadow: var(--sombra-coral);
+  letter-spacing: 0.01em;
+  box-shadow: var(--sombra-fucsia);
   transition:
     transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.25s ease,
@@ -95,7 +219,7 @@ body::before {
   background: linear-gradient(
     100deg,
     transparent,
-    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0.5),
     transparent
   );
   transform: skewX(-18deg);
@@ -104,7 +228,7 @@ body::before {
 .btn-coral:hover {
   transform: translateY(-2px);
   box-shadow: var(--sombra-flota);
-  filter: saturate(1.05);
+  filter: saturate(1.08) brightness(1.03);
 }
 .btn-coral:hover::after {
   left: 130%;
@@ -118,39 +242,48 @@ body::before {
   box-shadow: var(--sombra-suave);
 }
 
-/* Botón secundario: contorno cálido sobre blanco. */
+/* Botón secundario: píldora de vidrio que se tiñe de fucsia al pasar. */
 .btn-linea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 0.85rem;
-  border: 1px solid var(--color-linea);
-  background: #fff;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   color: var(--color-tinta);
   font-weight: 500;
+  box-shadow: var(--sombra-suave);
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
     background 0.2s ease,
+    color 0.2s ease,
     box-shadow 0.2s ease;
 }
 .btn-linea:hover {
-  border-color: var(--color-coral);
-  background: var(--color-crema);
+  border-color: rgba(236, 11, 134, 0.5);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--color-coral-dark);
   transform: translateY(-1px);
-  box-shadow: var(--sombra-suave);
+  box-shadow: var(--sombra-media);
 }
 .btn-linea:active {
   transform: translateY(0) scale(0.98);
 }
 
-/* Tarjeta de superficie con sombra cálida. */
+/* Tarjeta de superficie: vidrio esmerilado con halo fucsia. */
 .tarjeta {
-  border-radius: 1.25rem;
-  border: 1px solid var(--color-linea);
-  background: #fff;
-  box-shadow: var(--sombra-suave);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow:
+    var(--sombra-suave),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
   transition:
     transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.3s ease,
@@ -158,73 +291,103 @@ body::before {
 }
 /* Tarjetas que reaccionan al cursor (listas de pedidos, métodos…). */
 .tarjeta-flota:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--sombra-media);
-  border-color: #d9c9b0;
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-flota);
+  border-color: rgba(255, 123, 194, 0.7);
 }
 
-/* Campo de formulario unificado. */
+/* Campo de formulario: vidrio con anillo de foco fucsia. */
 .campo {
-  border-radius: 0.85rem;
-  border: 1px solid var(--color-linea);
-  background: #fff;
-  padding: 0.75rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.8rem 1.05rem;
   color: var(--color-tinta);
   outline: none;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
+    background 0.2s ease,
     transform 0.2s ease;
 }
+.campo::placeholder {
+  color: rgba(138, 88, 112, 0.7);
+}
 .campo:focus {
-  border-color: var(--color-coral);
-  box-shadow: 0 0 0 4px rgba(217, 100, 74, 0.16);
+  border-color: rgba(236, 11, 134, 0.7);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 4px rgba(236, 11, 134, 0.16);
 }
 
-/* Etiqueta de estado tipo "chip". */
+/* Etiqueta tipo "chip" de vidrio (como los filtros de la referencia). */
 .chip {
   display: inline-flex;
   align-items: center;
+  gap: 0.35rem;
   border-radius: 9999px;
-  background: var(--color-crema-2);
-  padding: 0.25rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.3rem 0.85rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-tinta);
+  color: var(--color-coral-dark);
+}
+
+/* Texto con degradado fucsia para acentos de titular. */
+.texto-fucsia {
+  background: linear-gradient(120deg, #ff3aa5 0%, #c50670 60%, #8a0552 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* ====================================================================
-   DEGRADADO Y TEXTURA DEL PANEL DE MARCA
+   DEGRADADO Y TEXTURA DEL PANEL DE MARCA (magenta + nubes)
    ==================================================================== */
 
 .panel-marca {
+  position: relative;
   background:
     radial-gradient(
-      120% 120% at 15% 10%,
-      rgba(217, 100, 74, 0.32) 0%,
-      rgba(217, 100, 74, 0) 45%
+      40% 35% at 20% 18%,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0) 60%
     ),
-    linear-gradient(150deg, var(--color-marca) 0%, var(--color-marca-2) 100%);
-  background-size: 160% 160%, 100% 100%;
-  animation: deriva 18s ease-in-out infinite alternate;
+    radial-gradient(
+      45% 40% at 85% 12%,
+      rgba(255, 123, 194, 0.55) 0%,
+      rgba(255, 123, 194, 0) 60%
+    ),
+    radial-gradient(
+      50% 45% at 80% 95%,
+      rgba(255, 58, 165, 0.45) 0%,
+      rgba(255, 58, 165, 0) 60%
+    ),
+    linear-gradient(150deg, #8a0552 0%, var(--color-marca) 55%, #2c021d 100%);
+  background-size: 160% 160%, 160% 160%, 160% 160%, 100% 100%;
+  animation: deriva 20s ease-in-out infinite alternate;
 }
 
 @keyframes deriva {
   from {
-    background-position: 0% 0%, 0 0;
+    background-position: 0% 0%, 100% 0%, 100% 100%, 0 0;
   }
   to {
-    background-position: 30% 25%, 0 0;
+    background-position: 25% 22%, 72% 18%, 70% 78%, 0 0;
   }
 }
 
-/* Textura sutil de grano para dar profundidad al panel. */
+/* Textura sutil de grano para dar profundidad a los paneles oscuros. */
 .grano::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.4;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
 }
 
@@ -275,6 +438,20 @@ body::before {
 }
 .entrada > *:nth-child(n + 8) {
   animation-delay: 0.46s;
+}
+
+/* Flotación lenta tipo "ingravidez" para elementos destacados (nubes, íconos). */
+@keyframes flotar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.flotar {
+  animation: flotar 6s ease-in-out infinite;
 }
 
 /* Estallido del check de éxito. */
@@ -337,14 +514,14 @@ body::before {
   animation: deslizar-entra 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Pulso suave del punto/insignia de notificación. */
+/* Pulso suave del punto/insignia de notificación (en fucsia). */
 @keyframes latido {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(217, 100, 74, 0.55);
+    box-shadow: 0 0 0 0 rgba(236, 11, 134, 0.55);
   }
   70% {
-    box-shadow: 0 0 0 7px rgba(217, 100, 74, 0);
+    box-shadow: 0 0 0 7px rgba(236, 11, 134, 0);
   }
 }
 .latido {

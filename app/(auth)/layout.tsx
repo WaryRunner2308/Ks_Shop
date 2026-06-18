@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "@/app/components/logo";
 
 // Layout compartido de login y registro: panel de marca a la izquierda,
 // formulario a la derecha. En móvil solo se ve el formulario con el logo arriba.
@@ -8,7 +9,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen w-full bg-crema lg:grid lg:grid-cols-[1.05fr_1fr]">
+    <div className="min-h-screen w-full lg:grid lg:grid-cols-[1.05fr_1fr]">
       {/* Panel de marca */}
       <aside className="panel-marca grano relative hidden flex-col justify-between overflow-hidden p-12 text-crema lg:flex">
         {/* Monograma gigante de marca, como marca de agua decorativa */}
@@ -19,12 +20,9 @@ export default function AuthLayout({
           K
         </span>
 
-        <Link
-          href="/"
-          className="relative z-10 font-display text-2xl tracking-tight text-crema transition hover:opacity-80"
-        >
-          K&apos;s<span className="text-coral">.</span>Shop
-        </Link>
+        <div className="relative z-10">
+          <Logo href="/" height={56} plate priority />
+        </div>
 
         <div className="relative z-10 aparecer">
           <p className="mb-5 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.2em] text-coral">
@@ -60,12 +58,9 @@ export default function AuthLayout({
       <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm aparecer">
           {/* Logo visible en móvil */}
-          <Link
-            href="/"
-            className="mb-10 block text-center font-display text-2xl tracking-tight text-tinta lg:hidden"
-          >
-            K&apos;s Shop
-          </Link>
+          <div className="mb-10 flex justify-center lg:hidden">
+            <Logo href="/" height={84} priority />
+          </div>
           {children}
         </div>
       </main>

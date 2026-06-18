@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import CampanaNotificaciones, {
   type Notificacion,
 } from "@/app/components/campana-notificaciones";
+import Logo from "@/app/components/logo";
 
 export default async function AdminLayout({
   children,
@@ -20,11 +21,12 @@ export default async function AdminLayout({
     .returns<Notificacion[]>();
 
   return (
-    <div className="flex min-h-screen flex-col bg-crema">
-      <header className="flex items-center justify-between border-b border-linea bg-white px-6 py-4">
-        <Link href="/admin" className="font-display text-xl text-tinta">
-          K&apos;s Shop · Admin
-        </Link>
+    <div className="flex min-h-screen flex-col">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/60 bg-white/55 px-6 py-4 backdrop-blur-xl">
+        <div className="flex items-center gap-3">
+          <Logo href="/admin" height={40} priority />
+          <span className="chip">Panel de la dueña</span>
+        </div>
         <CampanaNotificaciones inicial={data ?? []} canal="notis-admin" />
       </header>
 
