@@ -33,7 +33,7 @@ export default function Logo({
 
   const contenido = (
     <span
-      className={`inline-flex items-center justify-center overflow-hidden rounded-[24%] bg-white p-1 ring-1 ring-black/5 ${
+      className={`inline-flex items-center justify-center overflow-hidden rounded-full bg-white p-1 ring-1 ring-black/5 ${
         plate
           ? "shadow-[0_8px_24px_-8px_rgba(74,3,48,0.55)]"
           : "shadow-[0_10px_28px_-10px_rgba(236,11,134,0.45)]"
