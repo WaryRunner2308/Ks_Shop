@@ -28,7 +28,7 @@ export default async function ClienteLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-white/60 bg-white/55 px-6 py-4 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-white/10 bg-black/40 px-6 py-4 backdrop-blur-xl">
         <Logo height={40} priority />
         <nav className="flex items-center gap-2 text-sm sm:gap-3">
           <Link

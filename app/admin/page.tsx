@@ -34,7 +34,7 @@ function formatearFecha(iso: string): string {
 const ESTADO_CHIP: Record<string, string> = {
   solicitado: "bg-coral/15 text-coral-dark",
   cotizado: "bg-crema-2 text-tinta",
-  pagado: "bg-green-100 text-green-700",
+  pagado: "bg-green-950/60 text-green-400",
   cancelado: "bg-tinta/10 text-tinta-soft",
 };
 
@@ -82,7 +82,7 @@ function Tarjeta({ s }: { s: Solicitud }) {
         <FormularioPrecio id={s.id} />
       ) : (
         s.precio_venta != null && (
-          <div className="mt-3 rounded-xl bg-white/50 px-4 py-2.5 text-sm text-tinta-soft">
+          <div className="mt-3 rounded-xl bg-white/[0.06] px-4 py-2.5 text-sm text-tinta-soft">
             Precio enviado:{" "}
             <span className="font-semibold text-coral-dark">
               ${Number(s.precio_venta).toFixed(2)}
@@ -182,7 +182,7 @@ export default async function AdminPage() {
       </div>
 
       {/* Recordatorio del disclaimer obligatorio */}
-      <p className="mb-10 rounded-2xl border border-linea bg-white/60 px-4 py-3 text-xs leading-relaxed text-tinta-soft">
+      <p className="mb-10 rounded-2xl border border-linea bg-white/[0.05] px-4 py-3 text-xs leading-relaxed text-tinta-soft">
         💡 Recuerda: {DISCLAIMER_ENVIO}
       </p>
 

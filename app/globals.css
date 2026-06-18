@@ -1,14 +1,13 @@
 @import "tailwindcss";
 
 /* ====================================================================
-   K's SHOP — Sistema visual "Fucsia entre nubes"
-   Marca: blanco · negro · FUCSIA (fucsia predominante).
-   Estética: vidrio esmerilado sobre un cielo de nubes rosadas y fucsia.
+   K's SHOP — Sistema visual "Nebulosa Fucsia"
+   Modo oscuro unisex. Fucsia vibrante sobre negro profundo.
    ==================================================================== */
 
 :root {
-  --background: #ffe3f3;
-  --foreground: #1b0610;
+  --background: #0a000e;
+  --foreground: #f0e6ee;
 }
 
 @theme inline {
@@ -18,39 +17,37 @@
   --font-display: var(--font-fraunces);
 }
 
-/* Tokens de marca. Conservo los nombres originales (coral, crema, tinta…)
-   para no romper las clases existentes, pero ahora apuntan a la paleta fucsia. */
 @theme {
-  /* Superficies claras / "nube" */
-  --color-crema: #ffe7f4;
-  --color-crema-2: #ffd3ea;
-  --color-linea: #ffc9e4;
+  /* Superficies oscuras */
+  --color-crema: #170013;
+  --color-crema-2: #1f001a;
+  --color-linea: #2d0026;
 
-  /* Texto (negro de marca, con un matiz ciruela apenas perceptible) */
-  --color-tinta: #1b0610;
-  --color-tinta-soft: #8a5870;
+  /* Texto claro */
+  --color-tinta: #f0e6ee;
+  --color-tinta-soft: #b888a8;
 
-  /* FUCSIA — el color principal de la marca */
+  /* FUCSIA — color principal de la marca */
   --color-coral: #ec0b86;
-  --color-coral-dark: #c50670;
+  --color-coral-dark: #ff3aa5;
 
-  /* Panel oscuro de marca: magenta profundo para los degradados */
+  /* Panel de marca: magenta profundo */
   --color-marca: #4a0330;
   --color-marca-2: #8a0552;
 
-  /* Atajos fucsia adicionales por si se usan directamente */
+  /* Atajos fucsia */
   --color-fucsia: #ec0b86;
   --color-fucsia-claro: #ff7bc2;
 }
 
-/* Sombras teñidas de fucsia (no negro puro) y halos suaves. */
+/* Sombras para modo oscuro (más profundas, con brillo fucsia). */
 :root {
-  --sombra-suave: 0 1px 2px rgba(236, 11, 134, 0.05),
-    0 6px 18px rgba(236, 11, 134, 0.07);
-  --sombra-media: 0 8px 24px rgba(236, 11, 134, 0.12),
-    0 2px 8px rgba(197, 6, 112, 0.08);
-  --sombra-flota: 0 22px 48px -14px rgba(236, 11, 134, 0.42),
-    0 10px 24px -10px rgba(27, 6, 16, 0.12);
+  --sombra-suave: 0 1px 4px rgba(0, 0, 0, 0.5),
+    0 6px 18px rgba(236, 11, 134, 0.06);
+  --sombra-media: 0 8px 28px rgba(0, 0, 0, 0.55),
+    0 2px 8px rgba(197, 6, 112, 0.12);
+  --sombra-flota: 0 24px 52px -14px rgba(0, 0, 0, 0.7),
+    0 10px 24px -10px rgba(236, 11, 134, 0.38);
   --sombra-fucsia: 0 12px 30px -8px rgba(236, 11, 134, 0.55);
 }
 
@@ -61,10 +58,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Color del "rebote" (overscroll) al hacer scroll a tope arriba/abajo en móvil:
-   el rubber-band de iOS toma el color del elemento raíz, así que lo pintamos
-   con el tono del sistema para que NUNCA se vea blanco. En las pantallas de
-   acceso (escena oscura) usamos el magenta profundo para que combine. */
 html {
   background: var(--background);
 }
@@ -74,10 +67,10 @@ body:has(.escena-auth) {
 }
 
 /* ====================================================================
-   CIELO DE NUBES — atmósfera global animada detrás de todo
+   NEBULOSA OSCURA — atmósfera global animada detrás de todo
    ==================================================================== */
 
-/* Capa 1: brillos de color (fucsia + rosa) que respiran lentamente. */
+/* Capa 1: brillo fucsia difuso que respira lentamente sobre negro. */
 body::before {
   content: "";
   position: fixed;
@@ -86,31 +79,31 @@ body::before {
   pointer-events: none;
   background:
     radial-gradient(
-      55% 45% at 12% 8%,
-      rgba(255, 123, 194, 0.62) 0%,
-      rgba(255, 123, 194, 0) 60%
+      55% 45% at 15% 8%,
+      rgba(236, 11, 134, 0.16) 0%,
+      rgba(236, 11, 134, 0) 65%
     ),
     radial-gradient(
-      50% 40% at 88% 6%,
-      rgba(236, 11, 134, 0.48) 0%,
-      rgba(236, 11, 134, 0) 60%
+      50% 40% at 88% 5%,
+      rgba(197, 6, 112, 0.20) 0%,
+      rgba(197, 6, 112, 0) 65%
     ),
     radial-gradient(
-      60% 50% at 80% 95%,
-      rgba(255, 158, 207, 0.5) 0%,
-      rgba(255, 158, 207, 0) 62%
+      60% 50% at 78% 96%,
+      rgba(140, 0, 80, 0.14) 0%,
+      rgba(140, 0, 80, 0) 65%
     ),
     radial-gradient(
-      45% 40% at 0% 100%,
-      rgba(197, 6, 112, 0.28) 0%,
-      rgba(197, 6, 112, 0) 60%
+      45% 40% at 2% 98%,
+      rgba(74, 3, 48, 0.18) 0%,
+      rgba(74, 3, 48, 0) 65%
     ),
-    linear-gradient(180deg, #ffe9f5 0%, #ffceea 50%, #ffb6da 100%);
+    linear-gradient(180deg, #0e000d 0%, #0b0009 50%, #080007 100%);
   background-size: 200% 200%, 200% 200%, 200% 200%, 200% 200%, 100% 100%;
   animation: cielo 26s ease-in-out infinite alternate;
 }
 
-/* Capa 2: nubes blancas difusas que flotan suavemente. */
+/* Capa 2: velos fucsia profundos, apenas perceptibles. */
 body::after {
   content: "";
   position: fixed;
@@ -120,23 +113,23 @@ body::after {
   background:
     radial-gradient(
       38% 26% at 22% 30%,
-      rgba(255, 255, 255, 0.5) 0%,
-      rgba(255, 255, 255, 0) 70%
+      rgba(120, 0, 70, 0.09) 0%,
+      rgba(120, 0, 70, 0) 70%
     ),
     radial-gradient(
       30% 22% at 70% 22%,
-      rgba(255, 255, 255, 0.4) 0%,
-      rgba(255, 255, 255, 0) 70%
+      rgba(90, 0, 55, 0.07) 0%,
+      rgba(90, 0, 55, 0) 70%
     ),
     radial-gradient(
       42% 30% at 78% 70%,
-      rgba(255, 255, 255, 0.45) 0%,
-      rgba(255, 255, 255, 0) 72%
+      rgba(70, 0, 45, 0.08) 0%,
+      rgba(70, 0, 45, 0) 72%
     ),
     radial-gradient(
       34% 24% at 18% 82%,
-      rgba(255, 255, 255, 0.42) 0%,
-      rgba(255, 255, 255, 0) 72%
+      rgba(100, 3, 60, 0.09) 0%,
+      rgba(100, 3, 60, 0) 72%
     );
   filter: blur(8px);
   animation: nubes 32s ease-in-out infinite alternate;
@@ -160,49 +153,36 @@ body::after {
   }
 }
 
-/* Nube decorativa reutilizable (se puede poner dentro de paneles). */
-.nube {
-  position: absolute;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle at 50% 45%,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0) 70%
-  );
-  filter: blur(6px);
-  pointer-events: none;
-}
-
 /* ====================================================================
-   VIDRIO ESMERILADO — superficie base de la estética
+   VIDRIO OSCURO — superficie base de la estética dark
    ==================================================================== */
 
 .vidrio {
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   box-shadow:
     var(--sombra-suave),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 .vidrio-fucsia {
   background: linear-gradient(
     135deg,
-    rgba(255, 123, 194, 0.22) 0%,
-    rgba(255, 255, 255, 0.45) 55%
+    rgba(236, 11, 134, 0.12) 0%,
+    rgba(255, 255, 255, 0.05) 55%
   );
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ====================================================================
-   SISTEMA DE COMPONENTES — clases reutilizables y consistentes
+   SISTEMA DE COMPONENTES
    ==================================================================== */
 
-/* Botón primario FUCSIA: degradado vivo, halo y brillo que cruza al pasar. */
+/* Botón primario FUCSIA */
 .btn-coral {
   position: relative;
   display: inline-flex;
@@ -211,7 +191,7 @@ body::after {
   gap: 0.5rem;
   overflow: hidden;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #ff3aa5 0%, var(--color-coral-dark) 100%);
+  background: linear-gradient(135deg, #ff3aa5 0%, var(--color-coral) 100%);
   color: #fff;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -240,7 +220,7 @@ body::after {
 .btn-coral:hover {
   transform: translateY(-2px);
   box-shadow: var(--sombra-flota);
-  filter: saturate(1.08) brightness(1.03);
+  filter: saturate(1.08) brightness(1.05);
 }
 .btn-coral:hover::after {
   left: 130%;
@@ -249,20 +229,20 @@ body::after {
   transform: translateY(0) scale(0.98);
 }
 .btn-coral:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   transform: none;
   box-shadow: var(--sombra-suave);
 }
 
-/* Botón secundario: píldora de vidrio que se tiñe de fucsia al pasar. */
+/* Botón secundario: vidrio oscuro que se ilumina al pasar. */
 .btn-linea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
   color: var(--color-tinta);
@@ -276,9 +256,9 @@ body::after {
     box-shadow 0.2s ease;
 }
 .btn-linea:hover {
-  border-color: rgba(236, 11, 134, 0.5);
-  background: rgba(255, 255, 255, 0.78);
-  color: var(--color-coral-dark);
+  border-color: rgba(236, 11, 134, 0.55);
+  background: rgba(236, 11, 134, 0.1);
+  color: #ff7bc2;
   transform: translateY(-1px);
   box-shadow: var(--sombra-media);
 }
@@ -286,33 +266,32 @@ body::after {
   transform: translateY(0) scale(0.98);
 }
 
-/* Tarjeta de superficie: vidrio esmerilado con halo fucsia. */
+/* Tarjeta de superficie: vidrio oscuro con halo fucsia sutil. */
 .tarjeta {
   border-radius: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   box-shadow:
     var(--sombra-suave),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
   transition:
     transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.3s ease,
     border-color 0.3s ease;
 }
-/* Tarjetas que reaccionan al cursor (listas de pedidos, métodos…). */
 .tarjeta-flota:hover {
   transform: translateY(-4px);
   box-shadow: var(--sombra-flota);
-  border-color: rgba(255, 123, 194, 0.7);
+  border-color: rgba(236, 11, 134, 0.4);
 }
 
-/* Campo de formulario: vidrio con anillo de foco fucsia. */
+/* Campo de formulario: oscuro con anillo fucsia al enfocar. */
 .campo {
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 0.8rem 1.05rem;
@@ -325,22 +304,22 @@ body::after {
     transform 0.2s ease;
 }
 .campo::placeholder {
-  color: rgba(138, 88, 112, 0.7);
+  color: rgba(184, 136, 168, 0.5);
 }
 .campo:focus {
   border-color: rgba(236, 11, 134, 0.7);
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.09);
   box-shadow: 0 0 0 4px rgba(236, 11, 134, 0.16);
 }
 
-/* Etiqueta tipo "chip" de vidrio (como los filtros de la referencia). */
+/* Chip: píldora oscura con acento fucsia. */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 0.3rem 0.85rem;
@@ -349,16 +328,16 @@ body::after {
   color: var(--color-coral-dark);
 }
 
-/* Texto con degradado fucsia para acentos de titular. */
+/* Texto con degradado fucsia más vibrante (sobre fondos oscuros resalta mejor). */
 .texto-fucsia {
-  background: linear-gradient(120deg, #ff3aa5 0%, #c50670 60%, #8a0552 100%);
+  background: linear-gradient(120deg, #ff6cbf 0%, #ec0b86 55%, #c50670 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 /* ====================================================================
-   DEGRADADO Y TEXTURA DEL PANEL DE MARCA (magenta + nubes)
+   DEGRADADO Y TEXTURA DEL PANEL DE MARCA
    ==================================================================== */
 
 .panel-marca {
@@ -366,17 +345,17 @@ body::after {
   background:
     radial-gradient(
       40% 35% at 20% 18%,
-      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.18) 0%,
       rgba(255, 255, 255, 0) 60%
     ),
     radial-gradient(
       45% 40% at 85% 12%,
-      rgba(255, 123, 194, 0.55) 0%,
+      rgba(255, 123, 194, 0.45) 0%,
       rgba(255, 123, 194, 0) 60%
     ),
     radial-gradient(
       50% 45% at 80% 95%,
-      rgba(255, 58, 165, 0.45) 0%,
+      rgba(255, 58, 165, 0.38) 0%,
       rgba(255, 58, 165, 0) 60%
     ),
     linear-gradient(150deg, #8a0552 0%, var(--color-marca) 55%, #2c021d 100%);
@@ -393,7 +372,7 @@ body::after {
   }
 }
 
-/* Textura sutil de grano para dar profundidad a los paneles oscuros. */
+/* Textura de grano para profundidad en paneles. */
 .grano::before {
   content: "";
   position: absolute;
@@ -407,7 +386,6 @@ body::after {
    ANIMACIONES
    ==================================================================== */
 
-/* Aparición suave en la carga. */
 @keyframes subir {
   from {
     opacity: 0;
@@ -423,118 +401,59 @@ body::after {
   animation: subir 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Entrada escalonada automática para los hijos de una lista/contenedor. */
 .entrada > * {
   animation: subir 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.entrada > *:nth-child(1) {
-  animation-delay: 0.04s;
-}
-.entrada > *:nth-child(2) {
-  animation-delay: 0.1s;
-}
-.entrada > *:nth-child(3) {
-  animation-delay: 0.16s;
-}
-.entrada > *:nth-child(4) {
-  animation-delay: 0.22s;
-}
-.entrada > *:nth-child(5) {
-  animation-delay: 0.28s;
-}
-.entrada > *:nth-child(6) {
-  animation-delay: 0.34s;
-}
-.entrada > *:nth-child(7) {
-  animation-delay: 0.4s;
-}
-.entrada > *:nth-child(n + 8) {
-  animation-delay: 0.46s;
-}
+.entrada > *:nth-child(1) { animation-delay: 0.04s; }
+.entrada > *:nth-child(2) { animation-delay: 0.1s; }
+.entrada > *:nth-child(3) { animation-delay: 0.16s; }
+.entrada > *:nth-child(4) { animation-delay: 0.22s; }
+.entrada > *:nth-child(5) { animation-delay: 0.28s; }
+.entrada > *:nth-child(6) { animation-delay: 0.34s; }
+.entrada > *:nth-child(7) { animation-delay: 0.4s; }
+.entrada > *:nth-child(n + 8) { animation-delay: 0.46s; }
 
-/* Flotación lenta tipo "ingravidez" para elementos destacados (nubes, íconos). */
 @keyframes flotar {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 .flotar {
   animation: flotar 6s ease-in-out infinite;
 }
 
-/* Estallido del check de éxito. */
 @keyframes estallido {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  60% {
-    transform: scale(1.18);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(1); }
 }
 .estallar {
   animation: estallido 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Vibración de la campana de notificaciones. */
 @keyframes campaneo {
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-  15% {
-    transform: rotate(14deg);
-  }
-  30% {
-    transform: rotate(-12deg);
-  }
-  45% {
-    transform: rotate(9deg);
-  }
-  60% {
-    transform: rotate(-6deg);
-  }
-  75% {
-    transform: rotate(3deg);
-  }
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(14deg); }
+  30% { transform: rotate(-12deg); }
+  45% { transform: rotate(9deg); }
+  60% { transform: rotate(-6deg); }
+  75% { transform: rotate(3deg); }
 }
 .campaneo {
   animation: campaneo 0.8s ease;
   transform-origin: 50% 8%;
 }
 
-/* Toast que entra deslizando desde la derecha. */
 @keyframes deslizar-entra {
-  from {
-    opacity: 0;
-    transform: translateX(28px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
+  from { opacity: 0; transform: translateX(28px) scale(0.96); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
 }
 .deslizar-entra {
   animation: deslizar-entra 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Pulso suave del punto/insignia de notificación (en fucsia). */
 @keyframes latido {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 rgba(236, 11, 134, 0.55);
-  }
-  70% {
-    box-shadow: 0 0 0 7px rgba(236, 11, 134, 0);
-  }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 11, 134, 0.55); }
+  70% { box-shadow: 0 0 0 7px rgba(236, 11, 134, 0); }
 }
 .latido {
   animation: latido 2s ease-out infinite;
@@ -542,7 +461,7 @@ body::after {
 
 /* ====================================================================
    ESCENA DE AUTENTICACIÓN — "Aurora de pétalos"
-   Fondo inmersivo en movimiento para login y registro.
+   Más dramática y saturada que el fondo principal.
    ==================================================================== */
 
 .escena-auth {
@@ -559,7 +478,6 @@ body::after {
     linear-gradient(160deg, #2c021d 0%, #5e0340 48%, #1d0114 100%);
 }
 
-/* Aurora: manchas de color enormes que derivan y respiran. */
 .aurora {
   position: absolute;
   border-radius: 9999px;
@@ -570,67 +488,36 @@ body::after {
   mix-blend-mode: screen;
 }
 .aurora-1 {
-  width: 46rem;
-  height: 46rem;
-  left: -12rem;
-  top: -13rem;
-  background: radial-gradient(
-    circle at 50% 50%,
-    #ff3aa5 0%,
-    rgba(255, 58, 165, 0) 70%
-  );
+  width: 46rem; height: 46rem;
+  left: -12rem; top: -13rem;
+  background: radial-gradient(circle at 50% 50%, #ff3aa5 0%, rgba(255, 58, 165, 0) 70%);
   animation: aurora-a 19s ease-in-out infinite alternate;
 }
 .aurora-2 {
-  width: 40rem;
-  height: 40rem;
-  right: -13rem;
-  top: 18%;
-  background: radial-gradient(
-    circle at 50% 50%,
-    #ff7bc2 0%,
-    rgba(255, 123, 194, 0) 70%
-  );
+  width: 40rem; height: 40rem;
+  right: -13rem; top: 18%;
+  background: radial-gradient(circle at 50% 50%, #ff7bc2 0%, rgba(255, 123, 194, 0) 70%);
   animation: aurora-b 23s ease-in-out infinite alternate;
 }
 .aurora-3 {
-  width: 38rem;
-  height: 38rem;
-  left: 22%;
-  bottom: -15rem;
-  background: radial-gradient(
-    circle at 50% 50%,
-    #ec0b86 0%,
-    rgba(236, 11, 134, 0) 70%
-  );
+  width: 38rem; height: 38rem;
+  left: 22%; bottom: -15rem;
+  background: radial-gradient(circle at 50% 50%, #ec0b86 0%, rgba(236, 11, 134, 0) 70%);
   animation: aurora-c 21s ease-in-out infinite alternate;
 }
 @keyframes aurora-a {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    transform: translate(8rem, 4rem) scale(1.15);
-  }
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(8rem, 4rem) scale(1.15); }
 }
 @keyframes aurora-b {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    transform: translate(-7rem, 5rem) scale(1.1);
-  }
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-7rem, 5rem) scale(1.1); }
 }
 @keyframes aurora-c {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    transform: translate(5rem, -5rem) scale(1.18);
-  }
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(5rem, -5rem) scale(1.18); }
 }
 
-/* Orbes de luz que ascienden lentamente. */
 .orbe {
   position: absolute;
   bottom: -10vh;
@@ -647,23 +534,12 @@ body::after {
   animation: ascender linear infinite;
 }
 @keyframes ascender {
-  0% {
-    transform: translateY(0) scale(0.7);
-    opacity: 0;
-  }
-  12% {
-    opacity: 0.85;
-  }
-  85% {
-    opacity: 0.45;
-  }
-  100% {
-    transform: translateY(-115vh) scale(1.1);
-    opacity: 0;
-  }
+  0% { transform: translateY(0) scale(0.7); opacity: 0; }
+  12% { opacity: 0.85; }
+  85% { opacity: 0.45; }
+  100% { transform: translateY(-115vh) scale(1.1); opacity: 0; }
 }
 
-/* Pétalos que caen en diagonal mientras giran. */
 .petalo {
   position: absolute;
   top: -8vh;
@@ -680,30 +556,18 @@ body::after {
 .petalo-claro {
   background: linear-gradient(135deg, #ffffff, #ffd6ec);
 }
-/* Pétalo fucsia: para fondos CLAROS (portada), con más color y un brillo suave
-   para que resalte sobre el rosa del sistema. */
 .petalo-fucsia {
-  background: linear-gradient(135deg, #ff8fce, #ec0b86);
-  box-shadow: 0 1px 7px rgba(236, 11, 134, 0.4);
+  background: linear-gradient(135deg, #ff3aa5, #ec0b86);
+  box-shadow: 0 1px 9px rgba(236, 11, 134, 0.5);
 }
 @keyframes caer {
-  0% {
-    transform: translate(0, -8vh) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.95;
-  }
-  90% {
-    opacity: 0.8;
-  }
-  100% {
-    transform: translate(var(--drift, 8vw), 116vh) rotate(440deg);
-    opacity: 0;
-  }
+  0% { transform: translate(0, -8vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.95; }
+  90% { opacity: 0.8; }
+  100% { transform: translate(var(--drift, 8vw), 116vh) rotate(440deg); opacity: 0; }
 }
 
-/* Tarjeta de autenticación: vidrio luminoso con borde brillante. */
+/* Tarjeta de autenticación: vidrio luminoso contrastante con la escena oscura. */
 .tarjeta-auth {
   position: relative;
   z-index: 1;
@@ -711,33 +575,23 @@ body::after {
   max-width: 27rem;
   border-radius: 1.85rem;
   padding: 2.25rem;
-  background: rgba(255, 255, 255, 0.74);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(28px) saturate(165%);
   -webkit-backdrop-filter: blur(28px) saturate(165%);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow:
-    0 32px 80px -22px rgba(28, 1, 20, 0.65),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    0 32px 80px -22px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
-/* Entrada de la tarjeta: emerge con desenfoque. */
 @keyframes surgir {
-  from {
-    opacity: 0;
-    transform: translateY(28px) scale(0.95);
-    filter: blur(7px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
+  from { opacity: 0; transform: translateY(28px) scale(0.95); filter: blur(7px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 .surgir {
   animation: surgir 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Brillo giratorio detrás de la tarjeta. */
 .halo-auth {
   position: absolute;
   inset: -8px;
@@ -755,16 +609,11 @@ body::after {
   animation: girar 12s linear infinite;
 }
 @keyframes girar {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
-/* Respeta a quien prefiere menos movimiento. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

@@ -167,9 +167,9 @@ function BannerOferta({
 }) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-[100] flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-4">
-      <div className="pointer-events-auto w-full max-w-md rounded-3xl border border-[#ffc9e4] bg-white/95 p-4 shadow-[0_18px_50px_-12px_rgba(236,11,134,0.45)] backdrop-blur">
+      <div className="pointer-events-auto w-full max-w-md rounded-3xl border border-white/10 bg-[#1a0016]/90 p-4 shadow-[0_18px_50px_-12px_rgba(236,11,134,0.55)] backdrop-blur">
         <div className="flex items-start gap-3">
-          <div className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white ring-1 ring-[#ffd3ea]">
+          <div className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white/10 ring-1 ring-white/10">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/icons/icono-192.png"
@@ -178,10 +178,10 @@ function BannerOferta({
             />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="font-semibold text-[#1b0610]">
+            <p className="font-semibold text-white">
               Lleva K&apos;s Shop en tu celular
             </p>
-            <p className="mt-0.5 text-sm text-[#8a5870]">
+            <p className="mt-0.5 text-sm text-[#b888a8]">
               Instálala con un toque y ábrela como una app, sin buscar el enlace.
             </p>
           </div>
@@ -189,7 +189,7 @@ function BannerOferta({
             type="button"
             onClick={onDescartar}
             aria-label="Cerrar el aviso de instalación"
-            className="-mr-1 -mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full text-[#8a5870] transition hover:bg-[#ffe7f4] hover:text-[#1b0610]"
+            className="-mr-1 -mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full text-[#b888a8] transition hover:bg-white/10 hover:text-white"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
               <path

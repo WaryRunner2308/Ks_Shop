@@ -23,7 +23,7 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <header
-        className="sticky top-3 z-30 mx-3 flex items-center justify-between gap-3 rounded-3xl border border-white/60 bg-white/60 px-5 py-3 backdrop-blur-xl sm:mx-4 sm:px-6"
+        className="sticky top-3 z-30 mx-3 flex items-center justify-between gap-3 rounded-3xl border border-white/10 bg-black/40 px-5 py-3 backdrop-blur-xl sm:mx-4 sm:px-6"
         style={{ boxShadow: "var(--sombra-media)" }}
       >
         <div className="flex min-w-0 items-center gap-3">
