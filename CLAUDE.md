@@ -1,10 +1,16 @@
 # Sistema K's Shop
 
+## ⛔ REGLA DE ORO (OBLIGATORIA — leer primero)
+NO hagas absolutamente NADA que no se te haya pedido de forma explícita. Esto aplica a TODO: no editar archivos, no crear archivos, no commitear, no pushear, no migrar la base de datos, no instalar, no refactorizar, no "mejorar", no adelantar pasos siguientes. Limítate EXACTAMENTE a lo que el dueño pidió en su último mensaje. Si crees que falta algo o conviene un paso adicional, primero PROPÓN y ESPERA confirmación; nunca lo ejecutes por tu cuenta. Ante la duda, pregunta. Esta regla aplica en esta sesión y en TODAS las sesiones futuras (incluidas sesiones con un Claude nuevo).
+
 ## Qué es
 Web para "K's Shop", negocio de compras bajo pedido (AliExpress, Shein, Alibaba). El cliente solicita cotización pegando el link de un producto. La dueña mira el producto desde SU cuenta y escribe el PRECIO DE VENTA FINAL, que el sistema le envía al cliente tal cual. El cliente paga y sube comprobante. La dueña recibe avisos dentro del sistema.
 
 ## Stack (gratis)
 Next.js (App Router) + TypeScript + Tailwind. Supabase (Postgres, auth, storage, realtime). Vercel al final. Notificaciones in-app con Supabase Realtime, sin bots externos.
+
+## Cómo correr el sistema (IMPORTANTE — no olvidar)
+Para correr el sistema es solo: `pnpm start`. El gestor de paquetes es **pnpm** (no npm). Usar SIEMPRE `pnpm` para los comandos de este proyecto.
 
 ## Flujo de cotización (LO MÁS IMPORTANTE) — DOS pasos
 1. El CLIENTE pega el link + la variante (talla, color) y solicita la cotización. NO pega precio.
