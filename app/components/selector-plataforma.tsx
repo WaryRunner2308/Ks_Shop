@@ -95,7 +95,12 @@ export default function SelectorPlataforma({
         <ul
           id={listaId}
           role="listbox"
-          className="deslizar-entra absolute z-50 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-white/12 bg-[#1a0214] p-1.5 shadow-[var(--sombra-flota)] backdrop-blur-xl"
+          className="lista-selector deslizar-entra absolute z-50 mt-2 max-h-72 w-full overflow-y-auto rounded-2xl border border-white/15 p-1.5"
+          style={{
+            background: "#241022",
+            boxShadow:
+              "0 24px 52px -14px rgba(0,0,0,0.85), 0 0 0 1px rgba(0,0,0,0.4)",
+          }}
         >
           {opciones.map((o) => {
             const activa = o.valor === valor;

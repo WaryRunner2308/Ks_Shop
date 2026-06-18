@@ -614,6 +614,28 @@ body::after {
   to { transform: rotate(360deg); }
 }
 
+/* Barra de scroll fina y oscura para el desplegable de plataformas. */
+.lista-selector {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(236, 11, 134, 0.5) transparent;
+}
+.lista-selector::-webkit-scrollbar {
+  width: 8px;
+}
+.lista-selector::-webkit-scrollbar-track {
+  background: transparent;
+}
+.lista-selector::-webkit-scrollbar-thumb {
+  background: rgba(236, 11, 134, 0.45);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.lista-selector::-webkit-scrollbar-thumb:hover {
+  background: rgba(236, 11, 134, 0.7);
+  background-clip: padding-box;
+}
+
 /* Logos de plataformas flotando (portada) — reemplazan los pétalos. */
 @keyframes flotar-badge {
   0% {
