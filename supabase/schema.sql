@@ -355,7 +355,7 @@ begin
       new.usuario_id,
       new.presupuesto_id,
       case new.estado
-        when 'verificado' then 'Tu pago fue verificado'
+        when 'verificado' then 'Tu pago fue confirmado ✅'
         else 'Tu pago fue rechazado'
       end
     );

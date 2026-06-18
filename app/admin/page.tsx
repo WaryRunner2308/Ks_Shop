@@ -1,10 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import {
-  DISCLAIMER_ENVIO,
-  ESTADO_ETIQUETA,
-  etiquetaPlataforma,
-} from "@/lib/constantes";
+import { ESTADO_ETIQUETA, etiquetaPlataforma } from "@/lib/constantes";
 import FormularioPrecio from "./formulario-precio";
 
 type Cliente = { nombre: string | null; email: string | null };
@@ -119,19 +115,23 @@ function Tarjeta({
   );
 }
 
-// Tarjetita de resumen (contador rápido del estado del negocio).
+// Tarjetita de resumen (contador rápido del estado del negocio). Al tocarla
+// desplaza a la sección correspondiente (href tipo "#pendientes").
 function Resumen({
   valor,
   etiqueta,
   destacado = false,
+  href,
 }: {
   valor: number;
   etiqueta: string;
   destacado?: boolean;
+  href: string;
 }) {
   return (
-    <div
-      className={`tarjeta tarjeta-flota p-4 text-center sm:p-5 ${
+    <a
+      href={href}
+      className={`tarjeta tarjeta-flota block p-4 text-center sm:p-5 ${
         destacado ? "border-coral/40" : ""
       }`}
     >
@@ -145,7 +145,7 @@ function Resumen({
       <p className="mt-1 text-xs font-medium text-tinta-soft sm:text-sm">
         {etiqueta}
       </p>
-    </div>
+    </a>
   );
 }
 
@@ -165,6 +165,12 @@ export default async function AdminPage() {
   const solicitudes = data ?? [];
   const pendientes = solicitudes.filter((s) => s.estado === "solicitado");
   const cotizadas = solicitudes.filter((s) => s.estado !== "solicitado");
+
+  // Pagos que el cliente ya registró y faltan por confirmar.
+  const { count: pagosPorConfirmar } = await supabase
+    .from("pagos")
+    .select("id", { count: "exact", head: true })
+    .eq("estado", "registrado");
 
   // URLs firmadas (temporales) para ver las imágenes de referencia del bucket
   // privado. Solo para las solicitudes que traen imagen.
@@ -202,18 +208,78 @@ export default async function AdminPage() {
 
       {/* Resumen rápido */}
       <section className="entrada mb-6 grid grid-cols-3 gap-3 sm:gap-4">
-        <Resumen valor={pendientes.length} etiqueta="Pendientes" destacado />
-        <Resumen valor={cotizadas.length} etiqueta="Cotizadas" />
-        <Resumen valor={solicitudes.length} etiqueta="Total" />
+        <Resumen
+          valor={pendientes.length}
+          etiqueta="Pendientes"
+          destacado
+          href="#pendientes"
+        />
+        <Resumen
+          valor={cotizadas.length}
+          etiqueta="Cotizadas"
+          href="#cotizadas"
+        />
+        <Resumen
+          valor={solicitudes.length}
+          etiqueta="Total"
+          href="#pendientes"
+        />
       </section>
+
+      {/* Botón destacado: pagos que faltan por confirmar */}
+      <Link
+        href="/admin/pagos"
+        className="entrada mb-4 flex items-center justify-between gap-3 rounded-2xl border border-coral/30 bg-coral/10 px-5 py-4 transition hover:border-coral hover:bg-coral/15"
+      >
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-coral/20 text-coral-dark">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="2" y="5" width="20" height="14" rx="2" />
+              <path d="M2 10h20" />
+            </svg>
+          </span>
+          <div>
+            <p className="font-semibold text-tinta">Pagos por confirmar</p>
+            <p className="text-xs text-tinta-soft">
+              Revisa los comprobantes y confirma cada pago.
+            </p>
+          </div>
+        </div>
+        <span className="flex items-center gap-2">
+          {pagosPorConfirmar ? (
+            <span className="flex h-7 min-w-7 items-center justify-center rounded-full bg-coral px-2 text-sm font-bold text-white">
+              {pagosPorConfirmar}
+            </span>
+          ) : null}
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-coral-dark"
+          >
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </span>
+      </Link>
 
       {/* Accesos rápidos */}
       <div className="mb-6 flex flex-wrap gap-2">
         <Link href="/admin/clientes" className="btn-linea px-4 py-2 text-sm">
           Clientes
-        </Link>
-        <Link href="/admin/pagos" className="btn-linea px-4 py-2 text-sm">
-          Pagos
         </Link>
         <Link
           href="/admin/metodos-pago"
@@ -223,13 +289,10 @@ export default async function AdminPage() {
         </Link>
       </div>
 
-      {/* Recordatorio del disclaimer obligatorio */}
-      <p className="mb-10 rounded-2xl border border-linea bg-white/[0.05] px-4 py-3 text-xs leading-relaxed text-tinta-soft">
-        💡 Recuerda: {DISCLAIMER_ENVIO}
-      </p>
+      <div className="mb-10" />
 
       {/* Pendientes primero: lo que falta responder */}
-      <section className="mb-10">
+      <section id="pendientes" className="mb-10 scroll-mt-24">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-tinta">
           Pendientes
           <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-coral px-2 text-xs font-bold text-white">
@@ -250,7 +313,7 @@ export default async function AdminPage() {
       </section>
 
       {/* Ya cotizadas */}
-      <section>
+      <section id="cotizadas" className="scroll-mt-24">
         <h2 className="mb-4 text-lg font-semibold text-tinta">
           Ya cotizadas{" "}
           <span className="text-tinta-soft">({cotizadas.length})</span>

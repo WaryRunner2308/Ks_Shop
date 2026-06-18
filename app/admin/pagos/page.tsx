@@ -126,7 +126,7 @@ function Tarjeta({
               type="submit"
               className="inline-flex items-center gap-1.5 rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-green-700 hover:shadow-md active:translate-y-0"
             >
-              ✓ Aprobar pago
+              ✓ Confirmar pago
             </button>
           </form>
           <form action={rechazarPago}>
