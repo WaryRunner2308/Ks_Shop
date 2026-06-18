@@ -4,6 +4,7 @@ import CampanaNotificaciones, {
   type Notificacion,
 } from "@/app/components/campana-notificaciones";
 import WizardPush from "@/app/components/wizard-push";
+import LogosFlotantes from "@/app/components/logos-flotantes";
 import Logo from "@/app/components/logo";
 
 export default async function AdminLayout({
@@ -22,14 +23,14 @@ export default async function AdminLayout({
     .returns<Notificacion[]>();
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="relative isolate flex min-h-screen flex-col">
+      <LogosFlotantes />
       <header
         className="sticky top-3 z-30 mx-3 flex items-center justify-between gap-3 rounded-3xl border border-white/10 bg-black/40 px-5 py-3 backdrop-blur-xl sm:mx-4 sm:px-6"
         style={{ boxShadow: "var(--sombra-media)" }}
       >
         <div className="flex min-w-0 items-center gap-3">
           <Logo href="/admin" height={40} priority />
-          <span className="chip hidden sm:inline-flex">Panel de la dueña</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <CampanaNotificaciones inicial={data ?? []} canal="notis-admin" />

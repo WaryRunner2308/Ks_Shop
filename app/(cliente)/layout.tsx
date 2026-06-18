@@ -7,6 +7,7 @@ import CampanaNotificaciones, {
   type Notificacion,
 } from "@/app/components/campana-notificaciones";
 import WizardPush from "@/app/components/wizard-push";
+import LogosFlotantes from "@/app/components/logos-flotantes";
 
 export default async function ClienteLayout({
   children,
@@ -28,7 +29,8 @@ export default async function ClienteLayout({
     .returns<Notificacion[]>();
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="relative isolate flex min-h-screen flex-col">
+      <LogosFlotantes />
       <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-white/10 bg-black/40 px-6 py-4 backdrop-blur-xl">
         <Logo height={40} priority />
         <nav className="flex items-center gap-2 text-sm sm:gap-3">

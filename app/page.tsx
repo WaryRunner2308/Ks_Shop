@@ -81,8 +81,9 @@ export default async function Home() {
     const nombre = perfil?.nombre?.split(" ")[0] || "qué gusto verte";
 
     return (
-      <div className="relative flex min-h-screen flex-col text-tinta">
-        {/* Brillo ambiental sutil arriba (sin los logos flotantes del landing). */}
+      <div className="relative isolate flex min-h-screen flex-col text-tinta">
+        <LogosFlotantes />
+        {/* Brillo ambiental sutil arriba, detrás del saludo. */}
         <div
           aria-hidden
           className="pointer-events-none fixed left-1/2 top-0 -z-10 h-[26rem] w-[44rem] max-w-[120vw] -translate-x-1/2 -translate-y-1/3 rounded-full bg-[radial-gradient(closest-side,rgba(236,11,134,0.22),transparent)] blur-2xl"
