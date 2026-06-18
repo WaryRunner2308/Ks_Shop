@@ -30,25 +30,33 @@ function formatearFecha(iso: string): string {
   });
 }
 
+// Color de la insignia de estado (dentro de la paleta de marca).
+const ESTADO_CHIP: Record<string, string> = {
+  solicitado: "bg-coral/15 text-coral-dark",
+  cotizado: "bg-crema-2 text-tinta",
+  pagado: "bg-green-100 text-green-700",
+  cancelado: "bg-tinta/10 text-tinta-soft",
+};
+
 function Tarjeta({ s }: { s: Solicitud }) {
   const cliente = s.usuarios?.nombre || s.usuarios?.email || "Cliente";
   const pendiente = s.estado === "solicitado";
 
   return (
-    <li className={`tarjeta tarjeta-flota p-5 ${pendiente ? "border-coral/30" : ""}`}>
+    <li
+      className={`tarjeta tarjeta-flota p-5 ${pendiente ? "border-coral/40" : ""}`}
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-tinta">
-              {etiquetaPlataforma(s.plataforma)}
-            </span>
-            <span className="text-sm text-tinta-soft">· {cliente}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="chip">{etiquetaPlataforma(s.plataforma)}</span>
+            <span className="text-sm font-medium text-tinta">{cliente}</span>
           </div>
           <a
             href={s.url_producto}
             target="_blank"
             rel="noopener noreferrer"
-            className="block max-w-md truncate text-sm text-coral-dark hover:underline"
+            className="mt-2 block max-w-md truncate text-sm text-coral-dark hover:underline"
           >
             {s.url_producto}
           </a>
@@ -61,7 +69,11 @@ function Tarjeta({ s }: { s: Solicitud }) {
             {formatearFecha(s.created_at)}
           </p>
         </div>
-        <span className="chip shrink-0">
+        <span
+          className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
+            ESTADO_CHIP[s.estado] ?? "bg-crema-2 text-tinta"
+          }`}
+        >
           {ESTADO_ETIQUETA[s.estado] ?? s.estado}
         </span>
       </div>
@@ -70,15 +82,45 @@ function Tarjeta({ s }: { s: Solicitud }) {
         <FormularioPrecio id={s.id} />
       ) : (
         s.precio_venta != null && (
-          <div className="mt-3 text-sm text-tinta-soft">
+          <div className="mt-3 rounded-xl bg-white/50 px-4 py-2.5 text-sm text-tinta-soft">
             Precio enviado:{" "}
-            <span className="font-semibold text-tinta">
+            <span className="font-semibold text-coral-dark">
               ${Number(s.precio_venta).toFixed(2)}
             </span>
           </div>
         )
       )}
     </li>
+  );
+}
+
+// Tarjetita de resumen (contador rápido del estado del negocio).
+function Resumen({
+  valor,
+  etiqueta,
+  destacado = false,
+}: {
+  valor: number;
+  etiqueta: string;
+  destacado?: boolean;
+}) {
+  return (
+    <div
+      className={`tarjeta tarjeta-flota p-4 text-center sm:p-5 ${
+        destacado ? "border-coral/40" : ""
+      }`}
+    >
+      <p
+        className={`font-display text-3xl sm:text-4xl ${
+          destacado ? "texto-fucsia" : "text-tinta"
+        }`}
+      >
+        {valor}
+      </p>
+      <p className="mt-1 text-xs font-medium text-tinta-soft sm:text-sm">
+        {etiqueta}
+      </p>
+    </div>
   );
 }
 
@@ -100,31 +142,46 @@ export default async function AdminPage() {
   const cotizadas = solicitudes.filter((s) => s.estado !== "solicitado");
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12">
-      <header className="mb-8 aparecer">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="font-display text-3xl text-tinta">
-            Solicitudes de cotización
-          </h1>
-          <div className="flex shrink-0 gap-2">
-            <Link href="/admin/pagos" className="btn-linea px-4 py-2 text-sm">
-              Pagos
-            </Link>
-            <Link
-              href="/admin/metodos-pago"
-              className="btn-linea px-4 py-2 text-sm"
-            >
-              Métodos de pago
-            </Link>
-          </div>
-        </div>
-        <p className="mt-2 text-sm text-tinta-soft">
+    <div className="mx-auto max-w-3xl px-6 py-10">
+      {/* Encabezado tipo "hero" */}
+      <header className="aparecer mb-8">
+        <p className="chip mb-4 px-4 py-1.5 text-xs uppercase tracking-[0.2em]">
+          <span className="h-1.5 w-1.5 rounded-full bg-coral latido" />
+          Tu panel
+        </p>
+        <h1 className="font-display text-4xl leading-[1.05] tracking-tight text-tinta sm:text-5xl">
+          Solicitudes de{" "}
+          <span className="italic texto-fucsia">cotización</span>
+        </h1>
+        <p className="mt-3 max-w-md text-sm text-tinta-soft">
           Revisa los productos desde tu cuenta y envía el precio de venta.
         </p>
-        <p className="mt-3 rounded-xl border border-linea bg-white/60 px-4 py-2.5 text-xs leading-relaxed text-tinta-soft">
-          💡 Recuerda: {DISCLAIMER_ENVIO}
-        </p>
       </header>
+
+      {/* Resumen rápido */}
+      <section className="entrada mb-6 grid grid-cols-3 gap-3 sm:gap-4">
+        <Resumen valor={pendientes.length} etiqueta="Pendientes" destacado />
+        <Resumen valor={cotizadas.length} etiqueta="Cotizadas" />
+        <Resumen valor={solicitudes.length} etiqueta="Total" />
+      </section>
+
+      {/* Accesos rápidos */}
+      <div className="mb-6 flex flex-wrap gap-2">
+        <Link href="/admin/pagos" className="btn-linea px-4 py-2 text-sm">
+          💳 Pagos
+        </Link>
+        <Link
+          href="/admin/metodos-pago"
+          className="btn-linea px-4 py-2 text-sm"
+        >
+          ⚙️ Métodos de pago
+        </Link>
+      </div>
+
+      {/* Recordatorio del disclaimer obligatorio */}
+      <p className="mb-10 rounded-2xl border border-linea bg-white/60 px-4 py-3 text-xs leading-relaxed text-tinta-soft">
+        💡 Recuerda: {DISCLAIMER_ENVIO}
+      </p>
 
       {/* Pendientes primero: lo que falta responder */}
       <section className="mb-10">
@@ -135,7 +192,7 @@ export default async function AdminPage() {
           </span>
         </h2>
         {pendientes.length === 0 ? (
-          <p className="tarjeta border-dashed p-6 text-sm text-tinta-soft">
+          <p className="tarjeta border-dashed p-6 text-center text-sm text-tinta-soft">
             No hay solicitudes pendientes. ¡Todo al día! ✨
           </p>
         ) : (
@@ -154,7 +211,7 @@ export default async function AdminPage() {
           <span className="text-tinta-soft">({cotizadas.length})</span>
         </h2>
         {cotizadas.length === 0 ? (
-          <p className="tarjeta border-dashed p-6 text-sm text-tinta-soft">
+          <p className="tarjeta border-dashed p-6 text-center text-sm text-tinta-soft">
             Todavía no has cotizado ninguna.
           </p>
         ) : (

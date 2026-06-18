@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { cerrarSesion } from "@/app/auth/actions";
 import Logo from "@/app/components/logo";
@@ -20,6 +21,11 @@ export default async function Home() {
     perfil = data;
   }
 
+  // La dueña va DIRECTO a su panel: el inicio es la vitrina para clientes.
+  if (perfil?.rol === "admin") {
+    redirect("/admin");
+  }
+
   return (
     <div className="flex min-h-screen flex-col text-tinta">
       <header className="flex items-center justify-between px-6 py-5 sm:px-10">
@@ -27,26 +33,15 @@ export default async function Home() {
         <nav className="flex items-center gap-2 text-sm sm:gap-3">
           {user ? (
             <>
-              {perfil?.rol === "admin" ? (
-                <Link
-                  href="/admin"
-                  className="btn-linea px-4 py-2 font-semibold"
-                >
-                  Panel
-                </Link>
-              ) : (
-                <>
-                  <Link href="/cotizar" className="btn-coral px-4 py-2">
-                    Cotizar
-                  </Link>
-                  <Link
-                    href="/mis-solicitudes"
-                    className="rounded-full px-4 py-2 font-medium transition hover:bg-crema-2"
-                  >
-                    Mis solicitudes
-                  </Link>
-                </>
-              )}
+              <Link href="/cotizar" className="btn-coral px-4 py-2">
+                Cotizar
+              </Link>
+              <Link
+                href="/mis-solicitudes"
+                className="rounded-full px-4 py-2 font-medium transition hover:bg-crema-2"
+              >
+                Mis solicitudes
+              </Link>
               <form action={cerrarSesion}>
                 <button type="submit" className="btn-linea px-4 py-2">
                   Cerrar sesión
@@ -87,7 +82,7 @@ export default async function Home() {
             <>
               Hola,{" "}
               <span className="italic texto-fucsia">
-                {perfil?.nombre || "bienvenida"}
+                {perfil?.nombre || "qué gusto verte"}
               </span>
               .
             </>
@@ -95,7 +90,7 @@ export default async function Home() {
             <>
               Lo que quieres,
               <br />
-              <span className="italic texto-fucsia">pedido por nosotras.</span>
+              <span className="italic texto-fucsia">te lo conseguimos.</span>
             </>
           )}
         </h1>
@@ -105,17 +100,12 @@ export default async function Home() {
           el paquete llegue al país.
         </p>
 
-        {!user ? (
-          <Link href="/registro" className="btn-coral mt-8 px-7 py-3.5 text-base">
-            Pedir una cotización
-          </Link>
-        ) : (
-          perfil?.rol !== "admin" && (
-            <Link href="/cotizar" className="btn-coral mt-8 px-7 py-3.5 text-base">
-              Pedir una cotización
-            </Link>
-          )
-        )}
+        <Link
+          href={user ? "/cotizar" : "/registro"}
+          className="btn-coral mt-8 px-7 py-3.5 text-base"
+        >
+          Pedir una cotización
+        </Link>
 
         {/* Plataformas con las que trabajamos */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-2.5 text-sm">

@@ -16,7 +16,7 @@ export default function LoginPage() {
     <div>
       <header className="mb-8 text-center">
         <h2 className="font-display text-3xl tracking-tight text-tinta">
-          Bienvenida de vuelta
+          Hola de nuevo
         </h2>
         <p className="mt-2 text-sm text-tinta-soft">
           Inicia sesión para ver tus pedidos y cotizaciones.
