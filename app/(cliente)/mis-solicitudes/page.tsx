@@ -28,24 +28,22 @@ export default async function MisSolicitudesPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
-      <header className="mb-8 flex items-center justify-between gap-4">
+      <header className="mb-8 flex items-center justify-between gap-4 aparecer">
         <div>
           <h1 className="font-display text-3xl text-tinta">Mis solicitudes</h1>
           <p className="mt-2 text-sm text-tinta-soft">
             Aquí ves el estado de tus cotizaciones.
           </p>
         </div>
-        <Link
-          href="/cotizar"
-          className="shrink-0 rounded-xl bg-coral px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-coral-dark"
-        >
+        <Link href="/cotizar" className="btn-coral shrink-0 px-4 py-2.5 text-sm">
           Pedir cotización
         </Link>
       </header>
 
       {!solicitudes || solicitudes.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-linea bg-white p-10 text-center">
-          <p className="text-tinta-soft">Todavía no tienes solicitudes.</p>
+        <div className="tarjeta aparecer border-dashed p-10 text-center">
+          <p className="text-3xl">🛍️</p>
+          <p className="mt-3 text-tinta-soft">Todavía no tienes solicitudes.</p>
           <Link
             href="/cotizar"
             className="mt-4 inline-block font-semibold text-coral-dark hover:underline"
@@ -54,7 +52,7 @@ export default async function MisSolicitudesPage() {
           </Link>
         </div>
       ) : (
-        <ul className="flex flex-col gap-4">
+        <ul className="entrada flex flex-col gap-4">
           {solicitudes.map((s) => {
             const tienePrecio =
               s.precio_venta != null &&
@@ -62,10 +60,7 @@ export default async function MisSolicitudesPage() {
             const puedePagar =
               s.estado === "cotizado" && s.precio_venta != null;
             return (
-              <li
-                key={s.id}
-                className="rounded-2xl border border-linea bg-white p-5"
-              >
+              <li key={s.id} className="tarjeta tarjeta-flota p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="font-medium text-tinta">
@@ -85,15 +80,17 @@ export default async function MisSolicitudesPage() {
                       </p>
                     )}
                   </div>
-                  <span className="shrink-0 rounded-full bg-crema-2 px-3 py-1 text-xs font-medium text-tinta">
+                  <span className="chip shrink-0">
                     {ESTADO_ETIQUETA[s.estado] ?? s.estado}
                   </span>
                 </div>
 
                 {tienePrecio ? (
-                  <div className="mt-4 rounded-xl bg-crema p-4">
-                    <p className="text-sm text-tinta-soft">Precio</p>
-                    <p className="font-display text-2xl text-tinta">
+                  <div className="mt-4 rounded-xl border border-coral/15 bg-gradient-to-br from-crema to-crema-2 p-4">
+                    <p className="text-xs font-medium uppercase tracking-wide text-tinta-soft">
+                      Precio
+                    </p>
+                    <p className="font-display text-3xl text-coral-dark">
                       ${Number(s.precio_venta).toFixed(2)}
                     </p>
                     <p className="mt-2 text-xs leading-relaxed text-tinta-soft">
@@ -102,12 +99,13 @@ export default async function MisSolicitudesPage() {
                     {puedePagar ? (
                       <Link
                         href={`/pagar/${s.id}`}
-                        className="mt-3 inline-block rounded-xl bg-coral px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-coral-dark"
+                        className="btn-coral mt-3 px-5 py-2.5 text-sm"
                       >
-                        Pagar
+                        Pagar ahora
                       </Link>
                     ) : (
-                      <p className="mt-3 text-sm font-medium text-tinta">
+                      <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-tinta">
+                        <span className="h-2 w-2 rounded-full bg-coral latido" />
                         Pago registrado · en verificación
                       </p>
                     )}

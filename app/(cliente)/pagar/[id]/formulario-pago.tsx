@@ -32,18 +32,15 @@ export default function FormularioPago({
 
   if (estado.ok) {
     return (
-      <div className="rounded-2xl border border-linea bg-white p-8 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-coral/15 text-2xl">
+      <div className="tarjeta aparecer p-8 text-center">
+        <div className="estallar mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-coral/15 text-3xl text-coral-dark">
           ✓
         </div>
         <h1 className="font-display text-2xl text-tinta">¡Pago registrado!</h1>
         <p className="mt-3 text-sm leading-relaxed text-tinta-soft">
           Recibimos tu comprobante. Lo verificaremos y te confirmaremos pronto.
         </p>
-        <Link
-          href="/mis-solicitudes"
-          className="mt-6 inline-block rounded-xl bg-coral px-6 py-3 font-semibold text-white transition hover:bg-coral-dark"
-        >
+        <Link href="/mis-solicitudes" className="btn-coral mt-6 px-6 py-3">
           Ver mis solicitudes
         </Link>
       </div>
@@ -51,13 +48,15 @@ export default function FormularioPago({
   }
 
   return (
-    <form action={accion} className="flex flex-col gap-6">
+    <form action={accion} className="entrada flex flex-col gap-6">
       <input type="hidden" name="presupuesto_id" value={presupuestoId} />
 
       {/* Monto a pagar */}
-      <div className="rounded-2xl border border-linea bg-white p-5">
-        <p className="text-sm text-tinta-soft">Monto a pagar</p>
-        <p className="font-display text-3xl text-tinta">
+      <div className="tarjeta border-coral/20 bg-gradient-to-br from-white to-crema p-5">
+        <p className="text-xs font-medium uppercase tracking-wide text-tinta-soft">
+          Monto a pagar
+        </p>
+        <p className="font-display text-4xl text-coral-dark">
           ${precio.toFixed(2)}
         </p>
         <p className="mt-2 text-xs leading-relaxed text-tinta-soft">
@@ -82,7 +81,7 @@ export default function FormularioPago({
             return (
               <label
                 key={m.id}
-                className="flex cursor-pointer gap-3 rounded-xl border border-linea bg-white p-4 hover:border-coral"
+                className="flex cursor-pointer gap-3 rounded-xl border border-linea bg-white p-4 transition hover:-translate-y-0.5 hover:border-coral hover:shadow-[var(--sombra-suave)] has-[:checked]:border-coral has-[:checked]:bg-coral/5 has-[:checked]:ring-2 has-[:checked]:ring-coral/20"
               >
                 <input
                   type="radio"
@@ -123,7 +122,7 @@ export default function FormularioPago({
           name="comprobante"
           accept="image/*"
           required
-          className="rounded-xl border border-linea bg-white px-4 py-3 text-sm text-tinta file:mr-3 file:rounded-lg file:border-0 file:bg-crema-2 file:px-3 file:py-1.5 file:text-tinta"
+          className="campo cursor-pointer text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-crema-2 file:px-3 file:py-1.5 file:font-medium file:text-tinta hover:file:bg-coral hover:file:text-white"
         />
       </label>
 
@@ -136,7 +135,7 @@ export default function FormularioPago({
       <button
         type="submit"
         disabled={enviando || metodos.length === 0}
-        className="rounded-xl bg-coral px-4 py-3 font-semibold text-white transition hover:bg-coral-dark disabled:opacity-60"
+        className="btn-coral px-4 py-3"
       >
         {enviando ? "Registrando…" : "Registrar pago"}
       </button>

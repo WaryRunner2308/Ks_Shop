@@ -16,8 +16,7 @@ type Props = {
   onListo?: () => void;
 };
 
-const claseInput =
-  "rounded-lg border border-linea bg-white px-3 py-2 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20";
+const claseInput = "campo py-2";
 
 export default function FormularioMetodo({ metodo, onListo }: Props) {
   const editando = !!metodo;
@@ -97,7 +96,7 @@ export default function FormularioMetodo({ metodo, onListo }: Props) {
         <button
           type="submit"
           disabled={enviando || !tipo}
-          className="rounded-lg bg-coral px-4 py-2 text-sm font-semibold text-white transition hover:bg-coral-dark disabled:opacity-60"
+          className="btn-coral px-4 py-2 text-sm"
         >
           {enviando ? "Guardando…" : editando ? "Guardar cambios" : "Agregar método"}
         </button>
@@ -105,7 +104,7 @@ export default function FormularioMetodo({ metodo, onListo }: Props) {
           <button
             type="button"
             onClick={onListo}
-            className="rounded-lg border border-linea px-4 py-2 text-sm font-medium text-tinta transition hover:bg-crema-2"
+            className="btn-linea px-4 py-2 text-sm"
           >
             Cancelar
           </button>

@@ -11,15 +11,24 @@ export default function AuthLayout({
     <div className="min-h-screen w-full bg-crema lg:grid lg:grid-cols-[1.05fr_1fr]">
       {/* Panel de marca */}
       <aside className="panel-marca grano relative hidden flex-col justify-between overflow-hidden p-12 text-crema lg:flex">
+        {/* Monograma gigante de marca, como marca de agua decorativa */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -bottom-16 -right-10 select-none font-display text-[22rem] italic leading-none text-crema/[0.05]"
+        >
+          K
+        </span>
+
         <Link
           href="/"
-          className="relative z-10 font-display text-2xl tracking-tight text-crema"
+          className="relative z-10 font-display text-2xl tracking-tight text-crema transition hover:opacity-80"
         >
-          K&apos;s Shop
+          K&apos;s<span className="text-coral">.</span>Shop
         </Link>
 
         <div className="relative z-10 aparecer">
-          <p className="mb-5 text-sm font-medium uppercase tracking-[0.2em] text-coral">
+          <p className="mb-5 inline-flex items-center gap-2 text-sm font-medium uppercase tracking-[0.2em] text-coral">
+            <span className="h-1.5 w-1.5 rounded-full bg-coral latido" />
             Compras bajo pedido
           </p>
           <h1 className="font-display text-5xl italic leading-[1.05] text-crema xl:text-6xl">
@@ -36,15 +45,14 @@ export default function AuthLayout({
         </div>
 
         <div className="relative z-10 flex items-center gap-3 text-sm text-crema/60">
-          <span className="rounded-full border border-crema/20 px-3 py-1">
-            AliExpress
-          </span>
-          <span className="rounded-full border border-crema/20 px-3 py-1">
-            Shein
-          </span>
-          <span className="rounded-full border border-crema/20 px-3 py-1">
-            Alibaba
-          </span>
+          {["AliExpress", "Shein", "Alibaba"].map((p) => (
+            <span
+              key={p}
+              className="rounded-full border border-crema/20 px-3 py-1 transition hover:border-coral/60 hover:text-crema"
+            >
+              {p}
+            </span>
+          ))}
         </div>
       </aside>
 

@@ -25,7 +25,7 @@ export default function FilaMetodo({ metodo }: { metodo: Metodo }) {
   }
 
   return (
-    <li className="rounded-xl border border-linea bg-white p-4">
+    <li className="tarjeta tarjeta-flota p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
@@ -33,12 +33,17 @@ export default function FilaMetodo({ metodo }: { metodo: Metodo }) {
               {etiquetaTipo(metodo.tipo)}
             </span>
             <span
-              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${
                 metodo.activo
                   ? "bg-green-100 text-green-700"
                   : "bg-crema-2 text-tinta-soft"
               }`}
             >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  metodo.activo ? "bg-green-500" : "bg-tinta-soft/50"
+                }`}
+              />
               {metodo.activo ? "Activo" : "Inactivo"}
             </span>
           </div>
@@ -62,7 +67,7 @@ export default function FilaMetodo({ metodo }: { metodo: Metodo }) {
         <button
           type="button"
           onClick={() => setEditando(true)}
-          className="rounded-lg border border-linea px-3 py-1.5 text-sm font-medium text-tinta transition hover:bg-crema-2"
+          className="btn-linea px-3 py-1.5 text-sm"
         >
           Editar
         </button>
@@ -70,10 +75,7 @@ export default function FilaMetodo({ metodo }: { metodo: Metodo }) {
         <form action={alternarActivo}>
           <input type="hidden" name="id" value={metodo.id} />
           <input type="hidden" name="activo" value={(!metodo.activo).toString()} />
-          <button
-            type="submit"
-            className="rounded-lg border border-linea px-3 py-1.5 text-sm font-medium text-tinta transition hover:bg-crema-2"
-          >
+          <button type="submit" className="btn-linea px-3 py-1.5 text-sm">
             {metodo.activo ? "Desactivar" : "Activar"}
           </button>
         </form>
@@ -82,7 +84,7 @@ export default function FilaMetodo({ metodo }: { metodo: Metodo }) {
           <input type="hidden" name="id" value={metodo.id} />
           <button
             type="submit"
-            className="rounded-lg border border-coral/40 px-3 py-1.5 text-sm font-medium text-coral-dark transition hover:bg-coral/10"
+            className="rounded-xl border border-coral/40 px-3 py-1.5 text-sm font-medium text-coral-dark transition hover:-translate-y-0.5 hover:bg-coral/10 active:translate-y-0"
           >
             Eliminar
           </button>

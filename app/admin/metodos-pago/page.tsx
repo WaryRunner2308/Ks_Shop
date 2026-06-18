@@ -24,10 +24,10 @@ export default async function MetodosPagoPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
-      <header className="mb-8">
+      <header className="mb-8 aparecer">
         <Link
           href="/admin"
-          className="text-sm text-coral-dark hover:underline"
+          className="inline-flex items-center gap-1 text-sm text-coral-dark transition hover:gap-2 hover:underline"
         >
           ← Volver al panel
         </Link>
@@ -39,7 +39,7 @@ export default async function MetodosPagoPage() {
         </p>
       </header>
 
-      <section className="mb-10">
+      <section className="mb-10 aparecer">
         <h2 className="mb-3 text-lg font-semibold text-tinta">
           Agregar método
         </h2>
@@ -52,11 +52,11 @@ export default async function MetodosPagoPage() {
           <span className="text-tinta-soft">({metodos.length})</span>
         </h2>
         {metodos.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-linea bg-white p-6 text-sm text-tinta-soft">
+          <p className="tarjeta border-dashed p-6 text-sm text-tinta-soft">
             Aún no has agregado métodos de pago.
           </p>
         ) : (
-          <ul className="flex flex-col gap-3">
+          <ul className="entrada flex flex-col gap-3">
             {metodos.map((m) => (
               <FilaMetodo key={m.id} metodo={m} />
             ))}

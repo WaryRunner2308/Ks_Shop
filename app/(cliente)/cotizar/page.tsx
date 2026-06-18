@@ -17,8 +17,8 @@ export default function CotizarPage() {
   if (estado.ok) {
     return (
       <div className="mx-auto max-w-lg px-6 py-16">
-        <div className="rounded-2xl border border-linea bg-white p-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-coral/15 text-2xl">
+        <div className="tarjeta aparecer p-8 text-center">
+          <div className="estallar mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-coral/15 text-3xl text-coral-dark">
             ✓
           </div>
           <h1 className="font-display text-2xl text-tinta">
@@ -29,16 +29,10 @@ export default function CotizarPage() {
             estado de tus solicitudes en cualquier momento.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link
-              href="/mis-solicitudes"
-              className="rounded-xl bg-coral px-5 py-3 font-semibold text-white transition hover:bg-coral-dark"
-            >
+            <Link href="/mis-solicitudes" className="btn-coral px-5 py-3">
               Ver mis solicitudes
             </Link>
-            <Link
-              href="/cotizar"
-              className="rounded-xl border border-linea px-5 py-3 font-medium text-tinta transition hover:bg-crema-2"
-            >
+            <Link href="/cotizar" className="btn-linea px-5 py-3">
               Pedir otra
             </Link>
           </div>
@@ -49,21 +43,24 @@ export default function CotizarPage() {
 
   return (
     <div className="mx-auto max-w-lg px-6 py-12">
-      <header className="mb-8">
+      <header className="mb-8 aparecer">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-coral">
+          Paso 1 de 2
+        </p>
         <h1 className="font-display text-3xl text-tinta">Pedir una cotización</h1>
         <p className="mt-2 text-sm text-tinta-soft">
           Cuéntanos qué quieres y te enviaremos el precio.
         </p>
       </header>
 
-      <form action={accion} className="flex flex-col gap-5">
+      <form action={accion} className="tarjeta entrada flex flex-col gap-5 p-6">
         <label className="flex flex-col gap-1.5">
           <span className="text-sm font-medium text-tinta">Plataforma</span>
           <select
             name="plataforma"
             required
             defaultValue=""
-            className="rounded-xl border border-linea bg-white px-4 py-3 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20"
+            className="campo"
           >
             <option value="" disabled>
               Elige una…
@@ -85,7 +82,7 @@ export default function CotizarPage() {
             name="url_producto"
             required
             placeholder="https://…"
-            className="rounded-xl border border-linea bg-white px-4 py-3 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20"
+            className="campo"
           />
         </label>
 
@@ -98,7 +95,7 @@ export default function CotizarPage() {
             required
             rows={3}
             placeholder="Ej.: Talla M, color negro"
-            className="resize-none rounded-xl border border-linea bg-white px-4 py-3 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20"
+            className="campo resize-none"
           />
         </label>
 
@@ -111,7 +108,7 @@ export default function CotizarPage() {
         <button
           type="submit"
           disabled={enviando}
-          className="mt-1 rounded-xl bg-coral px-4 py-3 font-semibold text-white transition hover:bg-coral-dark disabled:opacity-60"
+          className="btn-coral mt-1 px-4 py-3"
         >
           {enviando ? "Enviando…" : "Enviar solicitud"}
         </button>

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf6f0;
+  --foreground: #271c17;
 }
 
 @theme inline {
@@ -25,13 +25,178 @@
   --color-linea: #e6dac9;
 }
 
+/* Sombras cálidas (teñidas de espresso, no negro puro) y anillo de foco coral. */
+:root {
+  --sombra-suave: 0 1px 2px rgba(39, 28, 23, 0.04),
+    0 4px 14px rgba(39, 28, 23, 0.05);
+  --sombra-media: 0 6px 18px rgba(39, 28, 23, 0.08),
+    0 2px 6px rgba(39, 28, 23, 0.05);
+  --sombra-flota: 0 18px 40px -12px rgba(189, 79, 55, 0.28),
+    0 8px 20px -8px rgba(39, 28, 23, 0.12);
+  --sombra-coral: 0 10px 24px -8px rgba(217, 100, 74, 0.5);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-manrope), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Degradado cálido del panel de marca, con un brillo coral. */
+/* Atmósfera global sutil: dos brillos cálidos detrás de todo, muy tenues. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      60% 50% at 85% -5%,
+      rgba(217, 100, 74, 0.1) 0%,
+      rgba(217, 100, 74, 0) 60%
+    ),
+    radial-gradient(
+      50% 45% at -5% 105%,
+      rgba(74, 41, 48, 0.08) 0%,
+      rgba(74, 41, 48, 0) 60%
+    );
+}
+
+/* ====================================================================
+   SISTEMA DE COMPONENTES — clases reutilizables y consistentes
+   ==================================================================== */
+
+/* Botón primario coral: degradado, brillo y "sheen" que cruza en hover. */
+.btn-coral {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  background: linear-gradient(135deg, #e06b50 0%, var(--color-coral-dark) 100%);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: var(--sombra-coral);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+.btn-coral::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: skewX(-18deg);
+  transition: left 0.6s ease;
+}
+.btn-coral:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-flota);
+  filter: saturate(1.05);
+}
+.btn-coral:hover::after {
+  left: 130%;
+}
+.btn-coral:active {
+  transform: translateY(0) scale(0.98);
+}
+.btn-coral:disabled {
+  opacity: 0.6;
+  transform: none;
+  box-shadow: var(--sombra-suave);
+}
+
+/* Botón secundario: contorno cálido sobre blanco. */
+.btn-linea {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--color-linea);
+  background: #fff;
+  color: var(--color-tinta);
+  font-weight: 500;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.btn-linea:hover {
+  border-color: var(--color-coral);
+  background: var(--color-crema);
+  transform: translateY(-1px);
+  box-shadow: var(--sombra-suave);
+}
+.btn-linea:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Tarjeta de superficie con sombra cálida. */
+.tarjeta {
+  border-radius: 1.25rem;
+  border: 1px solid var(--color-linea);
+  background: #fff;
+  box-shadow: var(--sombra-suave);
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+/* Tarjetas que reaccionan al cursor (listas de pedidos, métodos…). */
+.tarjeta-flota:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-media);
+  border-color: #d9c9b0;
+}
+
+/* Campo de formulario unificado. */
+.campo {
+  border-radius: 0.85rem;
+  border: 1px solid var(--color-linea);
+  background: #fff;
+  padding: 0.75rem 1rem;
+  color: var(--color-tinta);
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.campo:focus {
+  border-color: var(--color-coral);
+  box-shadow: 0 0 0 4px rgba(217, 100, 74, 0.16);
+}
+
+/* Etiqueta de estado tipo "chip". */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  background: var(--color-crema-2);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-tinta);
+}
+
+/* ====================================================================
+   DEGRADADO Y TEXTURA DEL PANEL DE MARCA
+   ==================================================================== */
+
 .panel-marca {
   background:
     radial-gradient(
@@ -40,6 +205,17 @@ body {
       rgba(217, 100, 74, 0) 45%
     ),
     linear-gradient(150deg, var(--color-marca) 0%, var(--color-marca-2) 100%);
+  background-size: 160% 160%, 100% 100%;
+  animation: deriva 18s ease-in-out infinite alternate;
+}
+
+@keyframes deriva {
+  from {
+    background-position: 0% 0%, 0 0;
+  }
+  to {
+    background-position: 30% 25%, 0 0;
+  }
 }
 
 /* Textura sutil de grano para dar profundidad al panel. */
@@ -52,7 +228,11 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
 }
 
-/* Aparición suave y escalonada en la carga. */
+/* ====================================================================
+   ANIMACIONES
+   ==================================================================== */
+
+/* Aparición suave en la carga. */
 @keyframes subir {
   from {
     opacity: 0;
@@ -66,4 +246,118 @@ body {
 
 .aparecer {
   animation: subir 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Entrada escalonada automática para los hijos de una lista/contenedor. */
+.entrada > * {
+  animation: subir 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.entrada > *:nth-child(1) {
+  animation-delay: 0.04s;
+}
+.entrada > *:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.entrada > *:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.entrada > *:nth-child(4) {
+  animation-delay: 0.22s;
+}
+.entrada > *:nth-child(5) {
+  animation-delay: 0.28s;
+}
+.entrada > *:nth-child(6) {
+  animation-delay: 0.34s;
+}
+.entrada > *:nth-child(7) {
+  animation-delay: 0.4s;
+}
+.entrada > *:nth-child(n + 8) {
+  animation-delay: 0.46s;
+}
+
+/* Estallido del check de éxito. */
+@keyframes estallido {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.estallar {
+  animation: estallido 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Vibración de la campana de notificaciones. */
+@keyframes campaneo {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(14deg);
+  }
+  30% {
+    transform: rotate(-12deg);
+  }
+  45% {
+    transform: rotate(9deg);
+  }
+  60% {
+    transform: rotate(-6deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+.campaneo {
+  animation: campaneo 0.8s ease;
+  transform-origin: 50% 8%;
+}
+
+/* Toast que entra deslizando desde la derecha. */
+@keyframes deslizar-entra {
+  from {
+    opacity: 0;
+    transform: translateX(28px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+.deslizar-entra {
+  animation: deslizar-entra 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Pulso suave del punto/insignia de notificación. */
+@keyframes latido {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 100, 74, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(217, 100, 74, 0);
+  }
+}
+.latido {
+  animation: latido 2s ease-out infinite;
+}
+
+/* Respeta a quien prefiere menos movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

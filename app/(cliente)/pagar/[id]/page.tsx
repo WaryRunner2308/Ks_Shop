@@ -44,10 +44,7 @@ export default async function PagarPage({
             ? "Estamos verificando tu pago."
             : "Aún no tiene un precio. Te avisaremos cuando esté cotizada."}
         </p>
-        <Link
-          href="/mis-solicitudes"
-          className="mt-6 inline-block rounded-xl border border-linea px-5 py-3 font-medium text-tinta transition hover:bg-crema-2"
-        >
+        <Link href="/mis-solicitudes" className="btn-linea mt-6 px-5 py-3">
           Volver a mis solicitudes
         </Link>
       </div>

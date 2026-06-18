@@ -32,7 +32,7 @@ export default function LoginPage() {
             required
             autoComplete="email"
             placeholder="tucorreo@ejemplo.com"
-            className="rounded-xl border border-linea bg-white px-4 py-3 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20"
+            className="campo"
           />
         </label>
 
@@ -44,7 +44,7 @@ export default function LoginPage() {
             required
             autoComplete="current-password"
             placeholder="••••••••"
-            className="rounded-xl border border-linea bg-white px-4 py-3 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20"
+            className="campo"
           />
         </label>
 
@@ -57,7 +57,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={enviando}
-          className="mt-2 rounded-xl bg-coral px-4 py-3 font-semibold text-white transition hover:bg-coral-dark disabled:opacity-60"
+          className="btn-coral mt-2 px-4 py-3"
         >
           {enviando ? "Entrando…" : "Iniciar sesión"}
         </button>

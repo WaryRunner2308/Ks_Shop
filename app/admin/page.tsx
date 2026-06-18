@@ -35,7 +35,7 @@ function Tarjeta({ s }: { s: Solicitud }) {
   const pendiente = s.estado === "solicitado";
 
   return (
-    <li className="rounded-2xl border border-linea bg-white p-5">
+    <li className={`tarjeta tarjeta-flota p-5 ${pendiente ? "border-coral/30" : ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ function Tarjeta({ s }: { s: Solicitud }) {
             {formatearFecha(s.created_at)}
           </p>
         </div>
-        <span className="shrink-0 rounded-full bg-crema-2 px-3 py-1 text-xs font-medium text-tinta">
+        <span className="chip shrink-0">
           {ESTADO_ETIQUETA[s.estado] ?? s.estado}
         </span>
       </div>
@@ -101,21 +101,18 @@ export default async function AdminPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <header className="mb-8">
-        <div className="flex items-center justify-between gap-4">
+      <header className="mb-8 aparecer">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="font-display text-3xl text-tinta">
             Solicitudes de cotización
           </h1>
           <div className="flex shrink-0 gap-2">
-            <Link
-              href="/admin/pagos"
-              className="rounded-xl border border-linea px-4 py-2 text-sm font-medium text-tinta transition hover:bg-crema-2"
-            >
+            <Link href="/admin/pagos" className="btn-linea px-4 py-2 text-sm">
               Pagos
             </Link>
             <Link
               href="/admin/metodos-pago"
-              className="rounded-xl border border-linea px-4 py-2 text-sm font-medium text-tinta transition hover:bg-crema-2"
+              className="btn-linea px-4 py-2 text-sm"
             >
               Métodos de pago
             </Link>
@@ -124,8 +121,8 @@ export default async function AdminPage() {
         <p className="mt-2 text-sm text-tinta-soft">
           Revisa los productos desde tu cuenta y envía el precio de venta.
         </p>
-        <p className="mt-3 text-xs leading-relaxed text-tinta-soft">
-          Recuerda: {DISCLAIMER_ENVIO}
+        <p className="mt-3 rounded-xl border border-linea bg-white/60 px-4 py-2.5 text-xs leading-relaxed text-tinta-soft">
+          💡 Recuerda: {DISCLAIMER_ENVIO}
         </p>
       </header>
 
@@ -133,16 +130,16 @@ export default async function AdminPage() {
       <section className="mb-10">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-tinta">
           Pendientes
-          <span className="rounded-full bg-coral px-2.5 py-0.5 text-xs font-bold text-white">
+          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-coral px-2 text-xs font-bold text-white">
             {pendientes.length}
           </span>
         </h2>
         {pendientes.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-linea bg-white p-6 text-sm text-tinta-soft">
-            No hay solicitudes pendientes. ¡Todo al día!
+          <p className="tarjeta border-dashed p-6 text-sm text-tinta-soft">
+            No hay solicitudes pendientes. ¡Todo al día! ✨
           </p>
         ) : (
-          <ul className="flex flex-col gap-4">
+          <ul className="entrada flex flex-col gap-4">
             {pendientes.map((s) => (
               <Tarjeta key={s.id} s={s} />
             ))}
@@ -157,11 +154,11 @@ export default async function AdminPage() {
           <span className="text-tinta-soft">({cotizadas.length})</span>
         </h2>
         {cotizadas.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-linea bg-white p-6 text-sm text-tinta-soft">
+          <p className="tarjeta border-dashed p-6 text-sm text-tinta-soft">
             Todavía no has cotizado ninguna.
           </p>
         ) : (
-          <ul className="flex flex-col gap-4">
+          <ul className="entrada flex flex-col gap-4">
             {cotizadas.map((s) => (
               <Tarjeta key={s.id} s={s} />
             ))}

@@ -46,7 +46,7 @@ function Tarjeta({
   const pendiente = pago.estado === "registrado";
 
   return (
-    <li className="rounded-2xl border border-linea bg-white p-5">
+    <li className={`tarjeta tarjeta-flota p-5 ${pendiente ? "border-coral/30" : ""}`}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-medium text-tinta">{cliente}</p>
@@ -73,7 +73,7 @@ function Tarjeta({
           </p>
         </div>
         <div className="shrink-0 text-right">
-          <p className="font-display text-xl text-tinta">
+          <p className="font-display text-2xl text-coral-dark">
             ${Number(pago.monto_declarado ?? 0).toFixed(2)}
           </p>
           <p className="text-xs text-tinta-soft">
@@ -81,7 +81,15 @@ function Tarjeta({
               ? etiquetaTipo(pago.metodos_pago.tipo)
               : "Método eliminado"}
           </p>
-          <span className="mt-1 inline-block rounded-full bg-crema-2 px-3 py-1 text-xs font-medium text-tinta">
+          <span
+            className={`mt-1 inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+              pago.estado === "verificado"
+                ? "bg-green-100 text-green-700"
+                : pago.estado === "rechazado"
+                  ? "bg-coral/15 text-coral-dark"
+                  : "bg-crema-2 text-tinta"
+            }`}
+          >
             {ESTADO_PAGO_ETIQUETA[pago.estado] ?? pago.estado}
           </span>
         </div>
@@ -90,12 +98,17 @@ function Tarjeta({
       {/* Comprobante (con URL firmada temporal) */}
       <div className="mt-4">
         {urlComprobante ? (
-          <a href={urlComprobante} target="_blank" rel="noopener noreferrer">
+          <a
+            href={urlComprobante}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block w-fit overflow-hidden rounded-xl border border-linea"
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={urlComprobante}
               alt="Comprobante de pago"
-              className="max-h-64 rounded-xl border border-linea object-contain"
+              className="max-h-64 object-contain transition duration-300 group-hover:scale-[1.03]"
             />
           </a>
         ) : (
@@ -111,16 +124,16 @@ function Tarjeta({
             <input type="hidden" name="id" value={pago.id} />
             <button
               type="submit"
-              className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-green-700 hover:shadow-md active:translate-y-0"
             >
-              Aprobar pago
+              ✓ Aprobar pago
             </button>
           </form>
           <form action={rechazarPago}>
             <input type="hidden" name="id" value={pago.id} />
             <button
               type="submit"
-              className="rounded-lg border border-coral/40 px-4 py-2 text-sm font-semibold text-coral-dark transition hover:bg-coral/10"
+              className="rounded-xl border border-coral/40 px-4 py-2 text-sm font-semibold text-coral-dark transition hover:-translate-y-0.5 hover:bg-coral/10 active:translate-y-0"
             >
               Rechazar pago
             </button>
@@ -165,8 +178,11 @@ export default async function PagosAdminPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <header className="mb-8">
-        <Link href="/admin" className="text-sm text-coral-dark hover:underline">
+      <header className="mb-8 aparecer">
+        <Link
+          href="/admin"
+          className="inline-flex items-center gap-1 text-sm text-coral-dark transition hover:gap-2 hover:underline"
+        >
           ← Volver al panel
         </Link>
         <h1 className="mt-2 font-display text-3xl text-tinta">
@@ -180,16 +196,16 @@ export default async function PagosAdminPage() {
       <section className="mb-10">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-tinta">
           Por verificar
-          <span className="rounded-full bg-coral px-2.5 py-0.5 text-xs font-bold text-white">
+          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-coral px-2 text-xs font-bold text-white">
             {pendientes.length}
           </span>
         </h2>
         {pendientes.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-linea bg-white p-6 text-sm text-tinta-soft">
-            No hay pagos por verificar. ¡Todo al día!
+          <p className="tarjeta border-dashed p-6 text-sm text-tinta-soft">
+            No hay pagos por verificar. ¡Todo al día! ✨
           </p>
         ) : (
-          <ul className="flex flex-col gap-4">
+          <ul className="entrada flex flex-col gap-4">
             {pendientes.map((p) => (
               <Tarjeta
                 key={p.id}
@@ -210,11 +226,11 @@ export default async function PagosAdminPage() {
           Ya revisados <span className="text-tinta-soft">({revisados.length})</span>
         </h2>
         {revisados.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-linea bg-white p-6 text-sm text-tinta-soft">
+          <p className="tarjeta border-dashed p-6 text-sm text-tinta-soft">
             Todavía no has revisado ninguno.
           </p>
         ) : (
-          <ul className="flex flex-col gap-4">
+          <ul className="entrada flex flex-col gap-4">
             {revisados.map((p) => (
               <Tarjeta
                 key={p.id}

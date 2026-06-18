@@ -16,7 +16,7 @@ export default function RegistroPage() {
   if (estado.ok) {
     return (
       <div className="text-center">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-coral/15 text-2xl">
+        <div className="estallar mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-coral/15 text-3xl text-coral-dark">
           ✓
         </div>
         <h2 className="font-display text-2xl tracking-tight text-tinta">
@@ -25,10 +25,7 @@ export default function RegistroPage() {
         <p className="mt-3 text-sm leading-relaxed text-tinta-soft">
           {estado.mensaje}
         </p>
-        <Link
-          href="/login"
-          className="mt-6 inline-block rounded-xl bg-coral px-6 py-3 font-semibold text-white transition hover:bg-coral-dark"
-        >
+        <Link href="/login" className="btn-coral mt-6 px-6 py-3">
           Ir a iniciar sesión
         </Link>
       </div>
@@ -55,7 +52,7 @@ export default function RegistroPage() {
             required
             autoComplete="name"
             placeholder="Tu nombre"
-            className="rounded-xl border border-linea bg-white px-4 py-3 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20"
+            className="campo"
           />
         </label>
 
@@ -67,7 +64,7 @@ export default function RegistroPage() {
             required
             autoComplete="email"
             placeholder="tucorreo@ejemplo.com"
-            className="rounded-xl border border-linea bg-white px-4 py-3 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20"
+            className="campo"
           />
         </label>
 
@@ -79,7 +76,7 @@ export default function RegistroPage() {
             required
             autoComplete="new-password"
             placeholder="Mínimo 6 caracteres"
-            className="rounded-xl border border-linea bg-white px-4 py-3 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20"
+            className="campo"
           />
         </label>
 
@@ -92,7 +89,7 @@ export default function RegistroPage() {
         <button
           type="submit"
           disabled={enviando}
-          className="mt-2 rounded-xl bg-coral px-4 py-3 font-semibold text-white transition hover:bg-coral-dark disabled:opacity-60"
+          className="btn-coral mt-2 px-4 py-3"
         >
           {enviando ? "Creando cuenta…" : "Crear cuenta"}
         </button>

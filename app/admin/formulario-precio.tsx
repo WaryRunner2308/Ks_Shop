@@ -27,13 +27,13 @@ export default function FormularioPrecio({ id }: { id: number }) {
             min="0"
             required
             placeholder="0.00"
-            className="w-32 rounded-lg border border-linea bg-white py-2 pl-7 pr-3 text-tinta outline-none transition focus:border-coral focus:ring-2 focus:ring-coral/20"
+            className="campo w-32 py-2 pl-7 pr-3"
           />
         </div>
         <button
           type="submit"
           disabled={enviando}
-          className="rounded-lg bg-coral px-4 py-2 text-sm font-semibold text-white transition hover:bg-coral-dark disabled:opacity-60"
+          className="btn-coral px-4 py-2 text-sm"
         >
           {enviando ? "Enviando…" : "Enviar precio al cliente"}
         </button>
