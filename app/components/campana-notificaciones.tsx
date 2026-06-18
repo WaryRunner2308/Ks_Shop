@@ -129,7 +129,7 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
 
       {/* Desplegable */}
       {abierto && (
-        <div className="deslizar-entra absolute right-0 z-20 mt-2 w-80 overflow-hidden rounded-xl border border-linea bg-white shadow-[var(--sombra-media)]">
+        <div className="deslizar-entra fixed inset-x-3 top-[5rem] z-40 overflow-hidden rounded-2xl border border-linea bg-white shadow-[var(--sombra-flota)] sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 sm:rounded-xl sm:shadow-[var(--sombra-media)]">
           <div className="flex items-center justify-between border-b border-linea px-4 py-3">
             <span className="font-semibold text-tinta">Notificaciones</span>
             {noLeidas > 0 && (
