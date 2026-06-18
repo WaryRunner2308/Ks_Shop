@@ -32,8 +32,7 @@ export default async function Home() {
       {/* Pétalos cayendo, como en el login */}
       <LogosFlotantes />
 
-      <header className="relative z-10 flex items-center justify-between px-6 py-5 sm:px-10">
-        <Logo height={48} priority />
+      <header className="relative z-10 flex items-center justify-end px-6 py-5 sm:px-10">
         <nav className="flex items-center gap-2 text-sm sm:gap-3">
           {user ? (
             <>
