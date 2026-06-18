@@ -13,6 +13,8 @@ create table usuarios (
   id uuid primary key references auth.users(id) on delete cascade,
   nombre text,
   email text,
+  -- Teléfono en formato internacional E.164 (p.ej. +584125423385).
+  telefono text,
   rol rol_usuario not null default 'cliente',
   created_at timestamptz not null default now()
 );
@@ -340,3 +342,31 @@ create trigger pago_notifica_cliente
 
 -- Activar Realtime para transmitir los cambios de notificaciones en vivo.
 alter publication supabase_realtime add table notificaciones;
+
+
+-- ============================================================
+-- TRIGGER: al registrarse un usuario en auth, crear su perfil
+-- ============================================================
+-- Copia nombre y teléfono desde los metadatos del registro a public.usuarios.
+create or replace function private.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path to 'public'
+as $$
+begin
+  insert into public.usuarios (id, nombre, email, telefono, rol)
+  values (
+    new.id,
+    coalesce(new.raw_user_meta_data->>'nombre', ''),
+    new.email,
+    nullif(new.raw_user_meta_data->>'telefono', ''),
+    'cliente'
+  );
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function private.handle_new_user();

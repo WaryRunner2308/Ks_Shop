@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { normalizarTelefonoVE } from "@/lib/telefono";
 
 // Estado que devuelven las acciones a los formularios.
 export type EstadoAuth = {
@@ -15,6 +16,7 @@ export type EstadoAuth = {
 const esquemaRegistro = z.object({
   nombre: z.string().trim().min(2, "Escribe tu nombre."),
   email: z.string().trim().email("El correo no es válido."),
+  telefono: z.string().trim().min(1, "Escribe tu número de teléfono."),
   password: z
     .string()
     .min(6, "La contraseña debe tener al menos 6 caracteres."),
@@ -46,6 +48,7 @@ export async function registrarse(
   const parsed = esquemaRegistro.safeParse({
     nombre: formData.get("nombre"),
     email: formData.get("email"),
+    telefono: formData.get("telefono"),
     password: formData.get("password"),
   });
 
@@ -53,13 +56,22 @@ export async function registrarse(
     return { error: parsed.error.issues[0].message };
   }
 
+  // El cliente puede escribir el número con el 0 (04125423385); aquí lo pasamos
+  // a formato internacional (+584125423385) para que WhatsApp funcione.
+  const telefono = normalizarTelefonoVE(parsed.data.telefono);
+  if (!telefono) {
+    return {
+      error: "El teléfono no es válido. Escríbelo así: 04125423385",
+    };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
-    // El nombre se guarda en los metadatos; el trigger de la base de datos
-    // lo copia a la tabla "usuarios" al crear el perfil.
-    options: { data: { nombre: parsed.data.nombre } },
+    // El nombre y el teléfono se guardan en los metadatos; el trigger de la
+    // base de datos los copia a la tabla "usuarios" al crear el perfil.
+    options: { data: { nombre: parsed.data.nombre, telefono } },
   });
 
   if (error) {

@@ -167,6 +167,9 @@ export default async function AdminPage() {
 
       {/* Accesos rápidos */}
       <div className="mb-6 flex flex-wrap gap-2">
+        <Link href="/admin/clientes" className="btn-linea px-4 py-2 text-sm">
+          Clientes
+        </Link>
         <Link href="/admin/pagos" className="btn-linea px-4 py-2 text-sm">
           Pagos
         </Link>

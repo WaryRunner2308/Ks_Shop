@@ -69,6 +69,22 @@ export default function RegistroPage() {
         </label>
 
         <label className="flex flex-col gap-1.5">
+          <span className="text-sm font-medium text-tinta">Teléfono</span>
+          <input
+            type="tel"
+            name="telefono"
+            required
+            autoComplete="tel"
+            placeholder="04125423385"
+            className="campo"
+          />
+          <span className="text-xs text-tinta-soft">
+            Escríbelo con el 0 (ej: 04125423385). Lo usamos para escribirte por
+            WhatsApp.
+          </span>
+        </label>
+
+        <label className="flex flex-col gap-1.5">
           <span className="text-sm font-medium text-tinta">Contraseña</span>
           <input
             type="password"
