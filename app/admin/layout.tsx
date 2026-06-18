@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import CampanaNotificaciones, {
   type Notificacion,
-} from "./campana-notificaciones";
+} from "@/app/components/campana-notificaciones";
 
 export default async function AdminLayout({
   children,
@@ -25,7 +25,7 @@ export default async function AdminLayout({
         <Link href="/admin" className="font-display text-xl text-tinta">
           K&apos;s Shop · Admin
         </Link>
-        <CampanaNotificaciones inicial={data ?? []} />
+        <CampanaNotificaciones inicial={data ?? []} canal="notis-admin" />
       </header>
 
       <div className="flex-1">{children}</div>

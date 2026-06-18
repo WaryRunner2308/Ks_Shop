@@ -148,13 +148,23 @@ create policy pagos_update on pagos for update to authenticated
 create policy pagos_delete on pagos for delete to authenticated
   using (private.es_admin());
 
--- NOTIFICACIONES: son para la duena; solo ella las lee, marca leidas y borra.
--- El insert se hace desde el servidor (service_role, que omite RLS), por eso no hay
--- politica de insert para clientes.
+-- NOTIFICACIONES: usuario_id es el DESTINATARIO. Cliente -> su id;
+-- duena (admin) -> usuario_id NULL. Cada quien ve/actualiza solo las suyas.
+-- El insert lo hacen los triggers (omiten RLS), por eso no hay politica de insert.
 create policy notificaciones_select on notificaciones for select to authenticated
-  using (private.es_admin());
+  using (
+    usuario_id = auth.uid()
+    or (usuario_id is null and private.es_admin())
+  );
 create policy notificaciones_update on notificaciones for update to authenticated
-  using (private.es_admin()) with check (private.es_admin());
+  using (
+    usuario_id = auth.uid()
+    or (usuario_id is null and private.es_admin())
+  )
+  with check (
+    usuario_id = auth.uid()
+    or (usuario_id is null and private.es_admin())
+  );
 create policy notificaciones_delete on notificaciones for delete to authenticated
   using (private.es_admin());
 
@@ -267,6 +277,66 @@ $$;
 create trigger pago_notifica_admin
   after insert on pagos
   for each row execute function private.notificar_nuevo_pago();
+
+-- Aviso al CLIENTE cuando su solicitud queda cotizada.
+create or replace function private.notificar_cliente_cotizado()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.estado = 'cotizado' and old.estado is distinct from 'cotizado' then
+    insert into notificaciones (usuario_id, presupuesto_id, mensaje)
+    values (
+      new.usuario_id,
+      new.id,
+      'Tu solicitud de ' ||
+      (case new.plataforma
+        when 'aliexpress' then 'AliExpress'
+        when 'shein' then 'Shein'
+        when 'alibaba' then 'Alibaba'
+        else new.plataforma::text
+      end)
+      || ' ya tiene precio: $'
+      || to_char(coalesce(new.precio_venta, 0), 'FM999999990.00')
+    );
+  end if;
+  return new;
+end;
+$$;
+
+create trigger presupuesto_notifica_cliente
+  after update on presupuestos
+  for each row execute function private.notificar_cliente_cotizado();
+
+-- Aviso al CLIENTE cuando su pago es verificado o rechazado.
+create or replace function private.notificar_cliente_pago()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.estado in ('verificado', 'rechazado')
+     and old.estado is distinct from new.estado then
+    insert into notificaciones (usuario_id, presupuesto_id, mensaje)
+    values (
+      new.usuario_id,
+      new.presupuesto_id,
+      case new.estado
+        when 'verificado' then 'Tu pago fue verificado'
+        else 'Tu pago fue rechazado'
+      end
+    );
+  end if;
+  return new;
+end;
+$$;
+
+create trigger pago_notifica_cliente
+  after update on pagos
+  for each row execute function private.notificar_cliente_pago();
 
 -- Activar Realtime para transmitir los cambios de notificaciones en vivo.
 alter publication supabase_realtime add table notificaciones;

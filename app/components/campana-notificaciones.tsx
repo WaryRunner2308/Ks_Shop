@@ -20,11 +20,16 @@ function hora(iso: string): string {
   });
 }
 
-export default function CampanaNotificaciones({
-  inicial,
-}: {
+type Props = {
   inicial: Notificacion[];
-}) {
+  // Nombre único del canal de Realtime (evita choques entre admin y cliente).
+  canal: string;
+  // Filtro opcional de Realtime (p.ej. "usuario_id=eq.<id>"). El admin no usa
+  // filtro: la RLS ya le entrega solo las del negocio.
+  filtro?: string;
+};
+
+export default function CampanaNotificaciones({ inicial, canal, filtro }: Props) {
   const [notis, setNotis] = useState<Notificacion[]>(inicial);
   const [abierto, setAbierto] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -35,23 +40,26 @@ export default function CampanaNotificaciones({
   // Suscripción a Realtime: cada notificación nueva entra en vivo.
   useEffect(() => {
     const supabase = createClient();
-    const canal = supabase
-      .channel("notificaciones-admin")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notificaciones" },
-        (payload) => {
-          const nueva = payload.new as Notificacion;
-          setNotis((prev) => [nueva, ...prev]);
-          setToast(nueva.mensaje);
-        },
-      )
-      .subscribe();
+    const suscripcion = supabase.channel(canal).on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "notificaciones",
+        ...(filtro ? { filter: filtro } : {}),
+      },
+      (payload) => {
+        const nueva = payload.new as Notificacion;
+        setNotis((prev) => [nueva, ...prev]);
+        setToast(nueva.mensaje);
+      },
+    );
+    suscripcion.subscribe();
 
     return () => {
-      supabase.removeChannel(canal);
+      supabase.removeChannel(suscripcion);
     };
-  }, []);
+  }, [canal, filtro]);
 
   // El toast se oculta solo a los 5 segundos.
   useEffect(() => {
