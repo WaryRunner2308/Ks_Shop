@@ -54,27 +54,13 @@ export default function LogosFlotantes() {
             } as React.CSSProperties
           }
         >
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: item.size,
-              height: item.size,
-              borderRadius: "24%",
-              background: "rgba(255,255,255,0.92)",
-              boxShadow: "0 4px 16px rgba(0,0,0,0.35), 0 1px 4px rgba(0,0,0,0.2)",
-              overflow: "hidden",
-            }}
-          >
-            <Image
-              src={LOGO_SRC[item.plat]}
-              alt={item.plat}
-              width={item.size}
-              height={item.size}
-              style={{ objectFit: "contain", width: "80%", height: "80%" }}
-            />
-          </span>
+          <Image
+            src={LOGO_SRC[item.plat]}
+            alt={item.plat}
+            width={item.size}
+            height={item.size}
+            style={{ objectFit: "contain", width: item.size, height: item.size, filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))" }}
+          />
         </span>
       ))}
     </div>
