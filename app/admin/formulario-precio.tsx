@@ -22,6 +22,7 @@ export default function FormularioPrecio({ id }: { id: number }) {
           </span>
           <input
             type="number"
+            inputMode="decimal"
             name="precio_venta"
             step="0.01"
             min="0"
