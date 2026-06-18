@@ -236,27 +236,52 @@ export default async function Home() {
                   const tienePrecio =
                     s.precio_venta != null &&
                     (s.estado === "cotizado" || s.estado === "pagado");
+                  // Si ya está cotizada con precio, el siguiente paso es pagar.
+                  const puedePagar =
+                    s.estado === "cotizado" && s.precio_venta != null;
+                  const destino = puedePagar
+                    ? `/pagar/${s.id}`
+                    : "/mis-solicitudes";
                   return (
-                    <li
-                      key={s.id}
-                      className="tarjeta tarjeta-flota flex items-center justify-between gap-3 p-4"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate font-medium text-tinta">
-                          {etiquetaPlataforma(s.plataforma)}
-                        </p>
-                        <p className="truncate text-xs text-tinta-soft">
-                          {s.variante || s.url_producto}
-                        </p>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-3">
-                        {tienePrecio && (
-                          <span className="font-display text-lg text-coral-dark">
-                            ${Number(s.precio_venta).toFixed(2)}
-                          </span>
-                        )}
-                        <ChipEstado estado={s.estado} />
-                      </div>
+                    <li key={s.id}>
+                      <Link
+                        href={destino}
+                        className="tarjeta tarjeta-flota flex items-center justify-between gap-3 p-4"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate font-medium text-tinta">
+                            {etiquetaPlataforma(s.plataforma)}
+                          </p>
+                          <p className="truncate text-xs text-tinta-soft">
+                            {s.variante || s.url_producto}
+                          </p>
+                          {puedePagar && (
+                            <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-coral-dark">
+                              Pagar ahora
+                              <svg
+                                width="13"
+                                height="13"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.4"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M5 12h14M13 6l6 6-6 6" />
+                              </svg>
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex shrink-0 items-center gap-3">
+                          {tienePrecio && (
+                            <span className="font-display text-lg text-coral-dark">
+                              ${Number(s.precio_venta).toFixed(2)}
+                            </span>
+                          )}
+                          <ChipEstado estado={s.estado} />
+                        </div>
+                      </Link>
                     </li>
                   );
                 })}
