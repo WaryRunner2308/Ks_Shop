@@ -68,7 +68,8 @@ body {
 html {
   background: var(--background);
 }
-html:has(.escena-auth) {
+html:has(.escena-auth),
+body:has(.escena-auth) {
   background: #2c021d;
 }
 

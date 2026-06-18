@@ -1,5 +1,10 @@
+import type { Viewport } from "next";
 import Link from "next/link";
 import Logo from "@/app/components/logo";
+
+export const viewport: Viewport = {
+  themeColor: "#2c021d",
+};
 
 // Escena inmersiva "Aurora de pétalos": aurora fucsia en movimiento, orbes de
 // luz que ascienden, pétalos cayendo y una tarjeta de vidrio luminoso al centro
