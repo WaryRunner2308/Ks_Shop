@@ -7,7 +7,7 @@
    ==================================================================== */
 
 :root {
-  --background: #fff3fa;
+  --background: #ffe3f3;
   --foreground: #1b0610;
 }
 
@@ -104,7 +104,7 @@ body::before {
       rgba(197, 6, 112, 0.28) 0%,
       rgba(197, 6, 112, 0) 60%
     ),
-    linear-gradient(180deg, #fff6fb 0%, #ffe9f5 45%, #ffdcef 100%);
+    linear-gradient(180deg, #ffe6f4 0%, #ffd4eb 48%, #ffc5e1 100%);
   background-size: 200% 200%, 200% 200%, 200% 200%, 200% 200%, 100% 100%;
   animation: cielo 26s ease-in-out infinite alternate;
 }
@@ -119,22 +119,22 @@ body::after {
   background:
     radial-gradient(
       38% 26% at 22% 30%,
-      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.5) 0%,
       rgba(255, 255, 255, 0) 70%
     ),
     radial-gradient(
       30% 22% at 70% 22%,
-      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0.4) 0%,
       rgba(255, 255, 255, 0) 70%
     ),
     radial-gradient(
       42% 30% at 78% 70%,
-      rgba(255, 255, 255, 0.82) 0%,
+      rgba(255, 255, 255, 0.45) 0%,
       rgba(255, 255, 255, 0) 72%
     ),
     radial-gradient(
       34% 24% at 18% 82%,
-      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.42) 0%,
       rgba(255, 255, 255, 0) 72%
     );
   filter: blur(8px);
