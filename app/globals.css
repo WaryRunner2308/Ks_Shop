@@ -86,12 +86,12 @@ body::before {
   background:
     radial-gradient(
       55% 45% at 12% 8%,
-      rgba(255, 123, 194, 0.55) 0%,
+      rgba(255, 123, 194, 0.62) 0%,
       rgba(255, 123, 194, 0) 60%
     ),
     radial-gradient(
       50% 40% at 88% 6%,
-      rgba(236, 11, 134, 0.4) 0%,
+      rgba(236, 11, 134, 0.48) 0%,
       rgba(236, 11, 134, 0) 60%
     ),
     radial-gradient(
@@ -104,7 +104,7 @@ body::before {
       rgba(197, 6, 112, 0.28) 0%,
       rgba(197, 6, 112, 0) 60%
     ),
-    linear-gradient(180deg, #ffe6f4 0%, #ffd4eb 48%, #ffc5e1 100%);
+    linear-gradient(180deg, #ffe9f5 0%, #ffceea 50%, #ffb6da 100%);
   background-size: 200% 200%, 200% 200%, 200% 200%, 200% 200%, 100% 100%;
   animation: cielo 26s ease-in-out infinite alternate;
 }
@@ -678,6 +678,12 @@ body::after {
 }
 .petalo-claro {
   background: linear-gradient(135deg, #ffffff, #ffd6ec);
+}
+/* Pétalo fucsia: para fondos CLAROS (portada), con más color y un brillo suave
+   para que resalte sobre el rosa del sistema. */
+.petalo-fucsia {
+  background: linear-gradient(135deg, #ff8fce, #ec0b86);
+  box-shadow: 0 1px 7px rgba(236, 11, 134, 0.4);
 }
 @keyframes caer {
   0% {

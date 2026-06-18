@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { cerrarSesion } from "@/app/auth/actions";
 import Logo from "@/app/components/logo";
+import LluviaPetalos from "@/app/components/lluvia-petalos";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -27,8 +28,11 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col text-tinta">
-      <header className="flex items-center justify-between px-6 py-5 sm:px-10">
+    <div className="relative isolate flex min-h-screen flex-col overflow-hidden text-tinta">
+      {/* Pétalos cayendo, como en el login */}
+      <LluviaPetalos />
+
+      <header className="relative z-10 flex items-center justify-between px-6 py-5 sm:px-10">
         <Logo height={48} priority />
         <nav className="flex items-center gap-2 text-sm sm:gap-3">
           {user ? (
@@ -59,11 +63,12 @@ export default async function Home() {
         </nav>
       </header>
 
-      <main className="entrada relative flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
-        {/* Nubecitas flotantes decorativas detrás del titular */}
+      <main className="entrada relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-16 text-center">
+        {/* Glow central: brillo blanco que se funde en rosa, da el "rosadito
+            bonito" con dimensión detrás del titular. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-10 -z-10 h-72 w-[34rem] max-w-[90vw] -translate-x-1/2 rounded-full bg-white/50 blur-3xl flotar"
+          className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[28rem] w-[46rem] max-w-[125vw] -translate-x-1/2 -translate-y-10 rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,0.75),rgba(255,123,194,0.28)_55%,transparent)] blur-2xl flotar"
         />
         <div className="flotar mb-2">
           <Logo href={null} height={150} priority />
