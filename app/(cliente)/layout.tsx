@@ -6,7 +6,7 @@ import Logo from "@/app/components/logo";
 import CampanaNotificaciones, {
   type Notificacion,
 } from "@/app/components/campana-notificaciones";
-import ActivarPush from "@/app/components/activar-push";
+import WizardPush from "@/app/components/wizard-push";
 
 export default async function ClienteLayout({
   children,
@@ -39,18 +39,11 @@ export default async function ClienteLayout({
             Inicio
           </Link>
           <Link
-            href="/cotizar"
-            className="rounded-full px-3 py-2 font-medium text-tinta transition hover:bg-crema-2"
-          >
-            Cotizar
-          </Link>
-          <Link
             href="/mis-solicitudes"
             className="rounded-full px-3 py-2 font-medium text-tinta transition hover:bg-crema-2"
           >
             Mis solicitudes
           </Link>
-          <ActivarPush />
           <CampanaNotificaciones
             inicial={data ?? []}
             canal="notis-cliente"
@@ -66,6 +59,8 @@ export default async function ClienteLayout({
           </form>
         </nav>
       </header>
+
+      <WizardPush />
 
       <div className="flex-1">{children}</div>
     </div>

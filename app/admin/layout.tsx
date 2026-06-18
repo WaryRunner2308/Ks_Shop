@@ -3,7 +3,7 @@ import { cerrarSesion } from "@/app/auth/actions";
 import CampanaNotificaciones, {
   type Notificacion,
 } from "@/app/components/campana-notificaciones";
-import ActivarPush from "@/app/components/activar-push";
+import WizardPush from "@/app/components/wizard-push";
 import Logo from "@/app/components/logo";
 
 export default async function AdminLayout({
@@ -32,7 +32,6 @@ export default async function AdminLayout({
           <span className="chip hidden sm:inline-flex">Panel de la dueña</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          <ActivarPush />
           <CampanaNotificaciones inicial={data ?? []} canal="notis-admin" />
           <form action={cerrarSesion}>
             <button type="submit" className="btn-linea px-4 py-2 text-sm">
@@ -41,6 +40,8 @@ export default async function AdminLayout({
           </form>
         </div>
       </header>
+
+      <WizardPush />
 
       <div className="flex-1">{children}</div>
 
