@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { cerrarSesion } from "@/app/auth/actions";
 import Logo from "@/app/components/logo";
-import LluviaPetalos from "@/app/components/lluvia-petalos";
+import LogosFlotantes from "@/app/components/logos-flotantes";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -30,7 +30,7 @@ export default async function Home() {
   return (
     <div className="relative isolate flex min-h-screen flex-col overflow-hidden text-tinta">
       {/* Pétalos cayendo, como en el login */}
-      <LluviaPetalos />
+      <LogosFlotantes />
 
       <header className="relative z-10 flex items-center justify-between px-6 py-5 sm:px-10">
         <Logo height={48} priority />
@@ -95,9 +95,9 @@ export default async function Home() {
           )}
         </h1>
         <p className="mt-6 max-w-md text-base leading-relaxed text-tinta-soft">
-          Cotiza, paga y recibe tus compras de AliExpress, Shein y Alibaba sin
-          complicaciones. El precio del envío internacional se notificará cuando
-          el paquete llegue al país.
+          Cotiza, paga y recibe tus compras de AliExpress, Shein, Temu y eBay
+          sin complicaciones. El precio del envío internacional se notificará
+          cuando el paquete llegue al país.
         </p>
 
         <Link
@@ -109,7 +109,7 @@ export default async function Home() {
 
         {/* Plataformas con las que trabajamos */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-2.5 text-sm">
-          {["AliExpress", "Shein", "Alibaba"].map((p) => (
+          {["AliExpress", "Shein", "Temu", "eBay"].map((p) => (
             <span
               key={p}
               className="btn-linea px-4 py-1.5 text-sm font-medium"

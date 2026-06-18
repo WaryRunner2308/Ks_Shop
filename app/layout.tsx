@@ -19,7 +19,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "K's Shop",
   description:
-    "K's Shop — tus compras de AliExpress, Shein y Alibaba, sin complicaciones.",
+    "K's Shop — tus compras de AliExpress, Shein, Temu y eBay, sin complicaciones.",
   // Habilita modo standalone y la barra de estado en iOS al instalar la PWA.
   appleWebApp: {
     capable: true,

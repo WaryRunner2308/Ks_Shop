@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "K's Shop",
     short_name: "K's Shop",
     description:
-      "Tus compras de AliExpress, Shein y Alibaba, sin complicaciones.",
+      "Tus compras de AliExpress, Shein, Temu y eBay, sin complicaciones.",
     start_url: "/",
     display: "standalone",
     theme_color: "#ec0b86",

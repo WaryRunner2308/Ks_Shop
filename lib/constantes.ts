@@ -3,7 +3,8 @@
 export const PLATAFORMAS = [
   { valor: "aliexpress", etiqueta: "AliExpress" },
   { valor: "shein", etiqueta: "Shein" },
-  { valor: "alibaba", etiqueta: "Alibaba" },
+  { valor: "temu", etiqueta: "Temu" },
+  { valor: "ebay", etiqueta: "eBay" },
 ] as const;
 
 export type Plataforma = (typeof PLATAFORMAS)[number]["valor"];
