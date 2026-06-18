@@ -39,27 +39,53 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
   const noLeidas = notis.filter((n) => !n.leida).length;
 
   // Suscripción a Realtime: cada notificación nueva entra en vivo.
+  // IMPORTANTE: la tabla tiene RLS, así que el canal DEBE autenticarse con el
+  // token del usuario ANTES de suscribirse. Si no, Realtime conecta como
+  // "anónimo" y no entrega nada (el aviso solo aparecía al recargar la página).
   useEffect(() => {
     const supabase = createClient();
-    const suscripcion = supabase.channel(canal).on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "notificaciones",
-        ...(filtro ? { filter: filtro } : {}),
-      },
-      (payload) => {
-        const nueva = payload.new as Notificacion;
-        setNotis((prev) => [nueva, ...prev]);
-        setToast(nueva.mensaje);
-        setVibrando(true);
-      },
-    );
-    suscripcion.subscribe();
+    let canalActivo: ReturnType<typeof supabase.channel> | null = null;
+    let cancelado = false;
+
+    async function suscribir() {
+      // Espera a tener la sesión y pásale el token al cliente de Realtime.
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (cancelado) return;
+      if (session?.access_token) {
+        await supabase.realtime.setAuth(session.access_token);
+      }
+      if (cancelado) return;
+
+      canalActivo = supabase
+        .channel(canal)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notificaciones",
+            ...(filtro ? { filter: filtro } : {}),
+          },
+          (payload) => {
+            const nueva = payload.new as Notificacion;
+            // Evita duplicar si llega dos veces.
+            setNotis((prev) =>
+              prev.some((n) => n.id === nueva.id) ? prev : [nueva, ...prev],
+            );
+            setToast(nueva.mensaje);
+            setVibrando(true);
+          },
+        )
+        .subscribe();
+    }
+
+    suscribir();
 
     return () => {
-      supabase.removeChannel(suscripcion);
+      cancelado = true;
+      if (canalActivo) supabase.removeChannel(canalActivo);
     };
   }, [canal, filtro]);
 
