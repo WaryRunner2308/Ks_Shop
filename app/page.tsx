@@ -120,8 +120,12 @@ export default async function Home() {
         </Link>
 
         {/* Plataformas con las que trabajamos */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-2.5 text-sm">
-          {["AliExpress", "Shein", "Temu", "eBay"].map((p) => (
+        <div className="mt-12 text-center">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-tinta-soft">
+            Plataformas con las que trabajo
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2.5 text-sm">
+          {["AliExpress", "Shein", "Temu", "eBay", "Romwe", "Fashion Nova", "Dolls Kill", "Babyboo", "Beauty Creations"].map((p) => (
             <span
               key={p}
               className="btn-linea px-4 py-1.5 text-sm font-medium"
@@ -129,6 +133,7 @@ export default async function Home() {
               {p}
             </span>
           ))}
+          </div>
         </div>
       </main>
     </div>

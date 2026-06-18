@@ -1,10 +1,15 @@
 // Plataformas que ofrece K's Shop. El "valor" se guarda en la base de datos;
 // la "etiqueta" es lo que ve el cliente.
 export const PLATAFORMAS = [
-  { valor: "aliexpress", etiqueta: "AliExpress" },
-  { valor: "shein", etiqueta: "Shein" },
-  { valor: "temu", etiqueta: "Temu" },
-  { valor: "ebay", etiqueta: "eBay" },
+  { valor: "aliexpress",        etiqueta: "AliExpress"              },
+  { valor: "shein",             etiqueta: "Shein"                   },
+  { valor: "temu",              etiqueta: "Temu"                    },
+  { valor: "ebay",              etiqueta: "eBay"                    },
+  { valor: "romwe",             etiqueta: "Romwe"                   },
+  { valor: "fashionnova",       etiqueta: "Fashion Nova"            },
+  { valor: "dollskill",         etiqueta: "Dolls Kill"              },
+  { valor: "babyboo",           etiqueta: "Babyboo"                 },
+  { valor: "beautycreations",   etiqueta: "Beauty Creations"        },
 ] as const;
 
 export type Plataforma = (typeof PLATAFORMAS)[number]["valor"];
