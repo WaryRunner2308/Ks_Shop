@@ -48,6 +48,15 @@ export default function LoginPage() {
           />
         </label>
 
+        <div className="-mt-1 text-right">
+          <Link
+            href="/recuperar"
+            className="text-sm font-medium text-coral-dark hover:underline"
+          >
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </div>
+
         {estado.error && (
           <p className="rounded-lg bg-coral/10 px-4 py-3 text-sm text-coral-dark">
             {estado.error}

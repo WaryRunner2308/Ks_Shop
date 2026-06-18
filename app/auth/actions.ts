@@ -27,6 +27,21 @@ const esquemaLogin = z.object({
   password: z.string().min(1, "Escribe tu contraseña."),
 });
 
+const esquemaEmail = z.object({
+  email: z.string().trim().email("El correo no es válido."),
+});
+
+const esquemaCodigo = z.object({
+  email: z.string().trim().email("El correo no es válido."),
+  codigo: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "El código son 6 dígitos."),
+  password: z
+    .string()
+    .min(6, "La nueva contraseña debe tener al menos 6 caracteres."),
+});
+
 // Traduce los errores más comunes de Supabase a español.
 function traducirError(mensaje: string): string {
   if (mensaje.includes("already registered")) {
@@ -109,6 +124,74 @@ export async function iniciarSesion(
 
   if (error) {
     return { error: traducirError(error.message) };
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/");
+}
+
+// Paso 1 de recuperación: enviar un código de 6 dígitos al correo.
+// No revelamos si el correo existe o no (seguridad): siempre respondemos ok.
+export async function solicitarCodigoRecuperacion(
+  _prev: EstadoAuth,
+  formData: FormData,
+): Promise<EstadoAuth> {
+  const parsed = esquemaEmail.safeParse({ email: formData.get("email") });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    parsed.data.email,
+  );
+
+  // Solo frenamos por límite de envíos; lo demás se trata como ok para no
+  // filtrar qué correos existen.
+  if (error && /rate|too many/i.test(error.message)) {
+    return { error: "Demasiados intentos. Espera un momento e intenta de nuevo." };
+  }
+
+  return {
+    ok: true,
+    mensaje: "Si el correo existe, te enviamos un código de 6 dígitos.",
+  };
+}
+
+// Paso 2 de recuperación: verificar el código y poner la nueva contraseña.
+export async function restablecerConCodigo(
+  _prev: EstadoAuth,
+  formData: FormData,
+): Promise<EstadoAuth> {
+  const parsed = esquemaCodigo.safeParse({
+    email: formData.get("email"),
+    codigo: formData.get("codigo"),
+    password: formData.get("password"),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  const supabase = await createClient();
+
+  // Verificar el código (crea sesión si es válido).
+  const { error: errVerif } = await supabase.auth.verifyOtp({
+    email: parsed.data.email,
+    token: parsed.data.codigo,
+    type: "recovery",
+  });
+  if (errVerif) {
+    return {
+      error: "El código no es válido o ya expiró. Pide uno nuevo.",
+    };
+  }
+
+  // Cambiar la contraseña del usuario ya autenticado por el código.
+  const { error: errUpd } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+  if (errUpd) {
+    return { error: "No se pudo cambiar la contraseña. Intenta de nuevo." };
   }
 
   revalidatePath("/", "layout");

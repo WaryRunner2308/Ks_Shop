@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 // Páginas públicas (cualquiera puede entrar sin iniciar sesión).
-const RUTAS_PUBLICAS = ["/", "/login", "/registro"];
+const RUTAS_PUBLICAS = ["/", "/login", "/registro", "/recuperar"];
 
 export async function proxy(request: NextRequest) {
   const { supabase, supabaseResponse, user } = await updateSession(request);
