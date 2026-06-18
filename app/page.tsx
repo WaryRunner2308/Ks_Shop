@@ -55,7 +55,7 @@ export default async function Home() {
           ) : (
             <Link
               href="/login"
-              className="rounded-full px-4 py-2 font-medium transition hover:bg-crema-2"
+              className="rounded-2xl border border-coral/40 bg-white/70 px-5 py-2.5 font-semibold text-coral-dark shadow-[0_6px_18px_-6px_rgba(236,11,134,0.45)] backdrop-blur-md transition hover:-translate-y-0.5 hover:border-coral hover:bg-white hover:shadow-[0_10px_26px_-8px_rgba(236,11,134,0.55)]"
             >
               Iniciar sesión
             </Link>

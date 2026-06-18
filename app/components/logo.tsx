@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 
-// Logo oficial de K's Shop. El archivo tiene fondo blanco, así que sobre
-// fondos claros usamos `mix-blend-multiply` para fundir ese blanco con las
-// nubes. Sobre fondos oscuros usamos `plate` (placa blanca) para que el
-// trazo negro del logo siga siendo legible.
+// Logo oficial de K's Shop. El archivo trae fondo blanco, así que lo
+// presentamos como una tarjetita blanca con esquinas redondeadas y una sombra
+// rosada suave: se ve bien sobre cualquier fondo y evita el cuadrado blanco
+// "duro". `plate` solo cambia la sombra (más fuerte para fondos oscuros).
 export default function Logo({
   height = 44,
   href = "/",
@@ -26,20 +26,22 @@ export default function Logo({
       height={1005}
       priority={priority}
       sizes={`${height * 2}px`}
-      className={plate ? "select-none" : "select-none mix-blend-multiply"}
+      className="select-none"
       style={{ height, width: "auto" }}
     />
   );
 
-  const contenido = plate ? (
+  const contenido = (
     <span
-      className="inline-flex items-center justify-center rounded-2xl bg-white/95 px-3 py-2 shadow-[0_8px_24px_-8px_rgba(74,3,48,0.5)]"
+      className={`inline-flex items-center justify-center overflow-hidden rounded-[24%] bg-white p-1 ring-1 ring-black/5 ${
+        plate
+          ? "shadow-[0_8px_24px_-8px_rgba(74,3,48,0.55)]"
+          : "shadow-[0_10px_28px_-10px_rgba(236,11,134,0.45)]"
+      }`}
       style={{ lineHeight: 0 }}
     >
       {img}
     </span>
-  ) : (
-    img
   );
 
   if (href === null) {
