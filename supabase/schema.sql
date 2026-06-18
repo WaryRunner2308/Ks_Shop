@@ -3,7 +3,7 @@
 
 -- Enums
 create type rol_usuario as enum ('cliente', 'admin');
-create type estado_presupuesto as enum ('solicitado', 'cotizado', 'pagado', 'cancelado');
+create type estado_presupuesto as enum ('solicitado', 'cotizado', 'pagado', 'confirmado', 'cancelado');
 create type estado_pago as enum ('registrado', 'verificado', 'rechazado');
 create type plataforma_compra as enum ('aliexpress', 'shein', 'alibaba');
 create type tipo_metodo_pago as enum ('pago_movil', 'transferencia', 'binance', 'paypal', 'zelle');
@@ -46,6 +46,9 @@ create table presupuestos (
   imagen_url text,
   precio_venta numeric(12,2),
   estado estado_presupuesto not null default 'solicitado',
+  -- Banderas de "ocultar del historial de confirmadas", independientes por lado.
+  archivada_admin boolean not null default false,
+  archivada_cliente boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -143,6 +146,37 @@ create policy presupuestos_update on presupuestos for update to authenticated
   using (private.es_admin()) with check (private.es_admin());
 create policy presupuestos_delete on presupuestos for delete to authenticated
   using (private.es_admin());
+
+-- El cliente no tiene update directo (la política es solo-admin). Estas funciones
+-- SECURITY DEFINER le permiten ocultar SOLO sus propias cotizaciones confirmadas
+-- del historial (sin afectar al admin).
+create or replace function public.ocultar_confirmada_cliente(p_id bigint)
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  update presupuestos
+  set archivada_cliente = true
+  where id = p_id
+    and usuario_id = auth.uid()
+    and estado = 'confirmado';
+$$;
+
+create or replace function public.vaciar_confirmadas_cliente()
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  update presupuestos
+  set archivada_cliente = true
+  where usuario_id = auth.uid()
+    and estado = 'confirmado';
+$$;
+
+grant execute on function public.ocultar_confirmada_cliente(bigint) to authenticated;
+grant execute on function public.vaciar_confirmadas_cliente() to authenticated;
 
 -- PAGOS: el cliente ve y sube los suyos; solo la duena los verifica/rechaza y borra.
 create policy pagos_select on pagos for select to authenticated

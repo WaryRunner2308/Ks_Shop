@@ -23,6 +23,7 @@ export const ESTADO_ETIQUETA: Record<string, string> = {
   solicitado: "Solicitado",
   cotizado: "Cotizado",
   pagado: "Pagado",
+  confirmado: "Confirmado",
   cancelado: "Cancelado",
 };
 

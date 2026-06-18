@@ -49,9 +49,9 @@ export default async function MisSolicitudesPage({
     .order("created_at", { ascending: false })
     .returns<Solicitud[]>();
 
-  const solicitudes = (data ?? []).filter((s) =>
-    pasaFiltro(s.estado, filtro),
-  );
+  // Las confirmadas salen de aquí y van a su propia página /confirmadas.
+  const activas = (data ?? []).filter((s) => s.estado !== "confirmado");
+  const solicitudes = activas.filter((s) => pasaFiltro(s.estado, filtro));
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
@@ -86,6 +86,42 @@ export default async function MisSolicitudesPage({
           Pedir cotización
         </Link>
       </header>
+
+      {/* Acceso a las confirmadas */}
+      <Link
+        href="/confirmadas"
+        className="aparecer mb-4 flex items-center justify-between gap-3 rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.06] px-4 py-3 transition hover:border-emerald-400/40 hover:bg-emerald-400/10"
+      >
+        <span className="flex items-center gap-2.5 text-sm font-medium text-tinta">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-emerald-300"
+          >
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+          Ver mis compras confirmadas
+        </span>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-tinta-soft"
+        >
+          <path d="M9 18l6-6-6-6" />
+        </svg>
+      </Link>
 
       {/* Filtros */}
       <div className="aparecer mb-6 flex flex-wrap gap-2">

@@ -22,6 +22,7 @@ const ESTADO_ESTILO: Record<string, { clase: string; punto: string }> = {
   solicitado: { clase: "bg-amber-400/12 text-amber-300", punto: "bg-amber-400" },
   cotizado: { clase: "bg-coral/15 text-coral-dark", punto: "bg-coral" },
   pagado: { clase: "bg-emerald-400/12 text-emerald-300", punto: "bg-emerald-400" },
+  confirmado: { clase: "bg-emerald-400/15 text-emerald-300", punto: "bg-emerald-400" },
   cancelado: { clase: "bg-white/8 text-tinta-soft", punto: "bg-tinta-soft" },
 };
 
@@ -72,11 +73,13 @@ export default async function Home() {
       .returns<Solicitud[]>();
 
     const solicitudes = data ?? [];
-    const recientes = solicitudes.slice(0, 3);
-    const pendientes = solicitudes.filter(
+    // Las confirmadas salen del inicio y van a su propia página.
+    const activas = solicitudes.filter((s) => s.estado !== "confirmado");
+    const recientes = activas.slice(0, 3);
+    const pendientes = activas.filter(
       (s) => s.estado === "solicitado",
     ).length;
-    const conPrecio = solicitudes.filter(
+    const conPrecio = activas.filter(
       (s) => s.estado === "cotizado" || s.estado === "pagado",
     ).length;
     const nombre = perfil?.nombre?.split(" ")[0] || "qué gusto verte";

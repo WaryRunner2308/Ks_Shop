@@ -14,6 +14,7 @@ type Solicitud = {
   estado: string;
   created_at: string;
   imagen_url: string | null;
+  archivada_admin: boolean | null;
   usuarios: Cliente | null;
 };
 
@@ -32,6 +33,7 @@ const ESTADO_CHIP: Record<string, string> = {
   solicitado: "bg-coral/15 text-coral-dark",
   cotizado: "bg-crema-2 text-tinta",
   pagado: "bg-green-950/60 text-green-400",
+  confirmado: "bg-green-950/60 text-green-400",
   cancelado: "bg-tinta/10 text-tinta-soft",
 };
 
@@ -157,14 +159,21 @@ export default async function AdminPage() {
   const { data } = await supabase
     .from("presupuestos")
     .select(
-      "id, plataforma, url_producto, variante, precio_venta, estado, created_at, imagen_url, usuarios(nombre, email)",
+      "id, plataforma, url_producto, variante, precio_venta, estado, created_at, imagen_url, archivada_admin, usuarios(nombre, email)",
     )
     .order("created_at", { ascending: false })
     .returns<Solicitud[]>();
 
   const solicitudes = data ?? [];
   const pendientes = solicitudes.filter((s) => s.estado === "solicitado");
-  const cotizadas = solicitudes.filter((s) => s.estado !== "solicitado");
+  // "Ya cotizadas" = activas (cotizada o pagada esperando confirmar). Las
+  // confirmadas salen del panel y van a su propia página.
+  const cotizadas = solicitudes.filter(
+    (s) => s.estado === "cotizado" || s.estado === "pagado",
+  );
+  const confirmadasCount = solicitudes.filter(
+    (s) => s.estado === "confirmado" && !s.archivada_admin,
+  ).length;
 
   // Pagos que el cliente ya registró y faltan por confirmar.
   const { count: pagosPorConfirmar } = await supabase
@@ -220,9 +229,9 @@ export default async function AdminPage() {
           href="#cotizadas"
         />
         <Resumen
-          valor={solicitudes.length}
-          etiqueta="Total"
-          href="#pendientes"
+          valor={confirmadasCount}
+          etiqueta="Confirmadas"
+          href="/admin/confirmadas"
         />
       </section>
 
