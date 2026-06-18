@@ -55,7 +55,10 @@ export default function SelectorPlataforma({
   }
 
   return (
-    <div className="relative" ref={contenedor}>
+    <div
+      className={`relative ${abierto ? "z-50" : "z-10"}`}
+      ref={contenedor}
+    >
       {/* Valor real que envía el formulario */}
       <input type="hidden" name={name} value={valor} />
 
