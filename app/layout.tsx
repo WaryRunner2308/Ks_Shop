@@ -31,7 +31,20 @@ export default function RootLayout({
       lang="es"
       className={`${fraunces.variable} ${manrope.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/*
+          Cierre de sesión al cerrar la pestaña: sessionStorage se borra cuando
+          se cierra la pestaña. Si al entrar no existe la marca (pestaña nueva)
+          pero quedan cookies de sesión de Supabase (sb-*), se borran y se vuelve
+          al inicio, para que nunca entre solo a una cuenta. Corre antes de pintar.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var K='ks_sesion_activa';if(sessionStorage.getItem(K))return;sessionStorage.setItem(K,'1');var tiene=document.cookie.split('; ').some(function(c){return c.indexOf('sb-')===0});if(!tiene)return;document.cookie.split('; ').forEach(function(c){var n=c.split('=')[0];if(n.indexOf('sb-')===0){document.cookie=n+'=; path=/; max-age=0';}});location.replace('/');}catch(e){}})();`,
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

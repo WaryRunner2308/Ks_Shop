@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Logo from "@/app/components/logo";
 
 // Escena inmersiva "Aurora de pétalos": aurora fucsia en movimiento, orbes de
@@ -44,6 +45,27 @@ export default function AuthLayout({
 }) {
   return (
     <div className="escena-auth">
+      {/* Flecha para volver al inicio */}
+      <Link
+        href="/"
+        className="absolute left-4 top-4 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition hover:bg-white/20 sm:left-6 sm:top-6"
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M19 12H5" />
+          <path d="M12 19l-7-7 7-7" />
+        </svg>
+        Inicio
+      </Link>
+
       {/* Auroras de fondo */}
       <div className="aurora aurora-1" aria-hidden />
       <div className="aurora aurora-2" aria-hidden />
