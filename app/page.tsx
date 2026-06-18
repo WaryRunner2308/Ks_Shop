@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { cerrarSesion } from "@/app/auth/actions";
 import Logo from "@/app/components/logo";
 import LogosFlotantes from "@/app/components/logos-flotantes";
+import WizardPush from "@/app/components/wizard-push";
 import { ESTADO_ETIQUETA, etiquetaPlataforma } from "@/lib/constantes";
 
 type Solicitud = {
@@ -83,6 +84,7 @@ export default async function Home() {
     return (
       <div className="relative isolate flex min-h-screen flex-col text-tinta">
         <LogosFlotantes />
+        <WizardPush />
         {/* Brillo ambiental sutil arriba, detrás del saludo. */}
         <div
           aria-hidden
