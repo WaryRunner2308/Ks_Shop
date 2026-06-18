@@ -131,7 +131,7 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
       <button
         type="button"
         onClick={() => setAbierto((v) => !v)}
-        className="relative rounded-full border border-linea bg-white p-2 transition hover:bg-crema-2"
+        className="relative rounded-full border border-white/12 bg-white/[0.06] p-2 transition hover:bg-white/10"
         aria-label="Notificaciones"
       >
         <svg
@@ -155,8 +155,14 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
 
       {/* Desplegable */}
       {abierto && (
-        <div className="deslizar-entra fixed inset-x-3 top-[5rem] z-40 overflow-hidden rounded-2xl border border-linea bg-white shadow-[var(--sombra-flota)] sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 sm:rounded-xl sm:shadow-[var(--sombra-media)]">
-          <div className="flex items-center justify-between border-b border-linea px-4 py-3">
+        <div
+          className="deslizar-entra fixed inset-x-3 top-[5rem] z-40 overflow-hidden rounded-2xl border border-white/12 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 sm:rounded-xl"
+          style={{
+            background: "#241022",
+            boxShadow: "0 24px 52px -14px rgba(0,0,0,0.85)",
+          }}
+        >
+          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <span className="font-semibold text-tinta">Notificaciones</span>
             {noLeidas > 0 && (
               <button
@@ -178,8 +184,8 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
               notis.map((n) => (
                 <li
                   key={n.id}
-                  className={`flex items-start gap-2 border-b border-linea px-4 py-3 last:border-0 ${
-                    n.leida ? "bg-white" : "bg-coral/5"
+                  className={`flex items-start gap-2 border-b border-white/10 px-4 py-3 last:border-0 ${
+                    n.leida ? "" : "bg-coral/10"
                   }`}
                 >
                   <div className="min-w-0 flex-1">
@@ -206,7 +212,13 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
 
       {/* Toast emergente */}
       {toast && (
-        <div className="deslizar-entra fixed right-4 top-4 z-50 flex max-w-xs items-start gap-3 overflow-hidden rounded-xl border border-linea bg-white py-3 pl-4 pr-4 shadow-[var(--sombra-flota)]">
+        <div
+          className="deslizar-entra fixed right-4 top-4 z-50 flex max-w-xs items-start gap-3 overflow-hidden rounded-xl border border-white/12 py-3 pl-4 pr-4"
+          style={{
+            background: "#241022",
+            boxShadow: "0 24px 52px -14px rgba(0,0,0,0.85)",
+          }}
+        >
           <span className="absolute inset-y-0 left-0 w-1 bg-coral" />
           <span className="text-lg">🔔</span>
           <p className="text-sm font-medium text-tinta">{toast}</p>
