@@ -63,7 +63,7 @@ html {
 }
 html:has(.escena-auth),
 body:has(.escena-auth) {
-  background: #2c021d;
+  background: #0a000e;
 }
 
 /* ====================================================================
@@ -474,8 +474,10 @@ body::after {
   padding: 2.5rem 1.25rem;
   isolation: isolate;
   background:
-    radial-gradient(65% 55% at 50% -5%, #c50670 0%, rgba(197, 6, 112, 0) 60%),
-    linear-gradient(160deg, #2c021d 0%, #5e0340 48%, #1d0114 100%);
+    radial-gradient(55% 45% at 15% 8%, rgba(236, 11, 134, 0.18) 0%, rgba(236, 11, 134, 0) 65%),
+    radial-gradient(50% 40% at 88% 5%, rgba(197, 6, 112, 0.22) 0%, rgba(197, 6, 112, 0) 65%),
+    radial-gradient(60% 50% at 78% 96%, rgba(140, 0, 80, 0.16) 0%, rgba(140, 0, 80, 0) 65%),
+    linear-gradient(180deg, #0e000d 0%, #0b0009 50%, #080007 100%);
 }
 
 .aurora {

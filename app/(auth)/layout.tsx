@@ -1,23 +1,11 @@
 import type { Viewport } from "next";
 import Link from "next/link";
 import Logo from "@/app/components/logo";
+import LogosFlotantes from "@/app/components/logos-flotantes";
 
 export const viewport: Viewport = {
-  themeColor: "#2c021d",
+  themeColor: "#0a000e",
 };
-
-
-// Orbes de luz que suben desde abajo.
-const orbes = [
-  { left: 12, size: 10, dur: 16, delay: 0 },
-  { left: 28, size: 6, dur: 13, delay: 4 },
-  { left: 40, size: 14, dur: 20, delay: 7 },
-  { left: 55, size: 8, dur: 15, delay: 2 },
-  { left: 68, size: 5, dur: 12, delay: 6 },
-  { left: 80, size: 12, dur: 18, delay: 3 },
-  { left: 90, size: 7, dur: 14, delay: 9 },
-  { left: 48, size: 9, dur: 17, delay: 11 },
-];
 
 export default function AuthLayout({
   children,
@@ -47,30 +35,11 @@ export default function AuthLayout({
         Inicio
       </Link>
 
-      {/* Auroras de fondo */}
-      <div className="aurora aurora-1" aria-hidden />
-      <div className="aurora aurora-2" aria-hidden />
-      <div className="aurora aurora-3" aria-hidden />
+      {/* Logos flotantes de plataformas */}
+      <LogosFlotantes />
 
-      {/* Orbes de luz ascendentes */}
-      <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
-        {orbes.map((o, i) => (
-          <span
-            key={`orbe-${i}`}
-            className="orbe"
-            style={{
-              left: `${o.left}%`,
-              width: `${o.size}px`,
-              height: `${o.size}px`,
-              animationDuration: `${o.dur}s`,
-              animationDelay: `${o.delay}s`,
-            }}
-          />
-        ))}
-      </div>
-
-{/* Tarjeta central con el formulario */}
-      <main className="surgir relative w-full max-w-[27rem]">
+      {/* Tarjeta central con el formulario */}
+      <main className="surgir relative z-10 w-full max-w-[27rem]">
         <span aria-hidden className="halo-auth" />
         <div className="tarjeta-auth">
           <div className="mb-7 flex flex-col items-center text-center">
@@ -81,7 +50,7 @@ export default function AuthLayout({
 
           {children}
 
-          <div className="mt-7 flex items-center justify-center gap-2 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-tinta-soft">
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[0.7rem] font-medium uppercase tracking-[0.18em] text-tinta-soft">
             <span>AliExpress</span>
             <span className="text-coral">·</span>
             <span>Shein</span>
@@ -89,6 +58,10 @@ export default function AuthLayout({
             <span>Temu</span>
             <span className="text-coral">·</span>
             <span>eBay</span>
+            <span className="text-coral">·</span>
+            <span>Romwe</span>
+            <span className="text-coral">·</span>
+            <span>Fashion Nova</span>
           </div>
         </div>
       </main>
