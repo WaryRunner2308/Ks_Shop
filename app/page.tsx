@@ -88,17 +88,29 @@ export default async function Home() {
             </>
           ) : (
             <>
-              Lo que quieres,
+              <span className="italic texto-fucsia">¡Lo que quieras,</span>
               <br />
-              <span className="italic texto-fucsia">te lo conseguimos.</span>
+              te lo conseguimos!
             </>
           )}
         </h1>
-        <p className="mt-6 max-w-md text-base leading-relaxed text-tinta-soft">
-          Cotiza, paga y recibe tus compras de AliExpress, Shein, Temu y eBay
-          sin complicaciones. El precio del envío internacional se notificará
-          cuando el paquete llegue al país.
+        <p className="mt-6 max-w-sm text-base leading-relaxed text-tinta-soft">
+          Tan fácil como:
         </p>
+        <ol className="mt-3 max-w-sm space-y-1.5 text-left text-base text-tinta-soft">
+          <li className="flex items-start gap-2">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-coral text-xs font-bold text-white">1</span>
+            Cotiza tus productos
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-coral text-xs font-bold text-white">2</span>
+            Completa tu pedido
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-coral text-xs font-bold text-white">3</span>
+            Espera que llegue tu compra
+          </li>
+        </ol>
 
         <Link
           href={user ? "/cotizar" : "/registro"}
