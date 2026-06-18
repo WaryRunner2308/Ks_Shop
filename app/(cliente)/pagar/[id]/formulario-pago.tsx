@@ -52,7 +52,7 @@ export default function FormularioPago({
       <input type="hidden" name="presupuesto_id" value={presupuestoId} />
 
       {/* Monto a pagar */}
-      <div className="tarjeta border-coral/20 bg-gradient-to-br from-white to-crema p-5">
+      <div className="tarjeta border-coral/25 bg-gradient-to-br from-coral/15 to-transparent p-5">
         <p className="text-xs font-medium uppercase tracking-wide text-tinta-soft">
           Monto a pagar
         </p>
@@ -71,7 +71,7 @@ export default function FormularioPago({
         </legend>
 
         {metodos.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-linea bg-white p-4 text-sm text-tinta-soft">
+          <p className="rounded-xl border border-dashed border-white/12 bg-white/[0.04] p-4 text-sm text-tinta-soft">
             La tienda aún no tiene métodos de pago disponibles. Intenta más
             tarde.
           </p>
@@ -81,7 +81,7 @@ export default function FormularioPago({
             return (
               <label
                 key={m.id}
-                className="flex cursor-pointer gap-3 rounded-xl border border-linea bg-white p-4 transition hover:-translate-y-0.5 hover:border-coral hover:shadow-[var(--sombra-suave)] has-[:checked]:border-coral has-[:checked]:bg-coral/5 has-[:checked]:ring-2 has-[:checked]:ring-coral/20"
+                className="flex cursor-pointer gap-3 rounded-xl border border-white/12 bg-white/[0.04] p-4 transition hover:-translate-y-0.5 hover:border-coral hover:bg-white/[0.07] has-[:checked]:border-coral has-[:checked]:bg-coral/10 has-[:checked]:ring-2 has-[:checked]:ring-coral/25"
               >
                 <input
                   type="radio"
