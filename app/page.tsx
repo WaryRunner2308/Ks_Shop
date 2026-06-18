@@ -159,20 +159,26 @@ export default async function Home() {
               </div>
             </Link>
 
-            {/* Resumen rápido */}
+            {/* Resumen rápido (clicable: lleva a las solicitudes filtradas) */}
             <div className="grid grid-cols-2 gap-4 sm:col-span-2 sm:grid-cols-1">
-              <div className="tarjeta flex flex-col justify-center p-5">
+              <Link
+                href="/mis-solicitudes?filtro=espera"
+                className="tarjeta tarjeta-flota flex flex-col justify-center p-5"
+              >
                 <p className="font-display text-3xl text-tinta">{pendientes}</p>
                 <p className="mt-1 text-xs font-medium text-tinta-soft">
                   En espera de precio
                 </p>
-              </div>
-              <div className="tarjeta flex flex-col justify-center p-5">
+              </Link>
+              <Link
+                href="/mis-solicitudes?filtro=cotizadas"
+                className="tarjeta tarjeta-flota flex flex-col justify-center p-5"
+              >
                 <p className="font-display text-3xl texto-fucsia">{conPrecio}</p>
                 <p className="mt-1 text-xs font-medium text-tinta-soft">
                   Ya cotizadas
                 </p>
-              </div>
+              </Link>
             </div>
           </section>
 

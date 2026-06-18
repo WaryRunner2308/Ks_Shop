@@ -16,15 +16,42 @@ type Solicitud = {
   created_at: string;
 };
 
-export default async function MisSolicitudesPage() {
+// Filtros disponibles y cómo deciden si una solicitud entra.
+const FILTROS = [
+  { clave: "todas", etiqueta: "Todas" },
+  { clave: "espera", etiqueta: "En espera" },
+  { clave: "cotizadas", etiqueta: "Cotizadas" },
+] as const;
+
+function pasaFiltro(estado: string, filtro: string): boolean {
+  if (filtro === "espera") return estado === "solicitado";
+  if (filtro === "cotizadas")
+    return estado === "cotizado" || estado === "pagado";
+  return true; // "todas"
+}
+
+export default async function MisSolicitudesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filtro?: string }>;
+}) {
+  const { filtro: filtroRaw } = await searchParams;
+  const filtro = FILTROS.some((f) => f.clave === filtroRaw)
+    ? (filtroRaw as string)
+    : "todas";
+
   const supabase = await createClient();
 
   // RLS garantiza que solo se devuelven las solicitudes del cliente logueado.
-  const { data: solicitudes } = await supabase
+  const { data } = await supabase
     .from("presupuestos")
     .select("id, plataforma, url_producto, variante, precio_venta, estado, created_at")
     .order("created_at", { ascending: false })
     .returns<Solicitud[]>();
+
+  const solicitudes = (data ?? []).filter((s) =>
+    pasaFiltro(s.estado, filtro),
+  );
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
@@ -60,15 +87,45 @@ export default async function MisSolicitudesPage() {
         </Link>
       </header>
 
+      {/* Filtros */}
+      <div className="aparecer mb-6 flex flex-wrap gap-2">
+        {FILTROS.map((f) => {
+          const activo = f.clave === filtro;
+          return (
+            <Link
+              key={f.clave}
+              href={
+                f.clave === "todas"
+                  ? "/mis-solicitudes"
+                  : `/mis-solicitudes?filtro=${f.clave}`
+              }
+              className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                activo
+                  ? "border-coral bg-coral/15 text-coral-dark"
+                  : "border-white/12 bg-white/[0.04] text-tinta-soft hover:border-white/25 hover:text-tinta"
+              }`}
+            >
+              {f.etiqueta}
+            </Link>
+          );
+        })}
+      </div>
+
       {!solicitudes || solicitudes.length === 0 ? (
         <div className="tarjeta aparecer border-dashed p-10 text-center">
           <p className="text-3xl">🛍️</p>
-          <p className="mt-3 text-tinta-soft">Todavía no tienes solicitudes.</p>
+          <p className="mt-3 text-tinta-soft">
+            {filtro === "espera"
+              ? "No tienes solicitudes en espera de precio."
+              : filtro === "cotizadas"
+                ? "Aún no tienes solicitudes cotizadas."
+                : "Todavía no tienes solicitudes."}
+          </p>
           <Link
             href="/cotizar"
             className="mt-4 inline-block font-semibold text-coral-dark hover:underline"
           >
-            Pedir mi primera cotización
+            Pedir una cotización
           </Link>
         </div>
       ) : (
