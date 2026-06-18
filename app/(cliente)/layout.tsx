@@ -6,6 +6,7 @@ import Logo from "@/app/components/logo";
 import CampanaNotificaciones, {
   type Notificacion,
 } from "@/app/components/campana-notificaciones";
+import ActivarPush from "@/app/components/activar-push";
 
 export default async function ClienteLayout({
   children,
@@ -49,6 +50,7 @@ export default async function ClienteLayout({
           >
             Mis solicitudes
           </Link>
+          <ActivarPush />
           <CampanaNotificaciones
             inicial={data ?? []}
             canal="notis-cliente"
