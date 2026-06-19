@@ -5,7 +5,7 @@ import { cerrarSesion } from "@/app/auth/actions";
 import Logo from "@/app/components/logo";
 import LogosFlotantes from "@/app/components/logos-flotantes";
 import WizardPush from "@/app/components/wizard-push";
-import { ESTADO_ETIQUETA, etiquetaPlataforma } from "@/lib/constantes";
+import { ESTADO_ETIQUETA, etiquetaPlataforma, TIPO_ETIQUETA } from "@/lib/constantes";
 
 type Solicitud = {
   id: number;
@@ -15,6 +15,7 @@ type Solicitud = {
   precio_venta: number | null;
   estado: string;
   created_at: string;
+  tipo: string;
 };
 
 // Estilo del estado de cada solicitud (color = significado).
@@ -67,7 +68,7 @@ export default async function Home() {
     const { data } = await supabase
       .from("presupuestos")
       .select(
-        "id, plataforma, url_producto, variante, precio_venta, estado, created_at",
+        "id, plataforma, url_producto, variante, precio_venta, estado, created_at, tipo",
       )
       .order("created_at", { ascending: false })
       .returns<Solicitud[]>();
@@ -258,11 +259,18 @@ export default async function Home() {
                         className="tarjeta tarjeta-flota flex items-center justify-between gap-3 p-4"
                       >
                         <div className="min-w-0">
-                          <p className="truncate font-medium text-tinta">
+                          <p className="flex items-center gap-2 truncate font-medium text-tinta">
                             {etiquetaPlataforma(s.plataforma)}
+                            {s.tipo === "carrito" && (
+                              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-coral/15 px-2 py-0.5 text-[0.65rem] font-semibold text-coral-dark">
+                                🛒 {TIPO_ETIQUETA.carrito}
+                              </span>
+                            )}
                           </p>
                           <p className="truncate text-xs text-tinta-soft">
-                            {s.variante || s.url_producto}
+                            {s.tipo === "carrito"
+                              ? s.url_producto
+                              : s.variante || s.url_producto}
                           </p>
                           {puedePagar && (
                             <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-coral-dark">

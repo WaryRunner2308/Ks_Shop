@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useRef, useState } from "react";
 import { crearSolicitud, type EstadoCotizar } from "./actions";
-import { PLATAFORMAS } from "@/lib/constantes";
+import { PLATAFORMAS, OPCIONES_CARRITO } from "@/lib/constantes";
 import SelectorPlataforma from "@/app/components/selector-plataforma";
 
 const estadoInicial: EstadoCotizar = {};
@@ -133,11 +133,68 @@ function BloqueProducto({
   );
 }
 
+// ── Bloque del carrito completo (una sola plataforma + un solo link) ──────────
+function BloqueCarrito() {
+  return (
+    <div className="tarjeta flex flex-col gap-4 p-5">
+      {/* Aviso: solo estas tres plataformas permiten compartir carrito */}
+      <p className="flex items-start gap-2 rounded-xl border border-coral/25 bg-coral/[0.08] px-3.5 py-3 text-xs leading-relaxed text-tinta">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="mt-0.5 shrink-0 text-coral-dark"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4M12 8h.01" />
+        </svg>
+        <span>
+          Por ahora solo puedes compartir carritos de{" "}
+          <strong className="font-semibold">Shein</strong>,{" "}
+          <strong className="font-semibold">Fashion Nova</strong> y{" "}
+          <strong className="font-semibold">Temu</strong>.
+        </span>
+      </p>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-tinta">Plataforma</span>
+        <SelectorPlataforma
+          name="carrito_plataforma"
+          opciones={OPCIONES_CARRITO}
+          placeholder="Elige la plataforma"
+        />
+      </div>
+
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-tinta">Link del carrito</span>
+        <input
+          type="url"
+          name="carrito_url"
+          required
+          inputMode="url"
+          placeholder="https://…"
+          className="campo"
+        />
+        <span className="text-xs text-tinta-soft">
+          Ábrelo desde la app con el botón “Compartir carrito” y pega aquí el
+          enlace.
+        </span>
+      </label>
+    </div>
+  );
+}
+
 export default function CotizarPage() {
   const [estado, accion, enviando] = useActionState(
     crearSolicitud,
     estadoInicial,
   );
+  const [modo, setModo] = useState<"producto" | "carrito">("producto");
   const [ids, setIds] = useState<number[]>([0]);
   const siguiente = useRef(1);
 
@@ -161,9 +218,11 @@ export default function CotizarPage() {
             ¡Solicitud recibida!
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-tinta-soft">
-            {n > 1
-              ? `Recibimos tus ${n} productos. Pronto revisaremos y recibirás el precio de cada uno.`
-              : "Pronto revisaremos tu producto y recibirás el precio."}
+            {estado.carrito
+              ? "Recibimos tu carrito. Pronto lo revisaremos y recibirás el precio."
+              : n > 1
+                ? `Recibimos tus ${n} productos. Pronto revisaremos y recibirás el precio de cada uno.`
+                : "Pronto revisaremos tu producto y recibirás el precio."}
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link href="/mis-solicitudes" className="btn-coral px-5 py-3">
@@ -214,38 +273,69 @@ export default function CotizarPage() {
       </header>
 
       <form action={accion} className="entrada flex flex-col gap-4">
-        <input type="hidden" name="cantidad" value={ids.length} />
+        {/* Tipo de solicitud: producto suelto o carrito completo */}
+        <input type="hidden" name="tipo" value={modo} />
+        <div className="grid grid-cols-2 gap-1 rounded-2xl border border-white/10 bg-white/[0.04] p-1">
+          {(
+            [
+              { clave: "producto", etiqueta: "Producto individual" },
+              { clave: "carrito", etiqueta: "Carrito completo" },
+            ] as const
+          ).map((opt) => (
+            <button
+              key={opt.clave}
+              type="button"
+              onClick={() => setModo(opt.clave)}
+              aria-pressed={modo === opt.clave}
+              className={`rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                modo === opt.clave
+                  ? "bg-coral text-white shadow-[0_6px_18px_-6px_rgba(236,11,134,0.6)]"
+                  : "text-tinta-soft hover:text-tinta"
+              }`}
+            >
+              {opt.etiqueta}
+            </button>
+          ))}
+        </div>
 
-        {ids.map((id, i) => (
-          <BloqueProducto
-            key={id}
-            indice={i}
-            numero={i + 1}
-            removible={ids.length > 1}
-            onQuitar={() => quitar(id)}
-          />
-        ))}
+        {modo === "producto" ? (
+          <>
+            <input type="hidden" name="cantidad" value={ids.length} />
 
-        {/* ¿Quieres cotizar algo más? */}
-        <button
-          type="button"
-          onClick={agregar}
-          className="btn-linea justify-center px-4 py-3 text-sm"
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          ¿Quieres cotizar algo más?
-        </button>
+            {ids.map((id, i) => (
+              <BloqueProducto
+                key={id}
+                indice={i}
+                numero={i + 1}
+                removible={ids.length > 1}
+                onQuitar={() => quitar(id)}
+              />
+            ))}
+
+            {/* ¿Quieres cotizar algo más? */}
+            <button
+              type="button"
+              onClick={agregar}
+              className="btn-linea justify-center px-4 py-3 text-sm"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              ¿Quieres cotizar algo más?
+            </button>
+          </>
+        ) : (
+          <BloqueCarrito />
+        )}
 
         {estado.error && (
           <p className="deslizar-entra rounded-xl border border-coral/30 bg-coral/10 px-4 py-3 text-sm text-coral-dark">
@@ -260,9 +350,11 @@ export default function CotizarPage() {
         >
           {enviando
             ? "Enviando…"
-            : ids.length > 1
-              ? `Enviar ${ids.length} solicitudes`
-              : "Enviar solicitud"}
+            : modo === "carrito"
+              ? "Enviar carrito"
+              : ids.length > 1
+                ? `Enviar ${ids.length} solicitudes`
+                : "Enviar solicitud"}
         </button>
 
         <p className="flex items-start gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-3 text-xs leading-relaxed text-tinta-soft">

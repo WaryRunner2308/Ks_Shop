@@ -4,6 +4,7 @@ import {
   DISCLAIMER_ENVIO,
   ESTADO_ETIQUETA,
   etiquetaPlataforma,
+  TIPO_ETIQUETA,
 } from "@/lib/constantes";
 import ContadorOferta from "@/app/components/contador-oferta";
 import NotasCotizacion, { type Nota } from "@/app/components/notas-cotizacion";
@@ -17,6 +18,7 @@ type Solicitud = {
   estado: string;
   created_at: string;
   expira_en: string | null;
+  tipo: string;
 };
 
 // Filtros disponibles y cómo deciden si una solicitud entra.
@@ -48,7 +50,7 @@ export default async function MisSolicitudesPage({
   // RLS garantiza que solo se devuelven las solicitudes del cliente logueado.
   const { data } = await supabase
     .from("presupuestos")
-    .select("id, plataforma, url_producto, variante, precio_venta, estado, created_at, expira_en")
+    .select("id, plataforma, url_producto, variante, precio_venta, estado, created_at, expira_en, tipo")
     .order("created_at", { ascending: false })
     .returns<Solicitud[]>();
 
@@ -194,8 +196,13 @@ export default async function MisSolicitudesPage({
               <li key={s.id} className="tarjeta tarjeta-flota p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-medium text-tinta">
+                    <p className="flex flex-wrap items-center gap-2 font-medium text-tinta">
                       {etiquetaPlataforma(s.plataforma)}
+                      {s.tipo === "carrito" && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-coral/15 px-2.5 py-0.5 text-xs font-semibold text-coral-dark">
+                          🛒 {TIPO_ETIQUETA.carrito}
+                        </span>
+                      )}
                     </p>
                     <a
                       href={s.url_producto}

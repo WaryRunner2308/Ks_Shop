@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { ESTADO_ETIQUETA, etiquetaPlataforma } from "@/lib/constantes";
+import { ESTADO_ETIQUETA, etiquetaPlataforma, TIPO_ETIQUETA } from "@/lib/constantes";
 import FormularioPrecio from "./formulario-precio";
 import NotasCotizacion, { type Nota } from "@/app/components/notas-cotizacion";
 
@@ -16,6 +16,7 @@ type Solicitud = {
   created_at: string;
   imagen_url: string | null;
   archivada_admin: boolean | null;
+  tipo: string;
   usuarios: Cliente | null;
 };
 
@@ -58,6 +59,11 @@ function Tarjeta({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <span className="chip">{etiquetaPlataforma(s.plataforma)}</span>
+            {s.tipo === "carrito" && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-coral/15 px-2.5 py-0.5 text-xs font-semibold text-coral-dark">
+                🛒 {TIPO_ETIQUETA.carrito}
+              </span>
+            )}
             <span className="text-sm font-medium text-tinta">{cliente}</span>
           </div>
           <a
@@ -165,7 +171,7 @@ export default async function AdminPage() {
   const { data } = await supabase
     .from("presupuestos")
     .select(
-      "id, plataforma, url_producto, variante, precio_venta, estado, created_at, imagen_url, archivada_admin, usuarios(nombre, email)",
+      "id, plataforma, url_producto, variante, precio_venta, estado, created_at, imagen_url, archivada_admin, tipo, usuarios(nombre, email)",
     )
     .order("created_at", { ascending: false })
     .returns<Solicitud[]>();

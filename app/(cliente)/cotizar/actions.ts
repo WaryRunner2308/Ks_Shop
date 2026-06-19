@@ -3,19 +3,34 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { PLATAFORMAS } from "@/lib/constantes";
+import { PLATAFORMAS, CARRITO_PLATAFORMAS } from "@/lib/constantes";
+import { validarLinkCarrito } from "@/lib/validar-carrito";
 
 export type EstadoCotizar = {
   error?: string;
   ok?: boolean;
   // Cuántos productos se enviaron (para el mensaje de éxito).
   cantidad?: number;
+  // Si la solicitud enviada fue un carrito completo (cambia el mensaje de éxito).
+  carrito?: boolean;
 };
 
 const valoresPlataforma = PLATAFORMAS.map((p) => p.valor) as [
   string,
   ...string[],
 ];
+
+const valoresCarrito = CARRITO_PLATAFORMAS.map((c) => c.valor) as [
+  string,
+  ...string[],
+];
+
+const esquemaCarrito = z.object({
+  plataforma: z.enum(valoresCarrito, {
+    message: "Elige una plataforma con carrito compartible.",
+  }),
+  url: z.string().trim().min(1, "Pega el link de tu carrito."),
+});
 
 const MAX_PRODUCTOS = 15;
 const MAX_IMG = 5 * 1024 * 1024; // 5 MB
@@ -54,6 +69,12 @@ export async function crearSolicitud(
   _prev: EstadoCotizar,
   formData: FormData,
 ): Promise<EstadoCotizar> {
+  // El formulario manda "carrito" cuando el cliente eligió cotizar el carrito
+  // completo. Es un flujo aparte: una sola plataforma + un solo link, blindado.
+  if (formData.get("tipo") === "carrito") {
+    return crearCarrito(formData);
+  }
+
   const cantidad = Number(formData.get("cantidad") ?? 0);
   if (!Number.isInteger(cantidad) || cantidad < 1) {
     return { error: "Agrega al menos un producto." };
@@ -124,6 +145,7 @@ export async function crearSolicitud(
       plataforma: p.plataforma,
       url_producto: p.url_producto,
       variante: p.variante,
+      tipo: "producto",
       imagen_url:
         (p as ProductoListo & { rutaImagen?: string }).rutaImagen ?? null,
     }));
@@ -146,4 +168,46 @@ export async function crearSolicitud(
 
   revalidatePath("/mis-solicitudes");
   return { ok: true, cantidad: productos.length };
+}
+
+// ── Carrito completo ──────────────────────────────────────────────────────────
+// Solo Shein, Fashion Nova y Temu permiten compartir el carrito. Se valida la
+// plataforma (debe ser una de esas) y se BLINDA el link: el dominio tiene que
+// coincidir con la plataforma elegida (ver lib/validar-carrito.ts).
+async function crearCarrito(formData: FormData): Promise<EstadoCotizar> {
+  const parsed = esquemaCarrito.safeParse({
+    plataforma: formData.get("carrito_plataforma"),
+    url: formData.get("carrito_url"),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  const chequeo = validarLinkCarrito(parsed.data.plataforma, parsed.data.url);
+  if (!chequeo.ok) {
+    return { error: chequeo.error };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Tu sesión expiró. Inicia sesión de nuevo." };
+  }
+
+  const { error } = await supabase.from("presupuestos").insert({
+    usuario_id: user.id,
+    plataforma: parsed.data.plataforma,
+    url_producto: chequeo.url,
+    variante: null,
+    tipo: "carrito",
+    imagen_url: null,
+  });
+  if (error) {
+    return { error: "No se pudo enviar el carrito. Intenta de nuevo." };
+  }
+
+  revalidatePath("/mis-solicitudes");
+  return { ok: true, cantidad: 1, carrito: true };
 }
