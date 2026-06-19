@@ -6,6 +6,9 @@ import Logo from "@/app/components/logo";
 import LogosFlotantes from "@/app/components/logos-flotantes";
 import WizardPush from "@/app/components/wizard-push";
 import PlataformasCliente from "@/app/components/plataformas-cliente";
+import CampanaNotificaciones, {
+  type Notificacion,
+} from "@/app/components/campana-notificaciones";
 import { ESTADO_ETIQUETA, etiquetaPlataforma, TIPO_ETIQUETA } from "@/lib/constantes";
 
 type Solicitud = {
@@ -75,6 +78,15 @@ export default async function Home() {
       .returns<Solicitud[]>();
 
     const solicitudes = data ?? [];
+
+    // Notificaciones del cliente (para la campana del inicio). RLS: solo las suyas.
+    const { data: notis } = await supabase
+      .from("notificaciones")
+      .select("id, mensaje, leida, created_at")
+      .order("created_at", { ascending: false })
+      .limit(30)
+      .returns<Notificacion[]>();
+
     // Las confirmadas salen del inicio y van a su propia página.
     const activas = solicitudes.filter((s) => s.estado !== "confirmado");
     const recientes = activas.slice(0, 3);
@@ -105,6 +117,11 @@ export default async function Home() {
             >
               Mis solicitudes
             </Link>
+            <CampanaNotificaciones
+              inicial={notis ?? []}
+              canal="notis-cliente-inicio"
+              filtro={`usuario_id=eq.${user.id}`}
+            />
             <form action={cerrarSesion}>
               <button type="submit" className="btn-linea px-4 py-2 text-sm">
                 Cerrar sesión
