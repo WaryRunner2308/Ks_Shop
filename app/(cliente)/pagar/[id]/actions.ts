@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { calcularMonto, configTipo } from "@/lib/metodos-pago";
 
 export type EstadoPago = {
   error?: string;
@@ -15,17 +16,6 @@ const esquema = z.object({
     .number({ message: "Elige un método de pago." })
     .int()
     .positive("Elige un método de pago."),
-  comprobante: z
-    .instanceof(File)
-    .refine((f) => f.size > 0, "Sube la imagen de tu comprobante.")
-    .refine(
-      (f) => f.type.startsWith("image/"),
-      "El comprobante debe ser una imagen.",
-    )
-    .refine(
-      (f) => f.size <= 5 * 1024 * 1024,
-      "La imagen no debe pesar más de 5 MB.",
-    ),
 });
 
 export async function registrarPago(
@@ -35,9 +25,7 @@ export async function registrarPago(
   const parsed = esquema.safeParse({
     presupuesto_id: formData.get("presupuesto_id"),
     metodo_pago_id: formData.get("metodo_pago_id"),
-    comprobante: formData.get("comprobante"),
   });
-
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
   }
@@ -50,22 +38,29 @@ export async function registrarPago(
     return { error: "Tu sesión expiró. Inicia sesión de nuevo." };
   }
 
-  // El presupuesto debe ser del cliente y estar "cotizado". RLS ya limita a
-  // que solo vea los suyos; el precio se toma de la base, no del cliente.
+  // El presupuesto debe ser del cliente, estar "cotizado" y no estar vencido.
   const { data: presupuesto } = await supabase
     .from("presupuestos")
-    .select("id, precio_venta, estado")
+    .select("id, precio_venta, estado, expira_en")
     .eq("id", parsed.data.presupuesto_id)
     .single();
 
   if (!presupuesto || presupuesto.estado !== "cotizado") {
     return { error: "Esta solicitud no está disponible para pagar." };
   }
+  if (
+    presupuesto.expira_en != null &&
+    new Date(presupuesto.expira_en).getTime() < Date.now()
+  ) {
+    return {
+      error: "El precio de esta oferta venció. Pediremos uno nuevo.",
+    };
+  }
 
   // El método elegido debe existir y estar activo.
   const { data: metodo } = await supabase
     .from("metodos_pago")
-    .select("id")
+    .select("id, tipo")
     .eq("id", parsed.data.metodo_pago_id)
     .eq("activo", true)
     .single();
@@ -74,18 +69,40 @@ export async function registrarPago(
     return { error: "El método de pago elegido ya no está disponible." };
   }
 
-  // Subir el comprobante a la carpeta del propio usuario (lo exige la política).
-  const archivo = parsed.data.comprobante;
-  const ext = (archivo.name.split(".").pop() || "jpg").toLowerCase();
-  const ruta = `${user.id}/${presupuesto.id}-${Date.now()}.${ext}`;
+  const config = configTipo(metodo.tipo);
+  // Para Divisas el comprobante es opcional (se coordina por WhatsApp).
+  const comprobanteOpcional = config?.whatsapp === "coordinar";
 
-  const { error: errorSubida } = await supabase.storage
-    .from("comprobantes")
-    .upload(ruta, archivo, { contentType: archivo.type });
+  // Validar el comprobante (si vino, o si es obligatorio).
+  const archivo = formData.get("comprobante");
+  const tieneArchivo = archivo instanceof File && archivo.size > 0;
 
-  if (errorSubida) {
-    return { error: "No se pudo subir el comprobante. Intenta de nuevo." };
+  if (!tieneArchivo && !comprobanteOpcional) {
+    return { error: "Sube la imagen de tu comprobante." };
   }
+
+  let ruta: string | null = null;
+  if (tieneArchivo) {
+    const f = archivo as File;
+    if (!f.type.startsWith("image/")) {
+      return { error: "El comprobante debe ser una imagen." };
+    }
+    if (f.size > 5 * 1024 * 1024) {
+      return { error: "La imagen no debe pesar más de 5 MB." };
+    }
+    const ext = (f.name.split(".").pop() || "jpg").toLowerCase();
+    ruta = `${user.id}/${presupuesto.id}-${Date.now()}.${ext}`;
+    const { error: errorSubida } = await supabase.storage
+      .from("comprobantes")
+      .upload(ruta, f, { contentType: f.type });
+    if (errorSubida) {
+      return { error: "No se pudo subir el comprobante. Intenta de nuevo." };
+    }
+  }
+
+  // Monto declarado = precio + comisión del método (PayPal, Binance…).
+  const base = Number(presupuesto.precio_venta ?? 0);
+  const { total } = calcularMonto(base, metodo.tipo);
 
   // Registrar el pago. El trigger marca el presupuesto como "pagado".
   const { error: errorPago } = await supabase.from("pagos").insert({
@@ -93,13 +110,12 @@ export async function registrarPago(
     usuario_id: user.id,
     metodo_pago_id: parsed.data.metodo_pago_id,
     comprobante_url: ruta,
-    monto_declarado: presupuesto.precio_venta,
+    monto_declarado: total,
     estado: "registrado",
   });
 
   if (errorPago) {
-    // Si falla, intentamos limpiar el archivo subido.
-    await supabase.storage.from("comprobantes").remove([ruta]);
+    if (ruta) await supabase.storage.from("comprobantes").remove([ruta]);
     return { error: "No se pudo registrar el pago. Intenta de nuevo." };
   }
 

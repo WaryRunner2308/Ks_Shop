@@ -54,3 +54,14 @@ export function enlaceWhatsApp(telefono: string): string {
   const digitos = telefono.replace(/\D/g, "");
   return `https://wa.me/${digitos}`;
 }
+
+/**
+ * Enlace de WhatsApp con un mensaje ya escrito (el cliente solo le da enviar).
+ */
+export function enlaceWhatsAppMensaje(
+  telefono: string,
+  mensaje: string,
+): string {
+  const digitos = telefono.replace(/\D/g, "");
+  return `https://wa.me/${digitos}?text=${encodeURIComponent(mensaje)}`;
+}

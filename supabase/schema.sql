@@ -28,7 +28,9 @@ create table configuracion (
 
 create table metodos_pago (
   id bigint generated always as identity primary key,
-  tipo tipo_metodo_pago not null,
+  -- Texto libre (la lista de tipos vive en lib/metodos-pago.ts: PayPal, Binance,
+  -- Wally, Zinli, Pago Móvil, Divisas, etc.).
+  tipo text not null,
   detalles jsonb not null default '{}'::jsonb,
   activo boolean not null default true,
   created_at timestamptz not null default now()
@@ -46,6 +48,8 @@ create table presupuestos (
   imagen_url text,
   precio_venta numeric(12,2),
   estado estado_presupuesto not null default 'solicitado',
+  -- Vencimiento de la oferta (12h). Se fija al cotizar; un cron la revierte.
+  expira_en timestamptz,
   -- Banderas de "ocultar del historial de confirmadas", independientes por lado.
   archivada_admin boolean not null default false,
   archivada_cliente boolean not null default false,
@@ -177,6 +181,45 @@ $$;
 
 grant execute on function public.ocultar_confirmada_cliente(bigint) to authenticated;
 grant execute on function public.vaciar_confirmadas_cliente() to authenticated;
+
+-- Expiración de ofertas (12h): un cron de Supabase (pg_cron) corre esta función
+-- cada 10 min. Las cotizaciones vencidas SIN pago vuelven a 'solicitado' (sin
+-- precio) para que la dueña re-cotice, y se avisa al cliente.
+--   create extension if not exists pg_cron;
+--   select cron.schedule('expirar-cotizaciones','*/10 * * * *',
+--     'select public.expirar_cotizaciones()');
+create or replace function public.expirar_cotizaciones()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  r record;
+begin
+  for r in
+    select id, usuario_id
+    from presupuestos
+    where estado = 'cotizado'
+      and expira_en is not null
+      and expira_en < now()
+  loop
+    update presupuestos
+      set estado = 'solicitado',
+          precio_venta = null,
+          expira_en = null,
+          updated_at = now()
+      where id = r.id;
+
+    insert into notificaciones (usuario_id, presupuesto_id, mensaje)
+    values (
+      r.usuario_id,
+      r.id,
+      'El precio de tu cotización venció (12h). Te enviaremos uno nuevo pronto.'
+    );
+  end loop;
+end;
+$$;
 
 -- PAGOS: el cliente ve y sube los suyos; solo la duena los verifica/rechaza y borra.
 create policy pagos_select on pagos for select to authenticated

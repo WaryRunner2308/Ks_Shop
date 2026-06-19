@@ -6,7 +6,7 @@ import {
   actualizarMetodo,
   type EstadoMetodo,
 } from "./actions";
-import { TIPOS_METODO, configTipo } from "@/lib/metodos-pago";
+import { TIPOS_METODO, configTipo, textoRecargo } from "@/lib/metodos-pago";
 
 const estadoInicial: EstadoMetodo = {};
 
@@ -35,7 +35,7 @@ export default function FormularioMetodo({ metodo, onListo }: Props) {
   return (
     <form
       action={accion}
-      className="flex flex-col gap-3 rounded-xl border border-linea bg-white p-4"
+      className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4"
     >
       {editando && <input type="hidden" name="id" value={metodo.id} />}
 
@@ -64,6 +64,20 @@ export default function FormularioMetodo({ metodo, onListo }: Props) {
         </select>
       </label>
 
+      {/* Nota de comisión / caso especial */}
+      {config && textoRecargo(config.valor) && (
+        <p className="rounded-lg border border-amber-400/20 bg-amber-400/[0.07] px-3 py-2 text-xs text-amber-300">
+          {textoRecargo(config.valor)} — se suma automáticamente al monto del
+          cliente.
+        </p>
+      )}
+      {config?.sinConfig && (
+        <p className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-tinta-soft">
+          No requiere datos de cuenta. El cliente coordina la entrega o depósito
+          contigo por WhatsApp.
+        </p>
+      )}
+
       {/* Campos dinámicos según el tipo elegido */}
       {config?.campos.map((campo) => (
         <label key={campo.nombre} className="flex flex-col gap-1">
@@ -87,7 +101,7 @@ export default function FormularioMetodo({ metodo, onListo }: Props) {
         </p>
       )}
       {estado.ok && !editando && (
-        <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">
+        <p className="rounded-lg bg-emerald-400/12 px-3 py-2 text-sm text-emerald-300">
           Método guardado.
         </p>
       )}

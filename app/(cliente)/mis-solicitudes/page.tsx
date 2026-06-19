@@ -5,6 +5,7 @@ import {
   ESTADO_ETIQUETA,
   etiquetaPlataforma,
 } from "@/lib/constantes";
+import ContadorOferta from "@/app/components/contador-oferta";
 
 type Solicitud = {
   id: number;
@@ -14,6 +15,7 @@ type Solicitud = {
   precio_venta: number | null;
   estado: string;
   created_at: string;
+  expira_en: string | null;
 };
 
 // Filtros disponibles y cómo deciden si una solicitud entra.
@@ -45,7 +47,7 @@ export default async function MisSolicitudesPage({
   // RLS garantiza que solo se devuelven las solicitudes del cliente logueado.
   const { data } = await supabase
     .from("presupuestos")
-    .select("id, plataforma, url_producto, variante, precio_venta, estado, created_at")
+    .select("id, plataforma, url_producto, variante, precio_venta, estado, created_at, expira_en")
     .order("created_at", { ascending: false })
     .returns<Solicitud[]>();
 
@@ -209,6 +211,11 @@ export default async function MisSolicitudesPage({
                     <p className="mt-2 text-xs leading-relaxed text-tinta-soft">
                       {DISCLAIMER_ENVIO}
                     </p>
+                    {puedePagar && s.expira_en && (
+                      <div className="mt-3">
+                        <ContadorOferta expiraEn={s.expira_en} compacto />
+                      </div>
+                    )}
                     {puedePagar ? (
                       <Link
                         href={`/pagar/${s.id}`}

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { etiquetaPlataforma } from "@/lib/constantes";
 import FormularioPago from "./formulario-pago";
+import ContadorOferta from "@/app/components/contador-oferta";
 
 type Metodo = {
   id: number;
@@ -24,25 +25,39 @@ export default async function PagarPage({
   // RLS garantiza que el cliente solo obtenga sus propios presupuestos.
   const { data: presupuesto } = await supabase
     .from("presupuestos")
-    .select("id, plataforma, url_producto, variante, precio_venta, estado")
+    .select(
+      "id, plataforma, url_producto, variante, precio_venta, estado, expira_en",
+    )
     .eq("id", presupuestoId)
     .single();
 
   if (!presupuesto) notFound();
 
-  // Si no está cotizada (o ya está pagada) no se puede pagar aquí.
-  if (presupuesto.estado !== "cotizado" || presupuesto.precio_venta == null) {
+  const vencida =
+    presupuesto.expira_en != null &&
+    new Date(presupuesto.expira_en).getTime() < Date.now();
+
+  // Si no está cotizada, ya está pagada, o venció la oferta: no se puede pagar.
+  if (
+    presupuesto.estado !== "cotizado" ||
+    presupuesto.precio_venta == null ||
+    vencida
+  ) {
     return (
       <div className="mx-auto max-w-lg px-6 py-16 text-center">
         <h1 className="font-display text-2xl text-tinta">
           {presupuesto.estado === "pagado"
             ? "Esta solicitud ya tiene un pago registrado"
-            : "Esta solicitud todavía no se puede pagar"}
+            : vencida
+              ? "El precio de esta oferta venció"
+              : "Esta solicitud todavía no se puede pagar"}
         </h1>
         <p className="mt-3 text-sm text-tinta-soft">
           {presupuesto.estado === "pagado"
             ? "Estamos verificando tu pago."
-            : "Aún no tiene un precio. Te avisaremos cuando esté cotizada."}
+            : vencida
+              ? "La oferta tenía 12 horas de validez. Pediremos un precio nuevo y te avisaremos."
+              : "Aún no tiene un precio. Te avisaremos cuando esté cotizada."}
         </p>
         <Link href="/mis-solicitudes" className="btn-linea mt-6 px-5 py-3">
           Volver a mis solicitudes
@@ -50,6 +65,15 @@ export default async function PagarPage({
       </div>
     );
   }
+
+  // Teléfono del admin (para los enlaces de WhatsApp de Pago Móvil / Divisas).
+  const { data: admin } = await supabase
+    .from("usuarios")
+    .select("telefono")
+    .eq("rol", "admin")
+    .not("telefono", "is", null)
+    .limit(1)
+    .maybeSingle();
 
   // Solo los métodos de pago ACTIVOS (RLS permite al cliente verlos).
   const { data: metodos } = await supabase
@@ -75,10 +99,18 @@ export default async function PagarPage({
         </p>
       </header>
 
+      {presupuesto.expira_en && (
+        <div className="mb-5">
+          <ContadorOferta expiraEn={presupuesto.expira_en} />
+        </div>
+      )}
+
       <FormularioPago
         presupuestoId={presupuesto.id}
         precio={Number(presupuesto.precio_venta)}
         metodos={metodos ?? []}
+        adminTelefono={admin?.telefono ?? null}
+        productoUrl={presupuesto.url_producto}
       />
     </div>
   );

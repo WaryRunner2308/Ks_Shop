@@ -32,6 +32,9 @@ export async function enviarPrecio(
 
   const supabase = await createClient();
 
+  // La oferta vale 12 horas desde que se cotiza.
+  const expira = new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString();
+
   // RLS exige rol admin para esta actualización. Solo cotizamos las que siguen
   // en estado "solicitado".
   const { data, error } = await supabase
@@ -39,6 +42,7 @@ export async function enviarPrecio(
     .update({
       precio_venta: parsed.data.precio_venta,
       estado: "cotizado",
+      expira_en: expira,
       updated_at: new Date().toISOString(),
     })
     .eq("id", parsed.data.id)
