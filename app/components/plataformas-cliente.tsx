@@ -21,7 +21,7 @@ export default function PlataformasCliente() {
         {PLATAFORMAS.map((p) => (
           <span
             key={p.valor}
-            className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-medium text-tinta-soft"
+            className="rounded-full border border-white/10 bg-[#180516] px-3.5 py-1.5 text-xs font-medium text-tinta-soft"
           >
             {p.etiqueta}
           </span>
@@ -49,7 +49,7 @@ export default function PlataformasCliente() {
       </div>
 
       {abierto && (
-        <div className="deslizar-entra mt-3 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-xs leading-relaxed text-tinta-soft">
+        <div className="deslizar-entra mt-3 rounded-xl border border-white/10 bg-[#180516] px-4 py-3 text-xs leading-relaxed text-tinta-soft">
           ¿No ves tu tienda? También compramos en otras. Al pedir tu cotización,
           elige <span className="font-semibold text-tinta">“Otra”</span> en la
           plataforma.{" "}

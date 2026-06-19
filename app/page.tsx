@@ -384,7 +384,7 @@ export default async function Home() {
         <nav className="flex items-center gap-2 text-sm sm:gap-3">
           <Link
             href="/login"
-            className="rounded-2xl border border-coral/40 bg-white/[0.08] px-5 py-2.5 font-semibold text-coral-dark shadow-[0_6px_18px_-6px_rgba(236,11,134,0.45)] backdrop-blur-md transition hover:-translate-y-0.5 hover:border-coral hover:bg-white/[0.14] hover:shadow-[0_10px_26px_-8px_rgba(236,11,134,0.55)]"
+            className="rounded-2xl border border-coral/40 bg-[#241022] px-5 py-2.5 font-semibold text-coral-dark shadow-[0_6px_18px_-6px_rgba(236,11,134,0.45)] backdrop-blur-md transition hover:-translate-y-0.5 hover:border-coral hover:bg-[#311630] hover:shadow-[0_10px_26px_-8px_rgba(236,11,134,0.55)]"
           >
             Iniciar sesión
           </Link>

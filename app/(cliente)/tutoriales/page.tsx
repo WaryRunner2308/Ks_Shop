@@ -27,7 +27,7 @@ export default async function TutorialesPage() {
     <div className="mx-auto max-w-2xl px-6 py-12">
       <Link
         href="/"
-        className="aparecer mb-6 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
+        className="aparecer mb-6 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-[#1c0618] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
       >
         <svg
           width="17"
@@ -82,7 +82,7 @@ export default async function TutorialesPage() {
                   href={`/tutoriales/${t.id}`}
                   className="tarjeta tarjeta-flota group block overflow-hidden p-0"
                 >
-                  <div className="aspect-[16/10] w-full overflow-hidden bg-white/[0.06]">
+                  <div className="aspect-[16/10] w-full overflow-hidden bg-[#20091c]">
                     {portada && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img

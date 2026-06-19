@@ -43,7 +43,7 @@ export default async function TutorialDetallePage({
     <div className="mx-auto max-w-2xl px-6 py-12">
       <Link
         href="/tutoriales"
-        className="aparecer mb-6 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
+        className="aparecer mb-6 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-[#1c0618] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
       >
         <svg
           width="17"
@@ -63,7 +63,7 @@ export default async function TutorialDetallePage({
 
       <header className="mb-8 aparecer">
         {portada && (
-          <div className="mb-5 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-white/[0.06] ring-1 ring-white/10">
+          <div className="mb-5 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-[#20091c] ring-1 ring-white/10">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={portada} alt="" className="h-full w-full object-cover" />
           </div>

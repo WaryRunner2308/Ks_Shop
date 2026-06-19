@@ -69,7 +69,7 @@ export default function NotasCotizacion({
                   className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-sm ${
                     esAdmin
                       ? "bg-coral/15 text-tinta"
-                      : "bg-white/[0.07] text-tinta"
+                      : "bg-[#2a1426] text-tinta"
                   }`}
                 >
                   <p className="whitespace-pre-wrap break-words">{n.mensaje}</p>

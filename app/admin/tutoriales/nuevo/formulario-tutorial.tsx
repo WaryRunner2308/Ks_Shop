@@ -17,7 +17,7 @@ function SelectorImagen({
 }) {
   const [preview, setPreview] = useState<string | null>(null);
   return (
-    <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/[0.04] p-3 transition hover:border-coral/50">
+    <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/15 bg-[#180516] p-3 transition hover:border-coral/50">
       {preview ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -26,7 +26,7 @@ function SelectorImagen({
           className="h-14 w-14 shrink-0 rounded-lg object-cover"
         />
       ) : (
-        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] text-tinta-soft">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-[#20091c] text-tinta-soft">
           <svg
             width="22"
             height="22"
@@ -81,7 +81,7 @@ function PasoBloque({
           <button
             type="button"
             onClick={onQuitar}
-            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-tinta-soft transition hover:bg-white/[0.06] hover:text-coral-dark"
+            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-tinta-soft transition hover:bg-[#20091c] hover:text-coral-dark"
           >
             <svg
               width="14"

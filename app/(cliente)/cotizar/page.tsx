@@ -37,7 +37,7 @@ function BloqueProducto({
           <button
             type="button"
             onClick={onQuitar}
-            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-tinta-soft transition hover:bg-white/[0.06] hover:text-coral-dark"
+            className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium text-tinta-soft transition hover:bg-[#20091c] hover:text-coral-dark"
           >
             <svg
               width="14"
@@ -98,7 +98,7 @@ function BloqueProducto({
           Para mejores resultados, sube la primera foto del producto sin
           recortar.
         </span>
-        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/[0.04] p-3 transition hover:border-coral/50">
+        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/15 bg-[#180516] p-3 transition hover:border-coral/50">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -107,7 +107,7 @@ function BloqueProducto({
               className="h-14 w-14 shrink-0 rounded-lg object-cover"
             />
           ) : (
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] text-tinta-soft">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-[#20091c] text-tinta-soft">
               <svg
                 width="22"
                 height="22"
@@ -248,7 +248,7 @@ export default function CotizarPage() {
     <div className="mx-auto max-w-lg px-6 py-12">
       <Link
         href="/"
-        className="aparecer mb-6 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
+        className="aparecer mb-6 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-[#1c0618] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
       >
         <svg
           width="17"
@@ -282,7 +282,7 @@ export default function CotizarPage() {
       <form action={accion} className="entrada flex flex-col gap-4">
         {/* Tipo de solicitud: producto suelto o carrito completo */}
         <input type="hidden" name="tipo" value={modo} />
-        <div className="grid grid-cols-2 gap-1 rounded-2xl border border-white/10 bg-white/[0.04] p-1">
+        <div className="grid grid-cols-2 gap-1 rounded-2xl border border-white/10 bg-[#180516] p-1">
           {(
             [
               { clave: "producto", etiqueta: "Producto individual" },
@@ -364,7 +364,7 @@ export default function CotizarPage() {
                 : "Enviar solicitud"}
         </button>
 
-        <p className="flex items-start gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-3 text-xs leading-relaxed text-tinta-soft">
+        <p className="flex items-start gap-2 rounded-xl border border-white/10 bg-[#180516] px-3.5 py-3 text-xs leading-relaxed text-tinta-soft">
           <svg
             width="15"
             height="15"

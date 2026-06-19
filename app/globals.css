@@ -670,8 +670,8 @@ body::after {
     transform: translate(0, -5vh) rotate(-8deg) scale(0.85);
     opacity: 0;
   }
-  10% { opacity: 0.65; }
-  90% { opacity: 0.45; }
+  10% { opacity: 0.22; }
+  90% { opacity: 0.15; }
   100% {
     transform: translate(var(--drift-badge, 5vw), 115vh) rotate(10deg) scale(1);
     opacity: 0;

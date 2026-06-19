@@ -51,7 +51,7 @@ export default function FormularioPromo() {
           Imagen{" "}
           <span className="font-normal text-tinta-soft">(opcional)</span>
         </span>
-        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/[0.04] p-3 transition hover:border-coral/50">
+        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/15 bg-[#180516] p-3 transition hover:border-coral/50">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -60,7 +60,7 @@ export default function FormularioPromo() {
               className="h-14 w-14 shrink-0 rounded-lg object-cover"
             />
           ) : (
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] text-tinta-soft">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-[#20091c] text-tinta-soft">
               <svg
                 width="22"
                 height="22"

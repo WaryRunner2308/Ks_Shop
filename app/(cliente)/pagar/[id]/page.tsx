@@ -95,7 +95,7 @@ export default async function PagarPage({
       <header className="mb-6">
         <Link
           href="/mis-solicitudes"
-          className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
+          className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-[#1c0618] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
         >
           <svg
             width="17"
@@ -124,20 +124,17 @@ export default async function PagarPage({
           href={imagenFirmada}
           target="_blank"
           rel="noopener noreferrer"
-          className="group mb-5 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-coral/40"
+          className="group mb-5 flex items-center gap-3 rounded-2xl border border-white/10 bg-[#150414] p-3 transition hover:border-coral/40"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imagenFirmada}
             alt="Imagen del producto"
-            className="h-16 w-16 shrink-0 rounded-lg bg-white/[0.04] object-cover ring-1 ring-white/10 transition group-hover:ring-coral/50"
+            className="h-16 w-16 shrink-0 rounded-lg bg-[#180516] object-cover ring-1 ring-white/10 transition group-hover:ring-coral/50"
           />
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-tinta">Imagen del producto</p>
-            <p className="text-xs text-coral-dark group-hover:underline">
-              Toca para verla completa
-            </p>
-          </div>
+          <p className="min-w-0 text-sm font-medium text-tinta">
+            Imagen del producto
+          </p>
         </a>
       )}
 

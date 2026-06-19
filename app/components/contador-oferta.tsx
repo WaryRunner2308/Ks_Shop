@@ -71,7 +71,7 @@ export default function ContadorOferta({
     <div
       className={`flex items-center gap-2.5 rounded-xl border px-4 py-3 ${
         vencido
-          ? "border-white/10 bg-white/[0.04] text-tinta-soft"
+          ? "border-white/10 bg-[#180516] text-tinta-soft"
           : urgente
             ? "border-coral/30 bg-coral/10 text-coral-dark"
             : "border-amber-400/20 bg-amber-400/[0.07] text-amber-300"

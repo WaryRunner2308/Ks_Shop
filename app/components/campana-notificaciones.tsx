@@ -253,7 +253,7 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
       <button
         type="button"
         onClick={() => setAbierto((v) => !v)}
-        className="relative rounded-full border border-white/12 bg-white/[0.06] p-2 transition hover:bg-white/10"
+        className="relative rounded-full border border-white/12 bg-[#20091c] p-2 transition hover:bg-white/10"
         aria-label="Notificaciones"
       >
         <svg

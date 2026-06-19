@@ -36,7 +36,7 @@ export default function FormularioMetodo({ metodo, onListo }: Props) {
   return (
     <form
       action={accion}
-      className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4"
+      className="flex flex-col gap-3 rounded-xl border border-white/10 bg-[#180516] p-4"
     >
       {editando && <input type="hidden" name="id" value={metodo.id} />}
 
@@ -62,7 +62,7 @@ export default function FormularioMetodo({ metodo, onListo }: Props) {
         </p>
       )}
       {config?.sinConfig && (
-        <p className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-tinta-soft">
+        <p className="rounded-lg border border-white/10 bg-[#180516] px-3 py-2 text-xs text-tinta-soft">
           No requiere datos de cuenta. El cliente coordina la entrega o depósito
           contigo por WhatsApp.
         </p>

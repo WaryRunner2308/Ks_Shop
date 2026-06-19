@@ -117,7 +117,7 @@ function Tarjeta({
         </>
       ) : (
         s.precio_venta != null && (
-          <div className="mt-3 rounded-xl bg-white/[0.06] px-4 py-2.5 text-sm text-tinta-soft">
+          <div className="mt-3 rounded-xl bg-[#20091c] px-4 py-2.5 text-sm text-tinta-soft">
             Precio enviado:{" "}
             <span className="font-semibold text-coral-dark">
               ${Number(s.precio_venta).toFixed(2)}

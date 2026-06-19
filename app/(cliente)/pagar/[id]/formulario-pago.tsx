@@ -114,7 +114,7 @@ export default function FormularioPago({
         </legend>
 
         {metodos.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-white/12 bg-white/[0.04] p-4 text-sm text-tinta-soft">
+          <p className="rounded-xl border border-dashed border-white/12 bg-[#180516] p-4 text-sm text-tinta-soft">
             La tienda aún no tiene métodos de pago disponibles. Intenta más
             tarde.
           </p>
@@ -125,7 +125,7 @@ export default function FormularioPago({
             return (
               <label
                 key={m.id}
-                className="flex cursor-pointer gap-3 rounded-xl border border-white/12 bg-white/[0.04] p-4 transition hover:-translate-y-0.5 hover:border-coral hover:bg-white/[0.07] has-[:checked]:border-coral has-[:checked]:bg-coral/10 has-[:checked]:ring-2 has-[:checked]:ring-coral/25"
+                className="flex cursor-pointer gap-3 rounded-xl border border-white/12 bg-[#180516] p-4 transition hover:-translate-y-0.5 hover:border-coral hover:bg-[#241022] has-[:checked]:border-coral has-[:checked]:bg-coral/10 has-[:checked]:ring-2 has-[:checked]:ring-coral/25"
               >
                 <input
                   type="radio"

@@ -30,7 +30,7 @@ export default async function AdminPromocionesPage() {
       <header className="mb-8 aparecer">
         <Link
           href="/admin"
-          className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
+          className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-[#1c0618] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
         >
           <svg
             width="17"
@@ -110,7 +110,7 @@ export default async function AdminPromocionesPage() {
                     <input type="hidden" name="id" value={p.id} />
                     <button
                       type="submit"
-                      className="rounded-full px-3 py-1.5 text-xs font-medium text-tinta-soft transition hover:bg-white/[0.06] hover:text-coral-dark"
+                      className="rounded-full px-3 py-1.5 text-xs font-medium text-tinta-soft transition hover:bg-[#20091c] hover:text-coral-dark"
                     >
                       Eliminar
                     </button>
