@@ -297,6 +297,8 @@ body::after {
   -webkit-backdrop-filter: blur(10px);
   padding: 0.8rem 1.05rem;
   color: var(--color-tinta);
+  /* Hace que los desplegables nativos (select) se pinten en oscuro. */
+  color-scheme: dark;
   outline: none;
   transition:
     border-color 0.2s ease,
@@ -306,6 +308,15 @@ body::after {
 }
 .campo::placeholder {
   color: rgba(184, 136, 168, 0.5);
+}
+/* Opciones del desplegable: si no, el navegador las muestra sobre fondo
+   blanco y el texto claro queda ilegible. Les damos el oscuro del sistema. */
+.campo option {
+  background-color: var(--color-crema-2);
+  color: var(--color-tinta);
+}
+.campo option:disabled {
+  color: var(--color-tinta-soft);
 }
 .campo:focus {
   border-color: rgba(236, 11, 134, 0.7);
