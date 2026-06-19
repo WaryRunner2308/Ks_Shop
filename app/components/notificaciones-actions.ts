@@ -18,3 +18,16 @@ export async function marcarTodasLeidas() {
     .update({ leida: true })
     .eq("leida", false);
 }
+
+// Borra una notificación. RLS limita a que cada quien borre solo las suyas.
+export async function borrarNotificacion(id: number) {
+  if (!Number.isInteger(id)) return;
+  const supabase = await createClient();
+  await supabase.from("notificaciones").delete().eq("id", id);
+}
+
+// Borra todas las notificaciones del destinatario (RLS lo limita a las suyas).
+export async function borrarTodasNotificaciones() {
+  const supabase = await createClient();
+  await supabase.from("notificaciones").delete().gte("id", 0);
+}

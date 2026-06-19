@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { marcarLeida, marcarTodasLeidas } from "./notificaciones-actions";
+import {
+  marcarLeida,
+  marcarTodasLeidas,
+  borrarNotificacion,
+  borrarTodasNotificaciones,
+} from "./notificaciones-actions";
 
 export type Notificacion = {
   id: number;
@@ -18,6 +23,113 @@ function hora(iso: string): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+// Una fila de notificación que se puede deslizar a la izquierda para borrarla
+// (estilo iPhone). Si el gesto es solo un toque, los botones internos funcionan
+// normal; solo se activa el arrastre cuando el movimiento es claramente horizontal.
+function FilaNotificacion({
+  n,
+  onLeer,
+  onBorrar,
+}: {
+  n: Notificacion;
+  onLeer: (id: number) => void;
+  onBorrar: (id: number) => void;
+}) {
+  const [dx, setDx] = useState(0);
+  const [arrastrando, setArrastrando] = useState(false);
+  const [saliendo, setSaliendo] = useState(false);
+  const inicio = useRef<{ x: number; y: number } | null>(null);
+  const activo = useRef(false);
+
+  function down(e: React.PointerEvent) {
+    inicio.current = { x: e.clientX, y: e.clientY };
+    activo.current = false;
+  }
+  function move(e: React.PointerEvent) {
+    if (!inicio.current || saliendo) return;
+    const ddx = e.clientX - inicio.current.x;
+    const ddy = e.clientY - inicio.current.y;
+    if (!activo.current) {
+      // Decide si es arrastre horizontal (y no scroll vertical o un toque).
+      if (Math.abs(ddx) > 8 && Math.abs(ddx) > Math.abs(ddy)) {
+        activo.current = true;
+        setArrastrando(true);
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      } else {
+        return;
+      }
+    }
+    setDx(Math.min(0, ddx)); // solo hacia la izquierda
+  }
+  function up() {
+    if (activo.current) {
+      setArrastrando(false);
+      if (dx < -80) {
+        setSaliendo(true);
+        window.setTimeout(() => onBorrar(n.id), 200);
+      } else {
+        setDx(0);
+      }
+    }
+    inicio.current = null;
+    activo.current = false;
+  }
+
+  return (
+    <li className="relative overflow-hidden border-b border-white/10 last:border-0">
+      {/* Fondo rojo que se descubre al deslizar. */}
+      <div className="absolute inset-0 flex items-center justify-end bg-red-500/85 pr-5 text-white">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+        </svg>
+      </div>
+
+      <div
+        onPointerDown={down}
+        onPointerMove={move}
+        onPointerUp={up}
+        onPointerCancel={up}
+        style={{
+          transform: `translateX(${saliendo ? -400 : dx}px)`,
+          opacity: saliendo ? 0 : 1,
+          transition: arrastrando
+            ? "none"
+            : "transform 0.2s ease, opacity 0.2s ease",
+          touchAction: "pan-y",
+          background: n.leida ? "#241022" : "#2c1330",
+        }}
+        className="relative flex items-start gap-2 px-4 py-3"
+      >
+        <div className="min-w-0 flex-1">
+          <p className="text-sm text-tinta">{n.mensaje}</p>
+          <p className="mt-0.5 text-xs text-tinta-soft">{hora(n.created_at)}</p>
+        </div>
+        {!n.leida && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onLeer(n.id);
+            }}
+            className="shrink-0 text-xs font-medium text-coral-dark hover:underline"
+          >
+            Leída
+          </button>
+        )}
+      </div>
+    </li>
+  );
 }
 
 type Props = {
@@ -126,6 +238,16 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
     await marcarTodasLeidas();
   }
 
+  async function borrarUna(id: number) {
+    setNotis((prev) => prev.filter((n) => n.id !== id));
+    await borrarNotificacion(id);
+  }
+
+  async function borrarTodas() {
+    setNotis([]);
+    await borrarTodasNotificaciones();
+  }
+
   return (
     <div className="relative" ref={contenedor}>
       <button
@@ -162,18 +284,48 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
             boxShadow: "0 24px 52px -14px rgba(0,0,0,0.85)",
           }}
         >
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+          <div className="flex items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
             <span className="font-semibold text-tinta">Notificaciones</span>
-            {noLeidas > 0 && (
-              <button
-                type="button"
-                onClick={leerTodas}
-                className="text-xs font-medium text-coral-dark hover:underline"
-              >
-                Marcar todas leídas
-              </button>
-            )}
+            <div className="flex items-center gap-3">
+              {noLeidas > 0 && (
+                <button
+                  type="button"
+                  onClick={leerTodas}
+                  className="text-xs font-medium text-coral-dark hover:underline"
+                >
+                  Marcar todas leídas
+                </button>
+              )}
+              {notis.length > 0 && (
+                <button
+                  type="button"
+                  onClick={borrarTodas}
+                  aria-label="Borrar todas las notificaciones"
+                  title="Borrar todas"
+                  className="shrink-0 rounded-full p-1 text-tinta-soft transition hover:bg-white/10 hover:text-coral-dark"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
+
+          {notis.length > 0 && (
+            <p className="px-4 pt-2 text-[0.7rem] text-tinta-soft">
+              Desliza una notificación a la izquierda para borrarla.
+            </p>
+          )}
 
           <ul className="max-h-96 overflow-y-auto">
             {notis.length === 0 ? (
@@ -182,28 +334,12 @@ export default function CampanaNotificaciones({ inicial, canal, filtro }: Props)
               </li>
             ) : (
               notis.map((n) => (
-                <li
+                <FilaNotificacion
                   key={n.id}
-                  className={`flex items-start gap-2 border-b border-white/10 px-4 py-3 last:border-0 ${
-                    n.leida ? "" : "bg-coral/10"
-                  }`}
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm text-tinta">{n.mensaje}</p>
-                    <p className="mt-0.5 text-xs text-tinta-soft">
-                      {hora(n.created_at)}
-                    </p>
-                  </div>
-                  {!n.leida && (
-                    <button
-                      type="button"
-                      onClick={() => leerUna(n.id)}
-                      className="shrink-0 text-xs font-medium text-coral-dark hover:underline"
-                    >
-                      Leída
-                    </button>
-                  )}
-                </li>
+                  n={n}
+                  onLeer={leerUna}
+                  onBorrar={borrarUna}
+                />
               ))
             )}
           </ul>
