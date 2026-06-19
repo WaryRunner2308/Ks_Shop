@@ -326,8 +326,8 @@ export default async function Home() {
             )}
           </section>
 
-          {/* Accesos: tutoriales y promociones */}
-          <section className="mt-10 grid gap-4 sm:grid-cols-2">
+          {/* Accesos: tutoriales, cursos y promociones */}
+          <section className="mt-10 grid gap-4 sm:grid-cols-3">
             <Link
               href="/tutoriales"
               className="tarjeta tarjeta-flota flex items-center gap-3 p-5"
@@ -351,6 +351,32 @@ export default async function Home() {
                 <p className="font-medium text-tinta">Tutoriales</p>
                 <p className="truncate text-xs text-tinta-soft">
                   Aprende a compartir tus links
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/cursos"
+              className="tarjeta tarjeta-flota flex items-center gap-3 p-5"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-coral/15 text-coral-dark">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                </svg>
+              </span>
+              <div className="min-w-0">
+                <p className="font-medium text-tinta">Cursos</p>
+                <p className="truncate text-xs text-tinta-soft">
+                  Aprende y paga en línea
                 </p>
               </div>
             </Link>

@@ -326,6 +326,9 @@ export default async function AdminPage() {
         <Link href="/admin/tutoriales" className="btn-linea px-4 py-2 text-sm">
           Tutoriales
         </Link>
+        <Link href="/admin/cursos" className="btn-linea px-4 py-2 text-sm">
+          Cursos
+        </Link>
         <Link href="/admin/promociones" className="btn-linea px-4 py-2 text-sm">
           Promociones
         </Link>
