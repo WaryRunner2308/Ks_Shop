@@ -18,8 +18,15 @@ Para correr el sistema es solo: `pnpm start`. El gestor de paquetes es **pnpm** 
 3. El SISTEMA le envía ese precio al cliente TAL CUAL, sin modificarlo ni calcular nada.
 POR QUÉ: las plataformas dan descuentos a usuarios nuevos; el precio del cliente NO es el de la dueña. Solo ella conoce su precio real y decide el precio de venta, por eso ella lo ingresa. Evita discusiones.
 
-## Precio (SIN cálculo)
-El sistema NO calcula ningún precio ni ganancia. La dueña escribe el precio de venta final y el sistema lo envía sin modificarlo. SIEMPRE mostrar disclaimer: "El precio del envío internacional final se notificará una vez que el paquete llegue al país."
+## Precio (la dueña lo pone; el sistema NO calcula el precio de venta ni la ganancia)
+El sistema NO calcula el PRECIO DE VENTA ni la ganancia: la dueña lo escribe a mano y se envía TAL CUAL al cliente. SIEMPRE mostrar disclaimer: "El precio del envío internacional final se notificará una vez que el paquete llegue al país."
+
+### ÚNICA excepción permitida — comisiones de método de pago (sí se calculan)
+La dueña pidió que SOLO estos recargos se sumen automáticamente al pagar (no son ganancia, son la comisión de la plataforma; se muestran con desglose al cliente):
+- **PayPal:** Monto + 6.5% + $0.30
+- **Binance:** Monto + 15%
+- **Wally, Zinli, Pago Móvil, Divisas:** sin recargo.
+Las reglas viven en `lib/metodos-pago.ts` (`calcularMonto`). No agregar otros cálculos de precio sin que la dueña lo pida explícitamente.
 
 ## Roles
 cliente: solicita cotización, paga, sube comprobante. admin (dueña): mira productos y escribe el precio de venta final, ve pagos, recibe notificaciones.
