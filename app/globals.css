@@ -159,7 +159,11 @@ body::after {
    ==================================================================== */
 
 .vidrio {
-  background: rgba(255, 255, 255, 0.05);
+  /* Brillo de vidrio sobre una base oscura casi opaca: mantiene la estética
+     pero impide que los logos flotantes del fondo se traspasen y estorben. */
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05)),
+    rgba(18, 3, 20, 0.82);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.09);
@@ -243,7 +247,9 @@ body::after {
   gap: 0.5rem;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.07);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.07)),
+    rgba(18, 3, 20, 0.82);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
   color: var(--color-tinta);
@@ -258,7 +264,9 @@ body::after {
 }
 .btn-linea:hover {
   border-color: rgba(236, 11, 134, 0.55);
-  background: rgba(236, 11, 134, 0.1);
+  background:
+    linear-gradient(rgba(236, 11, 134, 0.16), rgba(236, 11, 134, 0.16)),
+    rgba(18, 3, 20, 0.8);
   color: #ff7bc2;
   transform: translateY(-1px);
   box-shadow: var(--sombra-media);
@@ -271,7 +279,9 @@ body::after {
 .tarjeta {
   border-radius: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.09);
-  background: rgba(255, 255, 255, 0.05);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05)),
+    rgba(18, 3, 20, 0.84);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   box-shadow:
@@ -292,7 +302,9 @@ body::after {
 .campo {
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)),
+    rgba(18, 3, 20, 0.82);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 0.8rem 1.05rem;
@@ -320,7 +332,9 @@ body::after {
 }
 .campo:focus {
   border-color: rgba(236, 11, 134, 0.7);
-  background: rgba(255, 255, 255, 0.09);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.09)),
+    rgba(18, 3, 20, 0.84);
   box-shadow: 0 0 0 4px rgba(236, 11, 134, 0.16);
 }
 
@@ -331,7 +345,9 @@ body::after {
   gap: 0.35rem;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)),
+    rgba(18, 3, 20, 0.86);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 0.3rem 0.85rem;

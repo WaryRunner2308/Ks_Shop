@@ -161,7 +161,7 @@ function BloqueCarrito() {
           <path d="M12 16v-4M12 8h.01" />
         </svg>
         <span>
-          Por ahora solo puedes compartir carritos de{" "}
+          Las únicas plataformas que te permiten mandar carrito son:{" "}
           <strong className="font-semibold">Shein</strong>,{" "}
           <strong className="font-semibold">Fashion Nova</strong> y{" "}
           <strong className="font-semibold">Temu</strong>.

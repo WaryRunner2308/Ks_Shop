@@ -19,6 +19,7 @@ type Solicitud = {
   created_at: string;
   expira_en: string | null;
   tipo: string;
+  imagen_url: string | null;
 };
 
 // Filtros disponibles y cómo deciden si una solicitud entra.
@@ -50,13 +51,28 @@ export default async function MisSolicitudesPage({
   // RLS garantiza que solo se devuelven las solicitudes del cliente logueado.
   const { data } = await supabase
     .from("presupuestos")
-    .select("id, plataforma, url_producto, variante, precio_venta, estado, created_at, expira_en, tipo")
+    .select("id, plataforma, url_producto, variante, precio_venta, estado, created_at, expira_en, tipo, imagen_url")
     .order("created_at", { ascending: false })
     .returns<Solicitud[]>();
 
   // Las confirmadas salen de aquí y van a su propia página /confirmadas.
   const activas = (data ?? []).filter((s) => s.estado !== "confirmado");
   const solicitudes = activas.filter((s) => pasaFiltro(s.estado, filtro));
+
+  // URLs firmadas (temporales) para mostrar la imagen de referencia que subió el
+  // cliente. El bucket es privado; la RLS permite al cliente ver SOLO las suyas.
+  const rutasImg = solicitudes
+    .map((s) => s.imagen_url)
+    .filter((r): r is string => !!r);
+  const firmadas: Record<string, string> = {};
+  if (rutasImg.length > 0) {
+    const { data: urls } = await supabase.storage
+      .from("referencias")
+      .createSignedUrls(rutasImg, 3600);
+    for (const u of urls ?? []) {
+      if (u.path && u.signedUrl) firmadas[u.path] = u.signedUrl;
+    }
+  }
 
   // Notas (hilo de mensajes con la dueña) de las solicitudes mostradas.
   const notasPorSolicitud: Record<number, Nota[]> = {};
@@ -216,6 +232,24 @@ export default async function MisSolicitudesPage({
                       <p className="mt-1 text-sm text-tinta-soft">
                         Variante: {s.variante}
                       </p>
+                    )}
+                    {s.imagen_url && firmadas[s.imagen_url] && (
+                      <a
+                        href={firmadas[s.imagen_url]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group mt-2 inline-flex items-center gap-2"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={firmadas[s.imagen_url]}
+                          alt="Imagen de referencia"
+                          className="h-14 w-14 rounded-lg object-cover ring-1 ring-white/10 transition group-hover:ring-coral/50"
+                        />
+                        <span className="text-xs font-medium text-coral-dark group-hover:underline">
+                          Ver imagen que enviaste
+                        </span>
+                      </a>
                     )}
                   </div>
                   <span className="chip shrink-0">
