@@ -124,14 +124,20 @@ export default async function PagarPage({
           href={imagenFirmada}
           target="_blank"
           rel="noopener noreferrer"
-          className="mb-5 block overflow-hidden rounded-2xl ring-1 ring-white/10"
+          className="group mb-5 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 transition hover:border-coral/40"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imagenFirmada}
-            alt="Lo que pediste"
-            className="max-h-60 w-full bg-white/[0.03] object-contain"
+            alt="Imagen del producto"
+            className="h-16 w-16 shrink-0 rounded-lg bg-white/[0.04] object-cover ring-1 ring-white/10 transition group-hover:ring-coral/50"
           />
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-tinta">Imagen del producto</p>
+            <p className="text-xs text-coral-dark group-hover:underline">
+              Toca para verla completa
+            </p>
+          </div>
         </a>
       )}
 
