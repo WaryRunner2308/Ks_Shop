@@ -55,7 +55,20 @@ export default async function PromocionesPage() {
 
       {promociones.length === 0 ? (
         <div className="tarjeta aparecer border-dashed p-10 text-center">
-          <p className="text-3xl">🎉</p>
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mx-auto text-tinta-soft"
+          >
+            <path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+            <path d="M7 7h.01" />
+          </svg>
           <p className="mt-3 text-tinta-soft">
             No hay promociones activas en este momento.
           </p>

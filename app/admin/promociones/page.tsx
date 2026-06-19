@@ -84,8 +84,20 @@ export default async function AdminPromocionesPage() {
                       className="h-16 w-16 shrink-0 rounded-xl object-cover ring-1 ring-white/10"
                     />
                   ) : (
-                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-coral/15 text-2xl">
-                      🎉
+                    <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-coral/15 text-coral-dark">
+                      <svg
+                        width="26"
+                        height="26"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                        <path d="M7 7h.01" />
+                      </svg>
                     </span>
                   )}
                   <div className="min-w-0 flex-1">

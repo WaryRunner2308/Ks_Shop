@@ -61,7 +61,7 @@ function Tarjeta({
             <span className="chip">{etiquetaPlataforma(s.plataforma)}</span>
             {s.tipo === "carrito" && (
               <span className="inline-flex items-center gap-1 rounded-full bg-coral/15 px-2.5 py-0.5 text-xs font-semibold text-coral-dark">
-                🛒 {TIPO_ETIQUETA.carrito}
+                {TIPO_ETIQUETA.carrito}
               </span>
             )}
             <span className="text-sm font-medium text-tinta">{cliente}</span>

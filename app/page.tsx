@@ -266,7 +266,7 @@ export default async function Home() {
                             {etiquetaPlataforma(s.plataforma)}
                             {s.tipo === "carrito" && (
                               <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-coral/15 px-2 py-0.5 text-[0.65rem] font-semibold text-coral-dark">
-                                🛒 {TIPO_ETIQUETA.carrito}
+                                {TIPO_ETIQUETA.carrito}
                               </span>
                             )}
                           </p>
@@ -315,8 +315,20 @@ export default async function Home() {
               href="/tutoriales"
               className="tarjeta tarjeta-flota flex items-center gap-3 p-5"
             >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-coral/15 text-xl">
-                📚
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-coral/15 text-coral-dark">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
               </span>
               <div className="min-w-0">
                 <p className="font-medium text-tinta">Tutoriales</p>
@@ -329,8 +341,20 @@ export default async function Home() {
               href="/promociones"
               className="tarjeta tarjeta-flota flex items-center gap-3 p-5"
             >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-coral/15 text-xl">
-                🎉
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-coral/15 text-coral-dark">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                  <path d="M7 7h.01" />
+                </svg>
               </span>
               <div className="min-w-0">
                 <p className="font-medium text-tinta">Promociones</p>

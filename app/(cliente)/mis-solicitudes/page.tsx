@@ -216,7 +216,7 @@ export default async function MisSolicitudesPage({
                       {etiquetaPlataforma(s.plataforma)}
                       {s.tipo === "carrito" && (
                         <span className="inline-flex items-center gap-1 rounded-full bg-coral/15 px-2.5 py-0.5 text-xs font-semibold text-coral-dark">
-                          🛒 {TIPO_ETIQUETA.carrito}
+                          {TIPO_ETIQUETA.carrito}
                         </span>
                       )}
                     </p>

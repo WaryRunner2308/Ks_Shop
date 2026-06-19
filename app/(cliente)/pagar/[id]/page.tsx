@@ -26,7 +26,7 @@ export default async function PagarPage({
   const { data: presupuesto } = await supabase
     .from("presupuestos")
     .select(
-      "id, plataforma, url_producto, variante, precio_venta, estado, expira_en",
+      "id, plataforma, url_producto, variante, precio_venta, estado, expira_en, imagen_url",
     )
     .eq("id", presupuestoId)
     .single();
@@ -80,6 +80,16 @@ export default async function PagarPage({
     .order("created_at", { ascending: true })
     .returns<Metodo[]>();
 
+  // Imagen de referencia que subió el cliente (bucket privado → URL firmada).
+  // Le recuerda qué producto pidió y está por pagar.
+  let imagenFirmada: string | null = null;
+  if (presupuesto.imagen_url) {
+    const { data: firmada } = await supabase.storage
+      .from("referencias")
+      .createSignedUrl(presupuesto.imagen_url, 3600);
+    imagenFirmada = firmada?.signedUrl ?? null;
+  }
+
   return (
     <div className="mx-auto max-w-lg px-6 py-12">
       <header className="mb-6">
@@ -108,6 +118,22 @@ export default async function PagarPage({
           {presupuesto.variante ? ` · ${presupuesto.variante}` : ""}
         </p>
       </header>
+
+      {imagenFirmada && (
+        <a
+          href={imagenFirmada}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-5 block overflow-hidden rounded-2xl ring-1 ring-white/10"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imagenFirmada}
+            alt="Lo que pediste"
+            className="max-h-60 w-full bg-white/[0.03] object-contain"
+          />
+        </a>
+      )}
 
       {presupuesto.expira_en && (
         <div className="mb-5">
