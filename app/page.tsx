@@ -5,6 +5,7 @@ import { cerrarSesion } from "@/app/auth/actions";
 import Logo from "@/app/components/logo";
 import LogosFlotantes from "@/app/components/logos-flotantes";
 import WizardPush from "@/app/components/wizard-push";
+import PlataformasCliente from "@/app/components/plataformas-cliente";
 import { ESTADO_ETIQUETA, etiquetaPlataforma, TIPO_ETIQUETA } from "@/lib/constantes";
 
 type Solicitud = {
@@ -217,7 +218,9 @@ export default async function Home() {
             {solicitudes.length === 0 ? (
               <div className="tarjeta border-dashed p-8 text-center">
                 <p className="text-tinta-soft">
-                  Aún no tienes solicitudes. Es tan fácil como:
+                  Aún no tienes solicitudes.
+                  <br />
+                  Es tan fácil como:
                 </p>
                 <ol className="mx-auto mt-4 flex max-w-xs flex-col gap-2 text-left text-sm text-tinta-soft">
                   {[
@@ -306,32 +309,40 @@ export default async function Home() {
             )}
           </section>
 
-          {/* Plataformas */}
-          <section className="mt-12">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-tinta-soft">
-              Compro en estas plataformas
-            </p>
-            <div className="flex flex-wrap gap-2 text-sm">
-              {[
-                "AliExpress",
-                "Shein",
-                "Temu",
-                "eBay",
-                "Romwe",
-                "Fashion Nova",
-                "Dolls Kill",
-                "Babyboo",
-                "Beauty Creations",
-              ].map((p) => (
-                <span
-                  key={p}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-medium text-tinta-soft"
-                >
-                  {p}
-                </span>
-              ))}
-            </div>
+          {/* Accesos: tutoriales y promociones */}
+          <section className="mt-10 grid gap-4 sm:grid-cols-2">
+            <Link
+              href="/tutoriales"
+              className="tarjeta tarjeta-flota flex items-center gap-3 p-5"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-coral/15 text-xl">
+                📚
+              </span>
+              <div className="min-w-0">
+                <p className="font-medium text-tinta">Tutoriales</p>
+                <p className="truncate text-xs text-tinta-soft">
+                  Aprende a compartir tus links
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/promociones"
+              className="tarjeta tarjeta-flota flex items-center gap-3 p-5"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-coral/15 text-xl">
+                🎉
+              </span>
+              <div className="min-w-0">
+                <p className="font-medium text-tinta">Promociones</p>
+                <p className="truncate text-xs text-tinta-soft">
+                  Ofertas y novedades
+                </p>
+              </div>
+            </Link>
           </section>
+
+          {/* Plataformas */}
+          <PlataformasCliente />
         </main>
       </div>
     );

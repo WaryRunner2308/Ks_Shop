@@ -14,6 +14,14 @@ export const PLATAFORMAS = [
 
 export type Plataforma = (typeof PLATAFORMAS)[number]["valor"];
 
+// Opción "Otra" para cuando el cliente compra en una tienda fuera de la lista.
+// NO es una marca: por eso no entra en PLATAFORMAS (los chips de marca) sino
+// solo en el selector del formulario de cotización.
+export const OPCION_OTRA = { valor: "otra", etiqueta: "Otra" } as const;
+
+// Opciones del <SelectorPlataforma> para producto individual: las marcas + "Otra".
+export const OPCIONES_PLATAFORMA = [...PLATAFORMAS, OPCION_OTRA];
+
 // Disclaimer obligatorio sobre el envío internacional (ver CLAUDE.md).
 export const DISCLAIMER_ENVIO =
   "El precio del envío internacional final se notificará una vez que el paquete llegue al país.";
@@ -27,9 +35,10 @@ export const ESTADO_ETIQUETA: Record<string, string> = {
   cancelado: "Cancelado",
 };
 
-// Devuelve la etiqueta bonita de una plataforma a partir de su valor guardado.
+// Devuelve la etiqueta bonita de una plataforma a partir de su valor guardado
+// (incluye "Otra").
 export function etiquetaPlataforma(valor: string): string {
-  return PLATAFORMAS.find((p) => p.valor === valor)?.etiqueta ?? valor;
+  return OPCIONES_PLATAFORMA.find((p) => p.valor === valor)?.etiqueta ?? valor;
 }
 
 // Tipo de solicitud (coincide con la columna `tipo` de presupuestos).

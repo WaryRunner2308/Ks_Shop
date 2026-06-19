@@ -46,6 +46,18 @@ export default async function ClienteLayout({
           >
             Mis solicitudes
           </Link>
+          <Link
+            href="/tutoriales"
+            className="hidden rounded-full px-3 py-2 font-medium text-tinta transition hover:bg-crema-2 sm:inline-flex"
+          >
+            Tutoriales
+          </Link>
+          <Link
+            href="/promociones"
+            className="hidden rounded-full px-3 py-2 font-medium text-tinta transition hover:bg-crema-2 sm:inline-flex"
+          >
+            Promociones
+          </Link>
           <CampanaNotificaciones
             inicial={data ?? []}
             canal="notis-cliente"

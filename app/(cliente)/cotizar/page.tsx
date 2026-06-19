@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useRef, useState } from "react";
 import { crearSolicitud, type EstadoCotizar } from "./actions";
-import { PLATAFORMAS, OPCIONES_CARRITO } from "@/lib/constantes";
+import { OPCIONES_PLATAFORMA, OPCIONES_CARRITO } from "@/lib/constantes";
 import SelectorPlataforma from "@/app/components/selector-plataforma";
 
 const estadoInicial: EstadoCotizar = {};
@@ -58,7 +58,10 @@ function BloqueProducto({
 
       <div className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-tinta">Plataforma</span>
-        <SelectorPlataforma name={`plataforma_${indice}`} opciones={PLATAFORMAS} />
+        <SelectorPlataforma
+          name={`plataforma_${indice}`}
+          opciones={OPCIONES_PLATAFORMA}
+        />
       </div>
 
       <label className="flex flex-col gap-1.5">
@@ -89,7 +92,11 @@ function BloqueProducto({
       <div className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-tinta">
           Imagen de referencia{" "}
-          <span className="font-normal text-tinta-soft">(opcional)</span>
+          <span className="font-normal text-coral-dark">(obligatoria)</span>
+        </span>
+        <span className="text-xs leading-relaxed text-tinta-soft">
+          Para mejores resultados, sube la primera foto del producto sin
+          recortar.
         </span>
         <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-white/15 bg-white/[0.04] p-3 transition hover:border-coral/50">
           {preview ? (

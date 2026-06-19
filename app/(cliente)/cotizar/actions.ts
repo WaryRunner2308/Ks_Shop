@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { PLATAFORMAS, CARRITO_PLATAFORMAS } from "@/lib/constantes";
+import { OPCIONES_PLATAFORMA, CARRITO_PLATAFORMAS } from "@/lib/constantes";
 import { validarLinkCarrito } from "@/lib/validar-carrito";
 
 export type EstadoCotizar = {
@@ -15,7 +15,7 @@ export type EstadoCotizar = {
   carrito?: boolean;
 };
 
-const valoresPlataforma = PLATAFORMAS.map((p) => p.valor) as [
+const valoresPlataforma = OPCIONES_PLATAFORMA.map((p) => p.valor) as [
   string,
   ...string[],
 ];
@@ -48,9 +48,10 @@ const esquemaProducto = z.object({
     .min(1, "Escribe la variante que quieres (talla, color, etc.)."),
 });
 
-// Una imagen es válida si: no se subió nada (opcional) o es imagen ≤ 5 MB.
+// La imagen de referencia es OBLIGATORIA: debe subirse y ser imagen ≤ 5 MB.
 function imagenValida(f: File | null): { ok: boolean; error?: string } {
-  if (!f || f.size === 0) return { ok: true }; // opcional
+  if (!f || f.size === 0)
+    return { ok: false, error: "Sube la imagen de referencia del producto." };
   if (!f.type.startsWith("image/"))
     return { ok: false, error: "El archivo debe ser una imagen." };
   if (f.size > MAX_IMG)
