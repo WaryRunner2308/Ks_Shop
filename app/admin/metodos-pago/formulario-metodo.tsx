@@ -7,6 +7,7 @@ import {
   type EstadoMetodo,
 } from "./actions";
 import { TIPOS_METODO, configTipo, textoRecargo } from "@/lib/metodos-pago";
+import SelectorPlataforma from "@/app/components/selector-plataforma";
 
 const estadoInicial: EstadoMetodo = {};
 
@@ -39,30 +40,19 @@ export default function FormularioMetodo({ metodo, onListo }: Props) {
     >
       {editando && <input type="hidden" name="id" value={metodo.id} />}
 
-      <label className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1">
         <span className="text-sm font-medium text-tinta">Tipo de método</span>
-        {editando ? (
-          // En edición el tipo no cambia (se mantiene fijo).
-          <input type="hidden" name="tipo" value={tipo} />
-        ) : null}
-        <select
-          name={editando ? undefined : "tipo"}
+        {/* Selector personalizado (mismo visual que el del lado cliente). En
+            edición el tipo queda fijo (disabled), pero igual envía "tipo". */}
+        <SelectorPlataforma
+          name="tipo"
+          opciones={TIPOS_METODO}
+          placeholder="Elige un tipo…"
           value={tipo}
-          onChange={(e) => setTipo(e.target.value)}
+          onChange={setTipo}
           disabled={editando}
-          required
-          className={`${claseInput} disabled:opacity-70`}
-        >
-          <option value="" disabled>
-            Elige un tipo…
-          </option>
-          {TIPOS_METODO.map((t) => (
-            <option key={t.valor} value={t.valor}>
-              {t.etiqueta}
-            </option>
-          ))}
-        </select>
-      </label>
+        />
+      </div>
 
       {/* Nota de comisión / caso especial */}
       {config && textoRecargo(config.valor) && (

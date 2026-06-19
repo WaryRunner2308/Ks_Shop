@@ -17,18 +17,29 @@ export default function SelectorPlataforma({
   name,
   opciones,
   placeholder = "Elige una…",
+  value,
+  onChange,
+  disabled = false,
 }: {
   name: string;
   opciones: readonly Opcion[];
   placeholder?: string;
+  // Modo controlado (opcional): si se pasan, el padre maneja el valor.
+  value?: string;
+  onChange?: (valor: string) => void;
+  disabled?: boolean;
 }) {
   const [montado, setMontado] = useState(false);
   const [abierto, setAbierto] = useState(false);
-  const [valor, setValor] = useState("");
+  const [valorInterno, setValorInterno] = useState("");
   const [rect, setRect] = useState<DOMRect | null>(null);
   const disparador = useRef<HTMLButtonElement>(null);
   const lista = useRef<HTMLUListElement>(null);
   const listaId = useId();
+
+  // Si llega "value", el componente es controlado por el padre.
+  const controlado = value !== undefined;
+  const valor = controlado ? value : valorInterno;
 
   const seleccionada = opciones.find((o) => o.valor === valor);
 
@@ -39,6 +50,7 @@ export default function SelectorPlataforma({
   }
 
   function alternar() {
+    if (disabled) return;
     if (!abierto) recalcular();
     setAbierto((v) => !v);
   }
@@ -84,7 +96,8 @@ export default function SelectorPlataforma({
   }, [abierto]);
 
   function elegir(v: string) {
-    setValor(v);
+    if (controlado) onChange?.(v);
+    else setValorInterno(v);
     setAbierto(false);
   }
 
@@ -98,10 +111,11 @@ export default function SelectorPlataforma({
         ref={disparador}
         type="button"
         onClick={alternar}
+        disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={abierto}
         aria-controls={listaId}
-        className={`campo flex w-full items-center justify-between text-left ${
+        className={`campo flex w-full items-center justify-between text-left disabled:cursor-not-allowed disabled:opacity-70 ${
           seleccionada ? "text-tinta" : "text-tinta-soft"
         }`}
       >
