@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ESTADO_ETIQUETA, etiquetaPlataforma } from "@/lib/constantes";
 import FormularioPrecio from "./formulario-precio";
+import NotasCotizacion, { type Nota } from "@/app/components/notas-cotizacion";
 
 type Cliente = { nombre: string | null; email: string | null };
 
@@ -40,9 +41,11 @@ const ESTADO_CHIP: Record<string, string> = {
 function Tarjeta({
   s,
   imagenUrl,
+  notas = [],
 }: {
   s: Solicitud;
   imagenUrl?: string | null;
+  notas?: Nota[];
 }) {
   const cliente = s.usuarios?.nombre || s.usuarios?.email || "Cliente";
   const pendiente = s.estado === "solicitado";
@@ -102,7 +105,10 @@ function Tarjeta({
       </div>
 
       {pendiente ? (
-        <FormularioPrecio id={s.id} />
+        <>
+          <FormularioPrecio id={s.id} />
+          <NotasCotizacion presupuestoId={s.id} notas={notas} rol="admin" />
+        </>
       ) : (
         s.precio_venta != null && (
           <div className="mt-3 rounded-xl bg-white/[0.06] px-4 py-2.5 text-sm text-tinta-soft">
@@ -166,6 +172,21 @@ export default async function AdminPage() {
 
   const solicitudes = data ?? [];
   const pendientes = solicitudes.filter((s) => s.estado === "solicitado");
+
+  // Notas (hilo de mensajes) de las solicitudes pendientes, agrupadas por id.
+  const notasPorSolicitud: Record<number, Nota[]> = {};
+  const idsPendientes = pendientes.map((s) => s.id);
+  if (idsPendientes.length > 0) {
+    const { data: notas } = await supabase
+      .from("notas_cotizacion")
+      .select("id, presupuesto_id, autor, mensaje, created_at")
+      .in("presupuesto_id", idsPendientes)
+      .order("created_at", { ascending: true })
+      .returns<(Nota & { presupuesto_id: number })[]>();
+    for (const n of notas ?? []) {
+      (notasPorSolicitud[n.presupuesto_id] ??= []).push(n);
+    }
+  }
   // "Ya cotizadas" = activas (cotizada o pagada esperando confirmar). Las
   // confirmadas salen del panel y van a su propia página.
   const cotizadas = solicitudes.filter(
@@ -315,7 +336,12 @@ export default async function AdminPage() {
         ) : (
           <ul className="entrada flex flex-col gap-4">
             {pendientes.map((s) => (
-              <Tarjeta key={s.id} s={s} imagenUrl={urlDe(s)} />
+              <Tarjeta
+                key={s.id}
+                s={s}
+                imagenUrl={urlDe(s)}
+                notas={notasPorSolicitud[s.id] ?? []}
+              />
             ))}
           </ul>
         )}

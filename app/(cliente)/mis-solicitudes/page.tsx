@@ -6,6 +6,7 @@ import {
   etiquetaPlataforma,
 } from "@/lib/constantes";
 import ContadorOferta from "@/app/components/contador-oferta";
+import NotasCotizacion, { type Nota } from "@/app/components/notas-cotizacion";
 
 type Solicitud = {
   id: number;
@@ -54,6 +55,21 @@ export default async function MisSolicitudesPage({
   // Las confirmadas salen de aquí y van a su propia página /confirmadas.
   const activas = (data ?? []).filter((s) => s.estado !== "confirmado");
   const solicitudes = activas.filter((s) => pasaFiltro(s.estado, filtro));
+
+  // Notas (hilo de mensajes con la dueña) de las solicitudes mostradas.
+  const notasPorSolicitud: Record<number, Nota[]> = {};
+  const ids = solicitudes.map((s) => s.id);
+  if (ids.length > 0) {
+    const { data: notas } = await supabase
+      .from("notas_cotizacion")
+      .select("id, presupuesto_id, autor, mensaje, created_at")
+      .in("presupuesto_id", ids)
+      .order("created_at", { ascending: true })
+      .returns<(Nota & { presupuesto_id: number })[]>();
+    for (const n of notas ?? []) {
+      (notasPorSolicitud[n.presupuesto_id] ??= []).push(n);
+    }
+  }
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
@@ -234,6 +250,15 @@ export default async function MisSolicitudesPage({
                   <p className="mt-4 text-sm text-tinta-soft">
                     Aún sin precio. Te avisaremos cuando esté cotizada.
                   </p>
+                )}
+
+                {/* Hilo de notas con la dueña (responder o cancelar) */}
+                {(notasPorSolicitud[s.id]?.length ?? 0) > 0 && (
+                  <NotasCotizacion
+                    presupuestoId={s.id}
+                    notas={notasPorSolicitud[s.id]}
+                    rol="cliente"
+                  />
                 )}
               </li>
             );
