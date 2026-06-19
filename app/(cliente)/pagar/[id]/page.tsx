@@ -88,9 +88,22 @@ export default async function PagarPage({
       <header className="mb-6">
         <Link
           href="/mis-solicitudes"
-          className="text-sm text-coral-dark hover:underline"
+          className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-sm font-medium text-tinta-soft transition hover:border-white/25 hover:text-tinta"
         >
-          ← Mis solicitudes
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M19 12H5" />
+            <path d="M12 19l-7-7 7-7" />
+          </svg>
+          Mis solicitudes
         </Link>
         <h1 className="mt-2 font-display text-3xl text-tinta">Pagar pedido</h1>
         <p className="mt-1 text-sm text-tinta-soft">
