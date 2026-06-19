@@ -67,13 +67,10 @@ export default async function PagarPage({
   }
 
   // Teléfono del admin (para los enlaces de WhatsApp de Pago Móvil / Divisas).
-  const { data: admin } = await supabase
-    .from("usuarios")
-    .select("telefono")
-    .eq("rol", "admin")
-    .not("telefono", "is", null)
-    .limit(1)
-    .maybeSingle();
+  // Se obtiene con una función segura (SECURITY DEFINER) porque el cliente no
+  // tiene permiso de RLS para leer la fila del admin; la función devuelve SOLO
+  // el número, no el resto de los datos del admin.
+  const { data: telefonoAdmin } = await supabase.rpc("telefono_admin");
 
   // Solo los métodos de pago ACTIVOS (RLS permite al cliente verlos).
   const { data: metodos } = await supabase
@@ -122,7 +119,7 @@ export default async function PagarPage({
         presupuestoId={presupuesto.id}
         precio={Number(presupuesto.precio_venta)}
         metodos={metodos ?? []}
-        adminTelefono={admin?.telefono ?? null}
+        adminTelefono={telefonoAdmin ?? null}
         productoUrl={presupuesto.url_producto}
       />
     </div>
