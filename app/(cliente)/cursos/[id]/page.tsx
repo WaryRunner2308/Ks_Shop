@@ -8,6 +8,7 @@ type Curso = {
   nombre: string;
   descripcion: string;
   precio: number;
+  imagen_url: string | null;
 };
 
 // Logo simple de WhatsApp.
@@ -36,10 +37,15 @@ export default async function CursoDetallePage({
   // RLS: solo cursos publicados (o admin).
   const { data: curso } = await supabase
     .from("cursos")
-    .select("id, nombre, descripcion, precio")
+    .select("id, nombre, descripcion, precio, imagen_url")
     .eq("id", cursoId)
     .single<Curso>();
   if (!curso) notFound();
+
+  const fotoUrl = curso.imagen_url
+    ? supabase.storage.from("cursos").getPublicUrl(curso.imagen_url).data
+        .publicUrl
+    : null;
 
   // Pago más reciente del cliente para este curso.
   let estadoPago: string | null = null;
@@ -94,6 +100,13 @@ export default async function CursoDetallePage({
         </svg>
         Cursos
       </Link>
+
+      {fotoUrl && (
+        <div className="mb-6 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-[#20091c] ring-1 ring-white/10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={fotoUrl} alt="" className="h-full w-full object-cover" />
+        </div>
+      )}
 
       <header className="mb-6">
         <h1 className="font-display text-3xl text-tinta">{curso.nombre}</h1>

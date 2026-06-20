@@ -12,6 +12,7 @@ type Curso = {
   nombre: string;
   precio: number;
   publicado: boolean;
+  imagen_url: string | null;
   created_at: string;
 };
 
@@ -138,11 +139,15 @@ export default async function AdminCursosPage() {
 
   const { data: cursosData } = await supabase
     .from("cursos")
-    .select("id, nombre, precio, publicado, created_at")
+    .select("id, nombre, precio, publicado, imagen_url, created_at")
     .order("orden", { ascending: true })
     .order("created_at", { ascending: false })
     .returns<Curso[]>();
   const cursos = cursosData ?? [];
+  const urlFoto = (path: string | null) =>
+    path
+      ? supabase.storage.from("cursos").getPublicUrl(path).data.publicUrl
+      : null;
 
   const { data: pagosData } = await supabase
     .from("cursos_pagos")
@@ -219,6 +224,16 @@ export default async function AdminCursosPage() {
                 key={c.id}
                 className="tarjeta tarjeta-flota flex items-center gap-4 p-4"
               >
+                {urlFoto(c.imagen_url) ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={urlFoto(c.imagen_url)!}
+                    alt=""
+                    className="h-16 w-16 shrink-0 rounded-xl object-cover ring-1 ring-white/10"
+                  />
+                ) : (
+                  <span className="h-16 w-16 shrink-0 rounded-xl bg-[#20091c]" />
+                )}
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium text-tinta">{c.nombre}</p>
                   <p className="text-sm font-semibold text-coral-dark">

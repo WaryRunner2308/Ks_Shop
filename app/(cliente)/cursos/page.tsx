@@ -6,6 +6,7 @@ type Curso = {
   nombre: string;
   descripcion: string;
   precio: number;
+  imagen_url: string | null;
 };
 
 export default async function CursosPage() {
@@ -17,12 +18,16 @@ export default async function CursosPage() {
   // RLS: el cliente solo ve los cursos publicados.
   const { data: cursosData } = await supabase
     .from("cursos")
-    .select("id, nombre, descripcion, precio")
+    .select("id, nombre, descripcion, precio, imagen_url")
     .eq("publicado", true)
     .order("orden", { ascending: true })
     .order("created_at", { ascending: false })
     .returns<Curso[]>();
   const cursos = cursosData ?? [];
+  const urlFoto = (path: string | null) =>
+    path
+      ? supabase.storage.from("cursos").getPublicUrl(path).data.publicUrl
+      : null;
 
   // Estado de pago del cliente por curso (su pago más reciente).
   const estadoPorCurso = new Map<number, string>();
@@ -96,38 +101,50 @@ export default async function CursosPage() {
               <li key={c.id}>
                 <Link
                   href={`/cursos/${c.id}`}
-                  className="tarjeta tarjeta-flota block p-5"
+                  className="tarjeta tarjeta-flota group block overflow-hidden p-0"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <h2 className="min-w-0 font-display text-xl text-tinta">
-                      {c.nombre}
-                    </h2>
-                    <span className="shrink-0 font-display text-xl text-coral-dark">
-                      ${Number(c.precio).toFixed(2)}
+                  {urlFoto(c.imagen_url) && (
+                    <div className="aspect-[16/9] w-full overflow-hidden bg-[#20091c]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={urlFoto(c.imagen_url)!}
+                        alt=""
+                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <h2 className="min-w-0 font-display text-xl text-tinta">
+                        {c.nombre}
+                      </h2>
+                      <span className="shrink-0 font-display text-xl text-coral-dark">
+                        ${Number(c.precio).toFixed(2)}
+                      </span>
+                    </div>
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-tinta-soft">
+                      {c.descripcion}
+                    </p>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-coral-dark">
+                      {estado === "verificado"
+                        ? "Curso pagado"
+                        : estado === "registrado"
+                          ? "Verificando tu pago"
+                          : "Ver curso"}
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 12h14M13 6l6 6-6 6" />
+                      </svg>
                     </span>
                   </div>
-                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-tinta-soft">
-                    {c.descripcion}
-                  </p>
-                  <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-coral-dark">
-                    {estado === "verificado"
-                      ? "Curso pagado"
-                      : estado === "registrado"
-                        ? "Verificando tu pago"
-                        : "Ver curso"}
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M5 12h14M13 6l6 6-6 6" />
-                    </svg>
-                  </span>
                 </Link>
               </li>
             );
