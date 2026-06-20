@@ -67,13 +67,17 @@ function BloqueProducto({
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-tinta">Link del producto</span>
         <input
-          type="url"
+          type="text"
           name={`url_${indice}`}
           required
           inputMode="url"
-          placeholder="https://…"
+          placeholder="Pega aquí el link (o el texto que copiaste)"
           className="campo"
         />
+        <span className="text-xs text-tinta-soft">
+          Puedes pegar el mensaje completo que copias de la app (ej. AliExpress);
+          nosotros tomamos solo el link.
+        </span>
       </label>
 
       <label className="flex flex-col gap-1.5">
@@ -180,16 +184,16 @@ function BloqueCarrito() {
       <label className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-tinta">Link del carrito</span>
         <input
-          type="url"
+          type="text"
           name="carrito_url"
           required
           inputMode="url"
-          placeholder="https://…"
+          placeholder="Pega aquí el link (o el texto que copiaste)"
           className="campo"
         />
         <span className="text-xs text-tinta-soft">
           Ábrelo desde la app con el botón “Compartir carrito” y pega aquí el
-          enlace.
+          enlace (puedes pegar el texto completo; tomamos solo el link).
         </span>
       </label>
     </div>

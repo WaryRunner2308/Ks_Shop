@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { OPCIONES_PLATAFORMA, CARRITO_PLATAFORMAS } from "@/lib/constantes";
 import { validarLinkCarrito } from "@/lib/validar-carrito";
+import { extraerUrl } from "@/lib/extraer-url";
 
 export type EstadoCotizar = {
   error?: string;
@@ -87,9 +88,13 @@ export async function crearSolicitud(
   // Validar cada producto.
   const productos: ProductoListo[] = [];
   for (let i = 0; i < cantidad; i++) {
+    // El cliente puede pegar el link suelto o dentro del texto que comparten
+    // apps como AliExpress: nos quedamos solo con el enlace.
+    const urlCruda = String(formData.get(`url_${i}`) ?? "");
+    const urlLink = extraerUrl(urlCruda) ?? urlCruda;
     const parsed = esquemaProducto.safeParse({
       plataforma: formData.get(`plataforma_${i}`),
-      url_producto: formData.get(`url_${i}`),
+      url_producto: urlLink,
       variante: formData.get(`variante_${i}`),
     });
     if (!parsed.success) {
@@ -176,9 +181,12 @@ export async function crearSolicitud(
 // plataforma (debe ser una de esas) y se BLINDA el link: el dominio tiene que
 // coincidir con la plataforma elegida (ver lib/validar-carrito.ts).
 async function crearCarrito(formData: FormData): Promise<EstadoCotizar> {
+  // Igual que con los productos: aceptar el link pegado dentro de un texto.
+  const urlCarritoCruda = String(formData.get("carrito_url") ?? "");
+  const urlCarrito = extraerUrl(urlCarritoCruda) ?? urlCarritoCruda;
   const parsed = esquemaCarrito.safeParse({
     plataforma: formData.get("carrito_plataforma"),
-    url: formData.get("carrito_url"),
+    url: urlCarrito,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
