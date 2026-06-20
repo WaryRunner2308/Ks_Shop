@@ -74,10 +74,6 @@ function BloqueProducto({
           placeholder="Pega aquí el link (o el texto que copiaste)"
           className="campo"
         />
-        <span className="text-xs text-tinta-soft">
-          Puedes pegar el mensaje completo que copias de la app (ej. AliExpress);
-          nosotros tomamos solo el link.
-        </span>
       </label>
 
       <label className="flex flex-col gap-1.5">
