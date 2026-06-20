@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState, useRef, useState } from "react";
 import { crearSolicitud, type EstadoCotizar } from "./actions";
 import { OPCIONES_PLATAFORMA, OPCIONES_CARRITO } from "@/lib/constantes";
+import { comprimirImagen } from "@/lib/comprimir-imagen";
 import SelectorPlataforma from "@/app/components/selector-plataforma";
 
 const estadoInicial: EstadoCotizar = {};
@@ -22,9 +23,23 @@ function BloqueProducto({
 }) {
   const [preview, setPreview] = useState<string | null>(null);
 
-  function alElegirImagen(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
-    setPreview(f ? URL.createObjectURL(f) : null);
+  async function alElegirImagen(e: React.ChangeEvent<HTMLInputElement>) {
+    const input = e.currentTarget;
+    const f = input.files?.[0];
+    if (!f) {
+      setPreview(null);
+      return;
+    }
+    // Comprimir la foto antes de enviarla (evita el límite de tamaño del envío).
+    const optimizada = await comprimirImagen(f);
+    try {
+      const dt = new DataTransfer();
+      dt.items.add(optimizada);
+      input.files = dt.files;
+    } catch {
+      // Si el navegador no permite reemplazar el archivo, se envía el original.
+    }
+    setPreview(URL.createObjectURL(optimizada));
   }
 
   return (
