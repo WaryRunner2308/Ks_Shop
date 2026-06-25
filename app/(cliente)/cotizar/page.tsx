@@ -5,41 +5,72 @@ import { useActionState, useRef, useState } from "react";
 import { crearSolicitud, type EstadoCotizar } from "./actions";
 import { OPCIONES_PLATAFORMA, OPCIONES_CARRITO } from "@/lib/constantes";
 import { comprimirImagen } from "@/lib/comprimir-imagen";
+import { createClient } from "@/lib/supabase/client";
 import SelectorPlataforma from "@/app/components/selector-plataforma";
 
 const estadoInicial: EstadoCotizar = {};
 
-// ── Un bloque de producto (plataforma + link + variante + imagen opcional) ────
+// ── Un bloque de producto (plataforma + link + variante + imagen) ─────────────
+// La foto se SUBE directamente a Supabase desde el navegador (no pasa por el
+// servidor), así no chocamos con el límite de tamaño de las Server Actions /
+// Vercel. Al formulario solo le mandamos la "ruta" del archivo ya subido.
 function BloqueProducto({
+  id,
   indice,
   numero,
   removible,
   onQuitar,
+  onSubiendoChange,
 }: {
+  id: number;
   indice: number;
   numero: number;
   removible: boolean;
   onQuitar: () => void;
+  onSubiendoChange: (id: number, subiendo: boolean) => void;
 }) {
   const [preview, setPreview] = useState<string | null>(null);
+  const [ruta, setRuta] = useState<string>("");
+  const [subiendo, setSubiendo] = useState(false);
+  const [errorImg, setErrorImg] = useState<string | null>(null);
 
   async function alElegirImagen(e: React.ChangeEvent<HTMLInputElement>) {
-    const input = e.currentTarget;
-    const f = input.files?.[0];
-    if (!f) {
-      setPreview(null);
-      return;
-    }
-    // Comprimir la foto antes de enviarla (evita el límite de tamaño del envío).
-    const optimizada = await comprimirImagen(f);
+    const f = e.currentTarget.files?.[0];
+    if (!f) return;
+
+    setErrorImg(null);
+    setRuta("");
+    setPreview(URL.createObjectURL(f));
+    setSubiendo(true);
+    onSubiendoChange(id, true);
+
     try {
-      const dt = new DataTransfer();
-      dt.items.add(optimizada);
-      input.files = dt.files;
+      // Comprimir (queda en ~300 KB) y subir directo al bucket privado.
+      const optimizada = await comprimirImagen(f);
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("sesion");
+
+      const nombre = `${user.id}/${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2)}.jpg`;
+      const { error } = await supabase.storage
+        .from("referencias")
+        .upload(nombre, optimizada, {
+          contentType: optimizada.type || "image/jpeg",
+          upsert: false,
+        });
+      if (error) throw error;
+      setRuta(nombre);
     } catch {
-      // Si el navegador no permite reemplazar el archivo, se envía el original.
+      setErrorImg("No se pudo subir la imagen. Intenta de nuevo.");
+      setPreview(null);
+    } finally {
+      setSubiendo(false);
+      onSubiendoChange(id, false);
     }
-    setPreview(URL.createObjectURL(optimizada));
   }
 
   return (
@@ -140,16 +171,26 @@ function BloqueProducto({
             </span>
           )}
           <span className="text-sm text-tinta-soft">
-            {preview ? "Toca para cambiar la imagen" : "Sube una foto (ej. el color exacto)"}
+            {subiendo
+              ? "Subiendo imagen…"
+              : ruta
+                ? "Imagen lista · toca para cambiarla"
+                : preview
+                  ? "Toca para cambiar la imagen"
+                  : "Sube una foto (ej. el color exacto)"}
           </span>
           <input
             type="file"
-            name={`imagen_${indice}`}
             accept="image/*"
             onChange={alElegirImagen}
             className="hidden"
           />
         </label>
+        {/* Solo mandamos la RUTA del archivo ya subido, no el archivo. */}
+        <input type="hidden" name={`ruta_${indice}`} value={ruta} />
+        {errorImg && (
+          <span className="text-xs font-medium text-coral-dark">{errorImg}</span>
+        )}
       </div>
     </div>
   );
@@ -219,13 +260,30 @@ export default function CotizarPage() {
   const [modo, setModo] = useState<"producto" | "carrito">("producto");
   const [ids, setIds] = useState<number[]>([0]);
   const siguiente = useRef(1);
+  // Ids de productos cuya imagen se está subiendo ahora mismo (para no dejar
+  // enviar el formulario hasta que terminen).
+  const [subiendoIds, setSubiendoIds] = useState<Set<number>>(
+    () => new Set(),
+  );
+
+  function onSubiendoChange(id: number, subiendo: boolean) {
+    setSubiendoIds((prev) => {
+      const n = new Set(prev);
+      if (subiendo) n.add(id);
+      else n.delete(id);
+      return n;
+    });
+  }
 
   function agregar() {
     setIds((prev) => [...prev, siguiente.current++]);
   }
   function quitar(id: number) {
     setIds((prev) => prev.filter((x) => x !== id));
+    onSubiendoChange(id, false);
   }
+
+  const hayImagenesSubiendo = subiendoIds.size > 0;
 
   // Mensaje de confirmación tras enviar.
   if (estado.ok) {
@@ -327,10 +385,12 @@ export default function CotizarPage() {
             {ids.map((id, i) => (
               <BloqueProducto
                 key={id}
+                id={id}
                 indice={i}
                 numero={i + 1}
                 removible={ids.length > 1}
                 onQuitar={() => quitar(id)}
+                onSubiendoChange={onSubiendoChange}
               />
             ))}
 
@@ -367,16 +427,18 @@ export default function CotizarPage() {
 
         <button
           type="submit"
-          disabled={enviando}
+          disabled={enviando || (modo === "producto" && hayImagenesSubiendo)}
           className="btn-coral mt-1 px-4 py-3.5"
         >
           {enviando
             ? "Enviando…"
-            : modo === "carrito"
-              ? "Enviar carrito"
-              : ids.length > 1
-                ? `Enviar ${ids.length} solicitudes`
-                : "Enviar solicitud"}
+            : modo === "producto" && hayImagenesSubiendo
+              ? "Subiendo imagen…"
+              : modo === "carrito"
+                ? "Enviar carrito"
+                : ids.length > 1
+                  ? `Enviar ${ids.length} solicitudes`
+                  : "Enviar solicitud"}
         </button>
 
         <p className="flex items-start gap-2 rounded-xl border border-white/10 bg-[#180516] px-3.5 py-3 text-xs leading-relaxed text-tinta-soft">

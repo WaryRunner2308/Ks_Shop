@@ -34,7 +34,6 @@ const esquemaCarrito = z.object({
 });
 
 const MAX_PRODUCTOS = 15;
-const MAX_IMG = 5 * 1024 * 1024; // 5 MB
 
 const esquemaProducto = z.object({
   plataforma: z.enum(valoresPlataforma, { message: "Elige una plataforma." }),
@@ -49,22 +48,11 @@ const esquemaProducto = z.object({
     .min(1, "Escribe la variante que quieres (talla, color, etc.)."),
 });
 
-// La imagen de referencia es OBLIGATORIA: debe subirse y ser imagen ≤ 5 MB.
-function imagenValida(f: File | null): { ok: boolean; error?: string } {
-  if (!f || f.size === 0)
-    return { ok: false, error: "Sube la imagen de referencia del producto." };
-  if (!f.type.startsWith("image/"))
-    return { ok: false, error: "El archivo debe ser una imagen." };
-  if (f.size > MAX_IMG)
-    return { ok: false, error: "Cada imagen debe pesar 5 MB o menos." };
-  return { ok: true };
-}
-
 type ProductoListo = {
   plataforma: string;
   url_producto: string;
   variante: string;
-  imagen: File | null;
+  rutaImagen: string;
 };
 
 export async function crearSolicitud(
@@ -85,7 +73,16 @@ export async function crearSolicitud(
     return { error: `Máximo ${MAX_PRODUCTOS} productos por solicitud.` };
   }
 
-  // Validar cada producto.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Tu sesión expiró. Inicia sesión de nuevo." };
+  }
+
+  // Validar cada producto. La imagen ya se subió desde el navegador; aquí solo
+  // recibimos su RUTA (debe estar dentro de la carpeta del propio usuario).
   const productos: ProductoListo[] = [];
   for (let i = 0; i < cantidad; i++) {
     // El cliente puede pegar el link suelto o dentro del texto que comparten
@@ -97,79 +94,47 @@ export async function crearSolicitud(
       url_producto: urlLink,
       variante: formData.get(`variante_${i}`),
     });
+    const n = cantidad > 1 ? ` (producto ${i + 1})` : "";
     if (!parsed.success) {
-      const n = cantidad > 1 ? ` (producto ${i + 1})` : "";
       return { error: parsed.error.issues[0].message + n };
     }
 
-    const imagen = formData.get(`imagen_${i}`);
-    const archivo = imagen instanceof File ? imagen : null;
-    const chequeo = imagenValida(archivo);
-    if (!chequeo.ok) {
-      const n = cantidad > 1 ? ` (producto ${i + 1})` : "";
-      return { error: (chequeo.error ?? "Imagen inválida.") + n };
+    const ruta = String(formData.get(`ruta_${i}`) ?? "").trim();
+    if (!ruta) {
+      return { error: "Sube la imagen de referencia del producto." + n };
+    }
+    // Blindaje: la ruta debe pertenecer a la carpeta del usuario.
+    if (!ruta.startsWith(`${user.id}/`)) {
+      return { error: "La imagen no es válida. Vuelve a subirla." + n };
     }
 
     productos.push({
       plataforma: parsed.data.plataforma,
       url_producto: parsed.data.url_producto,
       variante: parsed.data.variante,
-      imagen: archivo && archivo.size > 0 ? archivo : null,
+      rutaImagen: ruta,
     });
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return { error: "Tu sesión expiró. Inicia sesión de nuevo." };
-  }
+  // Insertar un presupuesto por producto.
+  const filas = productos.map((p) => ({
+    usuario_id: user.id,
+    plataforma: p.plataforma,
+    url_producto: p.url_producto,
+    variante: p.variante,
+    tipo: "producto",
+    imagen_url: p.rutaImagen,
+  }));
 
-  // Subir las imágenes que vengan (a la carpeta del propio usuario).
-  const subidas: string[] = []; // rutas para limpiar si algo falla
-  try {
-    for (let i = 0; i < productos.length; i++) {
-      const img = productos[i].imagen;
-      if (!img) continue;
-      const ext = (img.name.split(".").pop() || "jpg").toLowerCase();
-      const ruta = `${user.id}/${Date.now()}-${i}.${ext}`;
-      const { error: errImg } = await supabase.storage
-        .from("referencias")
-        .upload(ruta, img, { contentType: img.type });
-      if (errImg) {
-        throw new Error("No se pudo subir una de las imágenes.");
-      }
-      subidas.push(ruta);
-      (productos[i] as ProductoListo & { rutaImagen?: string }).rutaImagen =
-        ruta;
-    }
-
-    // Insertar un presupuesto por producto.
-    const filas = productos.map((p) => ({
-      usuario_id: user.id,
-      plataforma: p.plataforma,
-      url_producto: p.url_producto,
-      variante: p.variante,
-      tipo: "producto",
-      imagen_url:
-        (p as ProductoListo & { rutaImagen?: string }).rutaImagen ?? null,
-    }));
-
-    const { error: errInsert } = await supabase
-      .from("presupuestos")
-      .insert(filas);
-    if (errInsert) {
-      throw new Error("No se pudo enviar la solicitud. Intenta de nuevo.");
-    }
-  } catch (e) {
-    // Limpiar imágenes subidas si algo falló.
-    if (subidas.length > 0) {
-      await supabase.storage.from("referencias").remove(subidas);
-    }
-    const msg =
-      e instanceof Error ? e.message : "No se pudo enviar la solicitud.";
-    return { error: msg };
+  const { error: errInsert } = await supabase
+    .from("presupuestos")
+    .insert(filas);
+  if (errInsert) {
+    // Limpiar las imágenes ya subidas si el guardado falló.
+    await supabase.storage
+      .from("referencias")
+      .remove(productos.map((p) => p.rutaImagen));
+    return { error: "No se pudo enviar la solicitud. Intenta de nuevo." };
   }
 
   revalidatePath("/mis-solicitudes");
